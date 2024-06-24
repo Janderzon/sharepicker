@@ -2,6 +2,11 @@ using SharePicker.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddHttpClient<FmpClient>(client =>
+***REMOVED***
+    client.BaseAddress = new Uri("https://financialmodelingprep.com/api/v3/");
+***REMOVED***);
+
 builder.Services
     .AddRazorComponents()
     .AddInteractiveServerComponents();
