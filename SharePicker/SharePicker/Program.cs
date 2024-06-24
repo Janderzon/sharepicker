@@ -1,24 +1,29 @@
 using SharePicker.Components;
+using SharePicker.Models;
+using SharePicker.Models.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHttpClient<FmpClient>(client =>
-***REMOVED***
+{
     client.BaseAddress = new Uri("https://financialmodelingprep.com/api/v3/");
-***REMOVED***);
+});
 
 builder.Services
     .AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services
+    .Configure<FmpClientOptions>(builder.Configuration.GetSection(FmpClientOptions.Name));
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
-***REMOVED***
+{
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
-***REMOVED***
+}
 
 app.UseHttpsRedirection();
 

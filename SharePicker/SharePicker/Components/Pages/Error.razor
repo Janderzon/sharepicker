@@ -7,11 +7,11 @@
 <h2 class="text-danger">An error occurred while processing your request.</h2>
 
 @if (ShowRequestId)
-***REMOVED***
+{
     <p>
         <strong>Request ID:</strong> <code>@RequestId</code>
     </p>
-***REMOVED***
+}
 
 <h3>Development Mode</h3>
 <p>
@@ -24,13 +24,13 @@
     and restarting the app.
 </p>
 
-@code***REMOVED***
+@code{
     [CascadingParameter]
-    private HttpContext? HttpContext ***REMOVED*** get; set; ***REMOVED***
+    private HttpContext? HttpContext { get; set; }
 
-    private string? RequestId ***REMOVED*** get; set; ***REMOVED***
+    private string? RequestId { get; set; }
     private bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
 
     protected override void OnInitialized() =>
         RequestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
-***REMOVED***
+}

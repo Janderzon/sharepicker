@@ -7,20 +7,22 @@ using System.ComponentModel.DataAnnotations;
 namespace SharePicker.Components;
 
 public class FmpClient(IOptions<FmpClientOptions> fmpClientOptions, HttpClient httpClient) : IDisposable
-***REMOVED***
-    public async Task<IncomeStatement> GetIncomeStatementAsync(
+{
+    public async Task<List<IncomeStatement>> GetIncomeStatementsAsync(
         Company company,
         CancellationToken cancellationToken)
-    ***REMOVED***
-        var dto = await GetWithAuth<IncomeStatementDto>(
-            $"income-statement/***REMOVED***company.Symbol***REMOVED***",
-            new Dictionary<string, string?>() ***REMOVED*** ***REMOVED*** "period", "annual" ***REMOVED*** ***REMOVED***,
+    {
+        var dtos = await GetWithAuth<List<IncomeStatementDto>>(
+            $"income-statement/{company.Symbol}",
+            new Dictionary<string, string?>() { { "period", "annual" } },
             cancellationToken);
 
-        return new IncomeStatement(
-            DateTimeOffset.ParseExact(dto.Date, "yyyy-MM-dd", null),
-            dto.EbitDa - dto.DepreciationAndAmortization);
-***REMOVED***
+        return dtos
+            .Select(dto => new IncomeStatement(
+                DateTimeOffset.ParseExact(dto.Date, "yyyy-MM-dd", null),
+                dto.EbitDa - dto.DepreciationAndAmortization))
+            .ToList();
+    }
 
     public void Dispose() => httpClient.Dispose();
 
@@ -31,24 +33,24 @@ public class FmpClient(IOptions<FmpClientOptions> fmpClientOptions, HttpClient h
         string url, 
         IReadOnlyDictionary<string, string?> parameters, 
         CancellationToken cancellationToken)
-    ***REMOVED***
+    {
         var parametersWithApiKey = parameters.Append(
             KeyValuePair.Create<string, string?>("apikey", fmpClientOptions.Value.ApiKey));
 
         return await httpClient.GetFromJsonAsync<T>(
             QueryHelpers.AddQueryString(url, parametersWithApiKey),
             cancellationToken) ?? throw new Exception("Json deserialised to null");
-***REMOVED***
+    }
 
     private class IncomeStatementDto
-    ***REMOVED***
+    {
         [Required]
-        public required string Date ***REMOVED*** get; init; ***REMOVED***
+        public required string Date { get; init; }
 
         [Required]
-        public required decimal DepreciationAndAmortization ***REMOVED*** get; init; ***REMOVED***
+        public required decimal DepreciationAndAmortization { get; init; }
 
         [Required]
-        public required decimal EbitDa ***REMOVED*** get; init; ***REMOVED***
-***REMOVED***
-***REMOVED***
+        public required decimal EbitDa { get; init; }
+    }
+}
