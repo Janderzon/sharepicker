@@ -8,20 +8,17 @@ namespace SharePicker.Components;
 
 public class FmpClient(IOptions<FmpClientOptions> fmpClientOptions, HttpClient httpClient) : IDisposable
 {
-    public async Task<List<IncomeStatement>> GetTradableCompaniesAsync(CancellationToken cancellationToken)
+    public async Task<List<Company>> GetTradableCompaniesAsync(CancellationToken cancellationToken)
     {
-        var dtos = await GetWithAuth<List<IncomeStatementDto>>(
-            $"income-statement/{company.Symbol}",
-            new Dictionary<string, string?>() { { "period", "annual" } },
-            cancellationToken);
+        var dtos = await GetWithAuth<List<TradableCompanyDto>>("available-traded/list", cancellationToken);
 
         return dtos
-            .Select(dto => new IncomeStatement(
-                DateTimeOffset.ParseExact(dto.Date, "yyyy-MM-dd", null),
-                dto.EbitDa - dto.DepreciationAndAmortization))
+            .Select(dto => new Company(
+                dto.Symbol,
+                dto.Name,
+                new Exchange(dto.Exchange, dto.ExchangeShortName)))
             .ToList();
     }
-
 
     public async Task<List<IncomeStatement>> GetIncomeStatementsAsync(
         Company company,

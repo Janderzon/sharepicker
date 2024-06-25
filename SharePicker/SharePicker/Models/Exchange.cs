@@ -1,5 +1,3 @@
 ﻿namespace SharePicker.Models;
 
-public class Exchange
-{
-}
+public record Exchange(string Name, string ShortName);

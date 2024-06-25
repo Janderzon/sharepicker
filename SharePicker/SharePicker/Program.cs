@@ -1,5 +1,4 @@
 using SharePicker.Components;
-using SharePicker.Models;
 using SharePicker.Models.Options;
 
 var builder = WebApplication.CreateBuilder(args);
