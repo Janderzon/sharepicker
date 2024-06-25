@@ -8,6 +8,21 @@ namespace SharePicker.Components;
 
 public class FmpClient(IOptions<FmpClientOptions> fmpClientOptions, HttpClient httpClient) : IDisposable
 {
+    public async Task<List<IncomeStatement>> GetTradableCompaniesAsync(CancellationToken cancellationToken)
+    {
+        var dtos = await GetWithAuth<List<IncomeStatementDto>>(
+            $"income-statement/{company.Symbol}",
+            new Dictionary<string, string?>() { { "period", "annual" } },
+            cancellationToken);
+
+        return dtos
+            .Select(dto => new IncomeStatement(
+                DateTimeOffset.ParseExact(dto.Date, "yyyy-MM-dd", null),
+                dto.EbitDa - dto.DepreciationAndAmortization))
+            .ToList();
+    }
+
+
     public async Task<List<IncomeStatement>> GetIncomeStatementsAsync(
         Company company,
         CancellationToken cancellationToken)
@@ -40,6 +55,21 @@ public class FmpClient(IOptions<FmpClientOptions> fmpClientOptions, HttpClient h
         return await httpClient.GetFromJsonAsync<T>(
             QueryHelpers.AddQueryString(url, parametersWithApiKey),
             cancellationToken) ?? throw new Exception("Json deserialised to null");
+    }
+
+    private class TradableCompanyDto
+    {
+        [Required]
+        public required string Symbol { get; init; }
+
+        [Required]
+        public required string Name { get; init; }
+
+        [Required]
+        public required string Exchange { get; init; }
+
+        [Required]
+        public required string ExchangeShortName { get; init; }
     }
 
     private class IncomeStatementDto
