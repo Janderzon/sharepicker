@@ -20,6 +20,9 @@ public class FmpClient(IOptions<FmpClientOptions> fmpClientOptions, HttpClient h
             .ToList();
     }
 
+    public Task<List<string>> GetSymbolsWithFinancialStatements(CancellationToken cancellationToken) =>
+        GetWithAuth<List<string>>("financial-statement-symbol-lists", cancellationToken);
+
     public async Task<List<IncomeStatement>> GetIncomeStatementsAsync(
         Company company,
         CancellationToken cancellationToken)
