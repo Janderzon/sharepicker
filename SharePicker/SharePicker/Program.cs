@@ -1,5 +1,6 @@
 using SharePicker.Components;
 using SharePicker.Models.Options;
+using SharePicker.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +14,8 @@ builder.Services
     .AddInteractiveServerComponents();
 
 builder.Services
-    .Configure<FmpClientOptions>(builder.Configuration.GetSection(FmpClientOptions.Name));
+    .Configure<FmpClientOptions>(builder.Configuration.GetSection(FmpClientOptions.Name))
+    .AddTransient<FinancialStatementRepository>();
 
 var app = builder.Build();
 
