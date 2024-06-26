@@ -3,36 +3,48 @@
 @using SharePicker.Services
 @inject FinancialStatementRepository FinancialStatementRepository
 
-<MudDataGrid 
-    Items="@_companies"
-    QuickFilter="@GlobalSearch"
-    Virtualize="true"
-    FixedHeader="true" 
-    Filterable="true"
-    Height="350px">
-    <ToolBarContent>
-        <MudText Typo="Typo.h6">Companies</MudText>
-        <MudSpacer />
-        <MudTextField 
-            @bind-Value="_searchString" 
-            Placeholder="Search" 
-            Adornment="Adornment.Start" 
-            Immediate="true"
-            AdornmentIcon="@Icons.Material.Filled.Search"
-            IconSize="Size.Medium" 
-            Class="mt-0" />
-    </ToolBarContent>
-    <Columns>
-        <PropertyColumn Property="company => company.Symbol" Title="Symbol" />
-        <PropertyColumn Property="company => company.Name" Title="Name" />
-        <PropertyColumn Property="company => company.Exchange.Name" Title="Exchange" />
-        <PropertyColumn Property="company => company.Exchange.ShortName" Title="Exchange Short Name" />
-    </Columns>
-</MudDataGrid>
+<MudStack>
+    <MudDataGrid
+        T="Company"
+        Items="@_companies"
+        QuickFilter="@GlobalSearch"
+        Virtualize="true"
+        FixedHeader="true" 
+        Filterable="true"
+        RowClick="OnRowClick"
+        Height="350px">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Companies</MudText>
+            <MudSpacer />
+            <MudTextField 
+                @bind-Value="_searchString" 
+                Placeholder="Search" 
+                Adornment="Adornment.Start" 
+                Immediate="true"
+                AdornmentIcon="@Icons.Material.Filled.Search"
+                IconSize="Size.Medium" 
+                Class="mt-0" />
+        </ToolBarContent>
+        <Columns>
+            <PropertyColumn Property="company => company.Symbol" Title="Symbol" />
+            <PropertyColumn Property="company => company.Name" Title="Name" />
+            <PropertyColumn Property="company => company.Exchange.Name" Title="Exchange" />
+            <PropertyColumn Property="company => company.Exchange.ShortName" Title="Exchange Short Name" />
+        </Columns>
+    </MudDataGrid>
+
+    @if(_incomeStatements != null)
+    {
+        <MudList T="string">
+            <MudListItem>EBIT:<MudSpacer />@_incomeStatements.First().Ebit</MudListItem>
+        </MudList>
+    }
+</MudStack>
 
 @code {
     private IEnumerable<Company>? _companies;
     private string? _searchString;
+    private IEnumerable<IncomeStatement>? _incomeStatements;
 
     protected override async Task OnInitializedAsync()
     {
@@ -57,5 +69,10 @@
             return true;
 
         return false;
+    }
+
+    private async Task OnRowClick(DataGridRowClickEventArgs<Company> args)
+    {
+        _incomeStatements = await FinancialStatementRepository.GetIncomeStatementsAsync(args.Item, CancellationToken.None);
     }
 }

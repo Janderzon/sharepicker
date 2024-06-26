@@ -15,4 +15,7 @@ public class FinancialStatementRepository(FmpClient fmpClient)
             .Where(company => symbolsWithFinancialStatements.Contains(company.Symbol))
             .ToHashSet();
     }
+
+    public Task<List<IncomeStatement>> GetIncomeStatementsAsync(Company company, CancellationToken cancellationToken) =>
+        fmpClient.GetIncomeStatementsAsync(company, cancellationToken);
 }
