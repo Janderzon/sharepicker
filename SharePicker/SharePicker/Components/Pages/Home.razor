@@ -1,7 +1,9 @@
 ﻿@page "/"
 @using SharePicker.Models
+@using SharePicker.Services
+@inject FinancialStatementRepository FinancialStatementRepository
 
-<MudDataGrid Items="@_companies">
+<MudDataGrid Items="@_companies" Virtualize="true" Height="350px">
     <Columns>
         <PropertyColumn Property="company => company.Symbol" Title="Symbol" />
         <PropertyColumn Property="company => company.Name" Title="Name" />
@@ -11,5 +13,10 @@
 </MudDataGrid>
 
 @code {
-    private IEnumerable<Company> _companies = new List<Company> { new Company("Symbol", "Name", new Exchange("ExchangeName", "ExchangeShortName")) };
+    private IEnumerable<Company>? _companies;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _companies = await FinancialStatementRepository.GetCompaniesAsync(CancellationToken.None);
+    }
 }
