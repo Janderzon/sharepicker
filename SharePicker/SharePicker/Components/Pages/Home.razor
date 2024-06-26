@@ -1,7 +1,15 @@
 ﻿@page "/"
+@using SharePicker.Models
 
-<PageTitle>Stock Picker</PageTitle>
+<MudDataGrid Items="@_companies">
+    <Columns>
+        <PropertyColumn Property="company => company.Symbol" Title="Symbol" />
+        <PropertyColumn Property="company => company.Name" Title="Name" />
+        <PropertyColumn Property="company => company.Exchange.Name" Title="Exchange" />
+        <PropertyColumn Property="company => company.Exchange.ShortName" Title="Exchange Short Name" />
+    </Columns>
+</MudDataGrid>
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
+@code {
+    private IEnumerable<Company> _companies = new List<Company> { new Company("Symbol", "Name", new Exchange("ExchangeName", "ExchangeShortName")) };
+}
