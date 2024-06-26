@@ -1,3 +1,4 @@
+using MudBlazor.Services;
 using SharePicker.Components;
 using SharePicker.Models.Options;
 using SharePicker.Services;
@@ -14,6 +15,7 @@ builder.Services
     .AddInteractiveServerComponents();
 
 builder.Services
+    .AddMudServices()
     .Configure<FmpClientOptions>(builder.Configuration.GetSection(FmpClientOptions.Name))
     .AddTransient<FinancialStatementRepository>();
 
