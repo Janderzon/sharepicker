@@ -16,7 +16,7 @@ public class FmpClient(IOptions<FmpClientOptions> fmpClientOptions, HttpClient h
             .Select(dto => new Company(
                 dto.Symbol,
                 dto.Name,
-                new Exchange(dto.Exchange, dto.ExchangeShortName)))
+                new Exchange(dto.Exchange ?? string.Empty, dto.ExchangeShortName ?? string.Empty)))
             .ToHashSet();
     }
 
@@ -59,28 +59,21 @@ public class FmpClient(IOptions<FmpClientOptions> fmpClientOptions, HttpClient h
 
     private class TradableCompanyDto
     {
-        [Required]
         public required string Symbol { get; init; }
 
-        [Required]
         public required string Name { get; init; }
 
-        [Required]
-        public required string Exchange { get; init; }
+        public string? Exchange { get; init; }
 
-        [Required]
-        public required string ExchangeShortName { get; init; }
+        public string? ExchangeShortName { get; init; }
     }
 
     private class IncomeStatementDto
     {
-        [Required]
         public required string Date { get; init; }
 
-        [Required]
         public required decimal DepreciationAndAmortization { get; init; }
 
-        [Required]
         public required decimal EbitDa { get; init; }
     }
 }

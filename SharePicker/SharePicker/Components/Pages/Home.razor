@@ -3,7 +3,25 @@
 @using SharePicker.Services
 @inject FinancialStatementRepository FinancialStatementRepository
 
-<MudDataGrid Items="@_companies" Virtualize="true" Height="350px">
+<MudDataGrid 
+    Items="@_companies"
+    QuickFilter="@GlobalSearch"
+    Virtualize="true"
+    FixedHeader="true" 
+    Filterable="true"
+    Height="350px">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Companies</MudText>
+        <MudSpacer />
+        <MudTextField 
+            @bind-Value="_searchString" 
+            Placeholder="Search" 
+            Adornment="Adornment.Start" 
+            Immediate="true"
+            AdornmentIcon="@Icons.Material.Filled.Search"
+            IconSize="Size.Medium" 
+            Class="mt-0" />
+    </ToolBarContent>
     <Columns>
         <PropertyColumn Property="company => company.Symbol" Title="Symbol" />
         <PropertyColumn Property="company => company.Name" Title="Name" />
@@ -14,9 +32,30 @@
 
 @code {
     private IEnumerable<Company>? _companies;
+    private string? _searchString;
 
     protected override async Task OnInitializedAsync()
     {
         _companies = await FinancialStatementRepository.GetCompaniesAsync(CancellationToken.None);
+    }
+
+    private bool GlobalSearch(Company company) 
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+
+        if (company.Symbol.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (company.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (company.Exchange.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (company.Exchange.ShortName.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        return false;
     }
 }
