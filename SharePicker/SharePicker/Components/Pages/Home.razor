@@ -11,7 +11,8 @@
         Virtualize="true"
         FixedHeader="true" 
         Filterable="true"
-        RowClick="OnRowClick"
+        SelectedItemChanged="OnSelectedCompanyChange"
+        Hover="true"
         Height="350px">
         <ToolBarContent>
             <MudText Typo="Typo.h6">Companies</MudText>
@@ -35,9 +36,20 @@
 
     @if(_incomeStatements != null)
     {
-        <MudList T="string">
-            <MudListItem>EBIT:<MudSpacer />@_incomeStatements.First().Ebit</MudListItem>
-        </MudList>
+        <MudSelect @bind-Value="@_selectedIncomeStatement">
+            @foreach (var incomeStatement in _incomeStatements)
+            {
+                <MudSelectItem Value="@incomeStatement">@incomeStatement.DateTimeOffset.ToString("yyyy-MM-dd")</MudSelectItem>
+            }
+        </MudSelect>
+        <MudSimpleTable Hover="true">
+            <tbody>
+                <tr>
+                    <td>EBIT:</td>
+                    <td>@_selectedIncomeStatement?.Ebit</td>
+                </tr>
+            </tbody>
+        </MudSimpleTable>
     }
 </MudStack>
 
@@ -45,6 +57,7 @@
     private IEnumerable<Company>? _companies;
     private string? _searchString;
     private IEnumerable<IncomeStatement>? _incomeStatements;
+    private IncomeStatement? _selectedIncomeStatement;
 
     protected override async Task OnInitializedAsync()
     {
@@ -71,8 +84,9 @@
         return false;
     }
 
-    private async Task OnRowClick(DataGridRowClickEventArgs<Company> args)
+    private async Task OnSelectedCompanyChange(Company company)
     {
-        _incomeStatements = await FinancialStatementRepository.GetIncomeStatementsAsync(args.Item, CancellationToken.None);
+        _incomeStatements = await FinancialStatementRepository.GetIncomeStatementsAsync(company, CancellationToken.None);
+        _selectedIncomeStatement = _incomeStatements.First();
     }
 }
