@@ -13,6 +13,7 @@
         Filterable="true"
         SelectedItemChanged="OnSelectedCompanyChange"
         Hover="true"
+        RowStyleFunc="SetRowStyle"
         Height="350px">
         <ToolBarContent>
             <MudText Typo="Typo.h6">Companies</MudText>
@@ -36,10 +37,10 @@
 
     @if(_incomeStatements != null)
     {
-        <MudSelect @bind-Value="@_selectedIncomeStatement">
+        <MudSelect @bind-Value="@_selectedIncomeStatement" ToStringFunc="ToString">
             @foreach (var incomeStatement in _incomeStatements)
             {
-                <MudSelectItem Value="@incomeStatement">@incomeStatement.DateTimeOffset.ToString("yyyy-MM-dd")</MudSelectItem>
+                <MudSelectItem Value="@incomeStatement" />
             }
         </MudSelect>
         <MudSimpleTable Hover="true">
@@ -55,14 +56,13 @@
 
 @code {
     private IEnumerable<Company>? _companies;
+    private Company? _selectedCompany;
     private string? _searchString;
     private IEnumerable<IncomeStatement>? _incomeStatements;
     private IncomeStatement? _selectedIncomeStatement;
 
-    protected override async Task OnInitializedAsync()
-    {
+    protected override async Task OnInitializedAsync() =>
         _companies = await FinancialStatementRepository.GetCompaniesAsync(CancellationToken.None);
-    }
 
     private bool GlobalSearch(Company company) 
     {
@@ -86,7 +86,14 @@
 
     private async Task OnSelectedCompanyChange(Company company)
     {
+        _selectedCompany = company;
         _incomeStatements = await FinancialStatementRepository.GetIncomeStatementsAsync(company, CancellationToken.None);
         _selectedIncomeStatement = _incomeStatements.First();
     }
+
+    private string SetRowStyle(Company company, int _) =>
+        company == _selectedCompany ? "background: #D3D3D3" : "";
+
+    private string ToString(IncomeStatement? incomeStatement) =>
+        incomeStatement?.DateTimeOffset.ToString("yyyy-MM-dd") ?? string.Empty;
 }
