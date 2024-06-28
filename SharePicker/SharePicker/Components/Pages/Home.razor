@@ -37,7 +37,7 @@
 
     @if(_incomeStatements != null)
     {
-        <MudSelect @bind-Value="@_selectedIncomeStatement" ToStringFunc="ToString">
+        <MudSelect @bind-Value="_selectedIncomeStatement" ToStringFunc="GetDateString">
             @foreach (var incomeStatement in _incomeStatements)
             {
                 <MudSelectItem Value="@incomeStatement" />
@@ -51,6 +51,7 @@
                 </tr>
             </tbody>
         </MudSimpleTable>
+        <MudChart ChartType="ChartType.Bar" ChartSeries="@([GetEbitSeries()])" XAxisLabels="GetXAxisLabels()" />
     }
 </MudStack>
 
@@ -94,6 +95,18 @@
     private string SetRowStyle(Company company, int _) =>
         company == _selectedCompany ? "background: #D3D3D3" : "";
 
-    private string ToString(IncomeStatement? incomeStatement) =>
+    private string GetDateString(IncomeStatement? incomeStatement) =>
         incomeStatement?.DateTimeOffset.ToString("yyyy-MM-dd") ?? string.Empty;
+
+    private ChartSeries GetEbitSeries() => new ChartSeries
+    {
+        Name = "EBIT",
+        Data = _incomeStatements?
+            .Select(incomeStatement => (double)incomeStatement.Ebit)
+            .ToArray() ?? []
+    };
+
+    private string[] GetXAxisLabels() => _incomeStatements?
+        .Select(incomeStatement => GetDateString(incomeStatement))
+        .ToArray() ?? [];
 }
