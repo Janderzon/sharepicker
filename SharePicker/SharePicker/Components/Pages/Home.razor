@@ -49,9 +49,13 @@
                     <td>EBIT:</td>
                     <td>@_selectedIncomeStatement?.Ebit</td>
                 </tr>
+                <tr>
+                    <td>Revenue:</td>
+                    <td>@_selectedIncomeStatement?.Revenue</td>
+                </tr>
             </tbody>
         </MudSimpleTable>
-        <MudChart ChartType="ChartType.Bar" ChartSeries="@([GetEbitSeries()])" XAxisLabels="GetXAxisLabels()" />
+        <MudChart ChartType="ChartType.Bar" ChartSeries="@([GetEbitSeries(), GetRevenueSeries()])" XAxisLabels="GetXAxisLabels()" />
     }
 </MudStack>
 
@@ -103,10 +107,21 @@
         Name = "EBIT",
         Data = _incomeStatements?
             .Select(incomeStatement => (double)incomeStatement.Ebit)
+            .Reverse()
+            .ToArray() ?? []
+    };
+
+    private ChartSeries GetRevenueSeries() => new ChartSeries
+    {
+        Name = "Revenue",
+        Data = _incomeStatements?
+            .Select(incomeStatement => (double)incomeStatement.Revenue)
+            .Reverse()
             .ToArray() ?? []
     };
 
     private string[] GetXAxisLabels() => _incomeStatements?
         .Select(incomeStatement => GetDateString(incomeStatement))
+        .Reverse()
         .ToArray() ?? [];
 }

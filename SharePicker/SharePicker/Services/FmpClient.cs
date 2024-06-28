@@ -35,7 +35,8 @@ public class FmpClient(IOptions<FmpClientOptions> fmpClientOptions, HttpClient h
         return dtos
             .Select(dto => new IncomeStatement(
                 DateTimeOffset.ParseExact(dto.Date, "yyyy-MM-dd", null),
-                dto.EbitDa - dto.DepreciationAndAmortization))
+                dto.EbitDa - dto.DepreciationAndAmortization,
+                dto.Revenue))
             .ToList();
     }
 
@@ -75,5 +76,7 @@ public class FmpClient(IOptions<FmpClientOptions> fmpClientOptions, HttpClient h
         public required decimal DepreciationAndAmortization { get; init; }
 
         public required decimal EbitDa { get; init; }
+
+        public required decimal Revenue { get; init; }
     }
 }
