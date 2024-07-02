@@ -71,6 +71,13 @@
             </MudText>
             <MudChart ChartType="ChartType.Bar" ChartSeries="@([GetEbitSeries(), GetRevenueSeries()])" XAxisLabels="GetXAxisLabels()" />
         </MudPaper>
+        <MudPaper>
+            <MudText Typo="Typo.h2">Profit Margin</MudText>
+            <MudText>
+                Profit margin is calculated as 100 * EBIT / Revenue. The profit margin should be at least 10-15%.
+            </MudText>
+            <MudChart ChartType="ChartType.Bar" ChartSeries="@([GetProfitMarginSeries()])" XAxisLabels="GetXAxisLabels()" />
+        </MudPaper>
     }
 </MudStack>
 
@@ -131,6 +138,15 @@
         Name = "Revenue",
         Data = _incomeStatements?
             .Select(incomeStatement => (double)incomeStatement.Revenue)
+            .Reverse()
+            .ToArray() ?? []
+    };
+
+    private ChartSeries GetProfitMarginSeries() => new ChartSeries
+    {
+        Name = "Profit Margin (%)",
+        Data = _incomeStatements?
+            .Select(incomeStatement => (double)(100m * incomeStatement.Ebit / incomeStatement.Revenue))
             .Reverse()
             .ToArray() ?? []
     };
