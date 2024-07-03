@@ -18,4 +18,10 @@ public class FinancialStatementRepository(FmpClient fmpClient)
 
     public Task<List<IncomeStatement>> GetIncomeStatementsAsync(Company company, CancellationToken cancellationToken) =>
         fmpClient.GetIncomeStatementsAsync(company, cancellationToken);
+
+    public Task<List<BalanceSheetStatement>> GetBalanceSheetStatementsAsync(Company company, CancellationToken cancellationToken) =>
+        fmpClient.GetBalanceSheetStatementsAsync(company, cancellationToken);
+
+    public Task<List<Ratios>> GetRatiosAsync(Company company, CancellationToken cancellationToken) =>
+        fmpClient.GetRatiosAsync(company, cancellationToken);
 }

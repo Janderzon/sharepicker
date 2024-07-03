@@ -40,6 +40,41 @@ public class FmpClient(IOptions<FmpClientOptions> fmpClientOptions, HttpClient h
             .ToList();
     }
 
+    public async Task<List<BalanceSheetStatement>> GetBalanceSheetStatementsAsync(
+        Company company,
+        CancellationToken cancellationToken)
+    {
+        var dtos = await GetWithAuth<List<BalanceSheetStatementDto>>(
+            $"balance-sheet-statement/{company.Symbol}",
+            new Dictionary<string, string?>() { { "period", "annual" } },
+            cancellationToken);
+
+        return dtos
+            .Select(dto => new BalanceSheetStatement(
+                DateTimeOffset.ParseExact(dto.Date, "yyyy-MM-dd", null),
+                dto.TotalAssets,
+                dto.TotalCurrentLiabilities,
+                dto.ShortTermDebt))
+            .ToList();
+    }
+
+    public async Task<List<Ratios>> GetRatiosAsync(
+        Company company,
+        CancellationToken cancellationToken)
+    {
+        var dtos = await GetWithAuth<List<RatiosDto>>(
+            $"ratios/{company.Symbol}",
+            new Dictionary<string, string?>() { { "period", "annual" } },
+            cancellationToken);
+
+        return dtos
+            .Select(dto => new Ratios(
+                DateTimeOffset.ParseExact(dto.Date, "yyyy-MM-dd", null),
+                dto.EbitPerRevenue,
+                dto.ReturnOnCapitalEmployed))
+            .ToList();
+    }
+
     public void Dispose() => httpClient.Dispose();
 
     private Task<T> GetWithAuth<T>(string url, CancellationToken cancellationToken) => 
@@ -78,5 +113,25 @@ public class FmpClient(IOptions<FmpClientOptions> fmpClientOptions, HttpClient h
         public required decimal EbitDa { get; init; }
 
         public required decimal Revenue { get; init; }
+    }
+
+    private class BalanceSheetStatementDto
+    {
+        public required string Date { get; init; }
+
+        public required decimal TotalCurrentLiabilities { get; init; }
+
+        public required decimal ShortTermDebt { get; init; }
+
+        public required decimal TotalAssets { get; init; }
+    }
+
+    private class RatiosDto
+    {
+        public required string Date { get; init; }
+
+        public required decimal EbitPerRevenue { get; init; }
+
+        public required decimal ReturnOnCapitalEmployed { get; init; }
     }
 }

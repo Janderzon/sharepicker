@@ -64,7 +64,7 @@
         <MudPaper>
             <MudText Typo="Typo.h2">EBIT Chart</MudText>
             <MudText>
-                EBIT should be increasing year on year. 
+                EBIT (earings before interest and tax) should be increasing year on year. 
                 Revenue should also be increasing year on year as it indicates that the EBIT growth is due to an increase in sales rather than cutting costs.
                 Ideally we'd view data for 10 years as it will include different parts of the economic cycle.
                 One-off gains/costs are not excluded and may account for any spikes/dips in the below chart.
@@ -74,9 +74,20 @@
         <MudPaper>
             <MudText Typo="Typo.h2">Profit Margin</MudText>
             <MudText>
-                Profit margin is calculated as 100 * EBIT / Revenue. The profit margin should be at least 10-15%.
+                Profit margin is calculated as 100 * EBIT / Revenue. 
+                The profit margin should be consistently at least 10-15%.
+                Companies with higher profit margins are better placed withstand tempory periods of difficulty that may depress profits.
             </MudText>
-            <MudChart ChartType="ChartType.Bar" ChartSeries="@([GetProfitMarginSeries()])" XAxisLabels="GetXAxisLabels()" />
+            <MudChart ChartType="ChartType.Bar" ChartSeries="@([GetProfitMarginSeries(), GetProfitMarginSeries2()])" XAxisLabels="GetXAxisLabels()" />
+        </MudPaper>
+        <MudPaper>
+            <MudText Typo="Typo.h2">ROCE</MudText>
+            <MudText>
+                ROCE (return on capital employed) is calculated as 100 * EBIT / Capital Employed, where Capital Employed = Total Assets - Current Liabilities + Short-Term Borrowings.
+                The profit margin should be consistently at least 10-15%.
+                Companies with higher profit margins are better placed withstand tempory periods of difficulty that may depress profits.
+            </MudText>
+            <MudChart ChartType="ChartType.Bar" ChartSeries="@([GetRoceSeries(), GetRoceSeries2()])" XAxisLabels="GetXAxisLabels()" />
         </MudPaper>
     }
 </MudStack>
@@ -85,8 +96,10 @@
     private IEnumerable<Company>? _companies;
     private Company? _selectedCompany;
     private string? _searchString;
-    private IEnumerable<IncomeStatement>? _incomeStatements;
+    private List<IncomeStatement>? _incomeStatements;
     private IncomeStatement? _selectedIncomeStatement;
+    private List<Ratios>? _ratios;
+    private List<BalanceSheetStatement>? _balanceSheetStatements;
 
     protected override async Task OnInitializedAsync() =>
         _companies = await FinancialStatementRepository.GetCompaniesAsync(CancellationToken.None);
@@ -116,6 +129,8 @@
         _selectedCompany = company;
         _incomeStatements = await FinancialStatementRepository.GetIncomeStatementsAsync(company, CancellationToken.None);
         _selectedIncomeStatement = _incomeStatements.First();
+        _ratios = await FinancialStatementRepository.GetRatiosAsync(company, CancellationToken.None);
+        _balanceSheetStatements = await FinancialStatementRepository.GetBalanceSheetStatementsAsync(company, CancellationToken.None);
     }
 
     private string SetRowStyle(Company company, int _) =>
@@ -147,6 +162,35 @@
         Name = "Profit Margin (%)",
         Data = _incomeStatements?
             .Select(incomeStatement => (double)(100m * incomeStatement.Ebit / incomeStatement.Revenue))
+            .Reverse()
+            .ToArray() ?? []
+    };
+
+    private ChartSeries GetProfitMarginSeries2() => new ChartSeries
+    {
+        Name = "Profit Margin 2 (%)",
+        Data = _ratios?
+            .Select(ratios => (double)(100m * ratios.ProfitMargin))
+            .Reverse()
+            .ToArray() ?? []
+    };
+
+    private ChartSeries GetRoceSeries() => new ChartSeries
+    {
+        Name = "ROCE (%)",
+        Data = _balanceSheetStatements?
+            .Zip(_incomeStatements)
+            .Select(tp => (double)(100m * tp.Second.Ebit
+                / (tp.First.TotalAssets - tp.First.CurrentLiabilities + tp.First.ShortTermDebt)))
+            .Reverse()
+            .ToArray() ?? []
+    };
+
+    private ChartSeries GetRoceSeries2() => new ChartSeries
+    {
+        Name = "ROCE 2 (%)",
+        Data = _ratios?
+            .Select(ratios => (double)(100m * ratios.Roce))
             .Reverse()
             .ToArray() ?? []
     };
