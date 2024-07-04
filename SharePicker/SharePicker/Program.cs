@@ -16,6 +16,7 @@ builder.Services
 
 builder.Services
     .AddMudServices()
+    .AddMemoryCache()
     .Configure<FmpClientOptions>(builder.Configuration.GetSection(FmpClientOptions.Name))
     .AddTransient<FinancialStatementRepository>();
 
