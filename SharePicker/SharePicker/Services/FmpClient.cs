@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Options;
 using SharePicker.Models;
 using SharePicker.Models.Options;
-using System.ComponentModel.DataAnnotations;
 
 namespace SharePicker.Components;
 
@@ -36,7 +35,13 @@ public class FmpClient(IOptions<FmpClientOptions> fmpClientOptions, HttpClient h
             .Select(dto => new IncomeStatement(
                 DateTimeOffset.ParseExact(dto.Date, "yyyy-MM-dd", null),
                 dto.EbitDa - dto.DepreciationAndAmortization,
-                dto.Revenue))
+                dto.Revenue,
+                dto.GrossProfit,
+                dto.OperatingIncome,
+                dto.IncomeBeforeTax,
+                dto.IncomeBeforeTax - dto.IncomeTaxExpense,
+                dto.Eps,
+                dto.EpsDiluted))
             .ToList();
     }
 
@@ -108,11 +113,25 @@ public class FmpClient(IOptions<FmpClientOptions> fmpClientOptions, HttpClient h
     {
         public required string Date { get; init; }
 
+        public required string ReportedCurrency { get; init; }
+
+        public required decimal Revenue { get; init; }
+
+        public required decimal GrossProfit { get; init; }
+
         public required decimal DepreciationAndAmortization { get; init; }
 
         public required decimal EbitDa { get; init; }
 
-        public required decimal Revenue { get; init; }
+        public required decimal OperatingIncome { get; init; }
+
+        public required decimal IncomeBeforeTax { get; init; }
+
+        public required decimal IncomeTaxExpense { get; init; }
+
+        public required decimal Eps { get; init; }
+
+        public required decimal EpsDiluted { get; init; }
     }
 
     private class BalanceSheetStatementDto
