@@ -4,91 +4,149 @@
 @inject FinancialStatementRepository FinancialStatementRepository
 
 <MudStack>
-    <MudPaper>
-        <MudText Typo="Typo.h2">Select A Company To Analyse</MudText>
-        <MudDataGrid
-            T="Company"
-            Items="@_companies"
-            QuickFilter="@GlobalSearch"
-            Virtualize="true"
-            FixedHeader="true" 
-            Filterable="true"
-            SelectedItemChanged="OnSelectedCompanyChange"
-            Hover="true"
-            RowStyleFunc="SetRowStyle"
-            Height="350px">
-            <ToolBarContent>
-                <MudText Typo="Typo.h6">Companies</MudText>
-                <MudSpacer />
-                <MudTextField 
-                    @bind-Value="_searchString" 
-                    Placeholder="Search" 
-                    Adornment="Adornment.Start" 
-                    Immediate="true"
-                    AdornmentIcon="@Icons.Material.Filled.Search"
-                    IconSize="Size.Medium" 
-                    Class="mt-0" />
-            </ToolBarContent>
-            <Columns>
-                <PropertyColumn Property="company => company.Symbol" Title="Symbol" />
-                <PropertyColumn Property="company => company.Name" Title="Name" />
-                <PropertyColumn Property="company => company.Exchange.Name" Title="Exchange" />
-                <PropertyColumn Property="company => company.Exchange.ShortName" Title="Exchange Short Name" />
-            </Columns>
-        </MudDataGrid>
-    </MudPaper>
+    <MudCard>
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h6">Select A Company To Analyse</MudText>
+            </CardHeaderContent>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudDataGrid
+                T="Company"
+                Items="@_companies"
+                QuickFilter="@GlobalSearch"
+                Virtualize="true"
+                FixedHeader="true" 
+                Filterable="true"
+                SelectedItemChanged="OnSelectedCompanyChange"
+                Hover="true"
+                RowStyleFunc="SetRowStyle"
+                Height="350px">
+                <ToolBarContent>
+                    <MudText Typo="Typo.h6">Companies</MudText>
+                    <MudSpacer />
+                    <MudTextField 
+                        @bind-Value="_searchString" 
+                        Placeholder="Search" 
+                        Adornment="Adornment.Start" 
+                        Immediate="true"
+                        AdornmentIcon="@Icons.Material.Filled.Search"
+                        IconSize="Size.Medium" 
+                        Class="mt-0" />
+                </ToolBarContent>
+                <Columns>
+                    <PropertyColumn Property="company => company.Symbol" Title="Symbol" />
+                    <PropertyColumn Property="company => company.Name" Title="Name" />
+                    <PropertyColumn Property="company => company.Exchange.Name" Title="Exchange" />
+                    <PropertyColumn Property="company => company.Exchange.ShortName" Title="Exchange Short Name" />
+                </Columns>
+            </MudDataGrid>
+        </MudCardContent>
+    </MudCard>
 
     @if(_incomeStatements != null)
     {
-        <MudPaper>
-            <MudText Typo="Typo.h2">Financial Statements</MudText>
-            <MudSelect @bind-Value="_selectedIncomeStatement" ToStringFunc="GetDateString">
-                @foreach (var incomeStatement in _incomeStatements)
-                {
-                    <MudSelectItem Value="@incomeStatement" />
-                }
-            </MudSelect>
-            <MudSimpleTable Hover="true">
-                <tbody>
-                    <tr>
-                        <td>EBIT:</td>
-                        <td>@_selectedIncomeStatement?.Ebit</td>
-                    </tr>
-                    <tr>
-                        <td>Revenue:</td>
-                        <td>@_selectedIncomeStatement?.Revenue</td>
-                    </tr>
-                </tbody>
-            </MudSimpleTable>
-        </MudPaper>
-        <MudPaper>
-            <MudText Typo="Typo.h2">EBIT Chart</MudText>
-            <MudText>
-                EBIT (earings before interest and tax) should be increasing year on year. 
-                Revenue should also be increasing year on year as it indicates that the EBIT growth is due to an increase in sales rather than cutting costs.
-                Ideally we'd view data for 10 years as it will include different parts of the economic cycle.
-                One-off gains/costs are not excluded and may account for any spikes/dips in the below chart.
-            </MudText>
-            <MudChart ChartType="ChartType.Bar" ChartSeries="@([GetEbitSeries(), GetRevenueSeries()])" XAxisLabels="GetXAxisLabels()" />
-        </MudPaper>
-        <MudPaper>
-            <MudText Typo="Typo.h2">Profit Margin</MudText>
-            <MudText>
-                Profit margin is calculated as 100 * EBIT / Revenue. 
-                The profit margin should be consistently at least 10-15%.
-                Companies with higher profit margins are better placed withstand tempory periods of difficulty that may depress profits.
-            </MudText>
-            <MudChart ChartType="ChartType.Bar" ChartSeries="@([GetProfitMarginSeries(), GetProfitMarginSeries2()])" XAxisLabels="GetXAxisLabels()" />
-        </MudPaper>
-        <MudPaper>
-            <MudText Typo="Typo.h2">ROCE</MudText>
-            <MudText>
-                ROCE (return on capital employed) is calculated as 100 * EBIT / Capital Employed, where Capital Employed = Total Assets - Current Liabilities + Short-Term Borrowings.
-                The profit margin should be consistently at least 10-15%.
-                Companies with higher profit margins are better placed withstand tempory periods of difficulty that may depress profits.
-            </MudText>
-            <MudChart ChartType="ChartType.Bar" ChartSeries="@([GetRoceSeries(), GetRoceSeries2()])" XAxisLabels="GetXAxisLabels()" />
-        </MudPaper>
+        <MudCard>
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h2">Financial Statements</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudStack Row="true" Justify="Justify.SpaceBetween">
+                    <MudText>@_selectedCompany?.Name (@_selectedCompany?.Symbol)</MudText>
+                    <MudSpacer />
+                    <MudSelect @bind-Value="_selectedIncomeStatement" ToStringFunc="GetDateString">
+                        @foreach (var incomeStatement in _incomeStatements)
+                        {
+                            <MudSelectItem Value="@incomeStatement" />
+                        }
+                    </MudSelect>
+                </MudStack>
+                <MudSimpleTable Hover="true" Dense="true">
+                    <tbody>
+                        <tr>
+                            <td>Revenue:</td>
+                            <td>@_selectedIncomeStatement?.Revenue</td>
+                        </tr>
+                        <tr>
+                            <td>Gross Profit:</td>
+                            <td>@_selectedIncomeStatement?.GrossProfit</td>
+                        </tr>
+                        <tr>
+                            <td>Profit Before Tax (PBT):</td>
+                            <td>@_selectedIncomeStatement?.ProfitBeforeTax</td>
+                        </tr>
+                        <tr>
+                            <td>Profit After Tax (PAT):</td>
+                            <td>@_selectedIncomeStatement?.ProfitAfterTax</td>
+                        </tr>
+                        <tr>
+                            <td>Operating Profits:</td>
+                            <td>@_selectedIncomeStatement?.OperatingProfits</td>
+                        </tr>
+                        <tr>
+                            <td>Earnings Before Interest And Tax (EBIT):</td>
+                            <td>@_selectedIncomeStatement?.Ebit</td>
+                        </tr>
+                        <tr>
+                            <td>Earnings Per Share:</td>
+                            <td>@_selectedIncomeStatement?.EarningsPerShare</td>
+                        </tr>
+                        <tr>
+                            <td>Diluted Earnings Per Share:</td>
+                            <td>@_selectedIncomeStatement?.DilutedEarningsPerShare</td>
+                        </tr>
+                    </tbody>
+                </MudSimpleTable>
+            </MudCardContent>
+        </MudCard>
+        <MudCard>
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h2">EBIT Chart</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudText>
+                    EBIT (earings before interest and tax) should be increasing year on year. 
+                    Revenue should also be increasing year on year as it indicates that the EBIT growth is due to an increase in sales rather than cutting costs.
+                    Ideally we'd view data for 10 years as it will include different parts of the economic cycle.
+                    One-off gains/costs are not excluded and may account for any spikes/dips in the below chart.
+                </MudText>
+                <MudChart ChartType="ChartType.Bar" ChartSeries="@([GetEbitSeries(), GetRevenueSeries()])" XAxisLabels="GetXAxisLabels()" />
+            </MudCardContent>
+        </MudCard>
+        <MudCard>
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h2">Profit Margin</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudText>
+                    Profit margin is calculated as 100 * EBIT / Revenue. 
+                    The profit margin should be consistently at least 10-15%.
+                    Companies with higher profit margins are better placed withstand tempory periods of difficulty that may depress profits.
+                </MudText>
+                <MudChart ChartType="ChartType.Bar" ChartSeries="@([GetProfitMarginSeries(), GetProfitMarginSeries2()])" XAxisLabels="GetXAxisLabels()" />
+            </MudCardContent>
+        </MudCard>
+        <MudCard>
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h2">ROCE</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudText>
+                    ROCE (return on capital employed) is calculated as 100 * EBIT / Capital Employed, where Capital Employed = Total Assets - Current Liabilities + Short-Term Borrowings.
+                    The profit margin should be consistently at least 10-15%.
+                    Companies with higher profit margins are better placed withstand tempory periods of difficulty that may depress profits.
+                </MudText>
+                <MudChart ChartType="ChartType.Bar" ChartSeries="@([GetRoceSeries(), GetRoceSeries2()])" XAxisLabels="GetXAxisLabels()" />
+            </MudCardContent>
+        </MudCard>
     }
 </MudStack>
 
