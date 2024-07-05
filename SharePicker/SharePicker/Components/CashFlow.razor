@@ -1,0 +1,52 @@
+﻿@using SharePicker.Models
+<MudDataGrid Items="@_rows">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" StickyLeft="true" Sortable="false" />
+        @foreach(var cashFlowStatement in CashFlowStatements ?? new List<CashFlowStatement>())
+        {
+            <PropertyColumn Property="x => x.ValueFactory(cashFlowStatement)" StickyLeft="true" Sortable="false" />
+        }
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private record Row(string Name, Func<CashFlowStatement, decimal> ValueFactory);
+    private List<Row> _rows = new()
+    {
+       new ("Operating Profit", cashFlowStatement => cashFlowStatement.OperationsCashFlow.OperatingProfit),
+       new ("Depreciation & Amortisation", cashFlowStatement => cashFlowStatement.OperationsCashFlow.DepreciationAndAmortisation),
+       new ("Profit On Disposals", cashFlowStatement => cashFlowStatement.OperationsCashFlow.ProfitOnDisposals),
+       new ("Change In Stock", cashFlowStatement => cashFlowStatement.OperationsCashFlow.ChangeInStock),
+       new ("Change In Debtors", cashFlowStatement => cashFlowStatement.OperationsCashFlow.ChangeInDebtors),
+       new ("Change In Creditors", cashFlowStatement => cashFlowStatement.OperationsCashFlow.ChangeInCreditors),
+       new ("Change In Provisions", cashFlowStatement => cashFlowStatement.OperationsCashFlow.ChangeInProvisions),
+       new ("Change In Working Capital", cashFlowStatement => cashFlowStatement.OperationsCashFlow.ChangeInWorkingCapital),
+       new ("Other (Operating)", cashFlowStatement => cashFlowStatement.OperationsCashFlow.Other),
+       new ("Operating Cash Flow", cashFlowStatement => cashFlowStatement.OperationsCashFlow.OperatingCashFlow),
+       new ("Tax Paid", cashFlowStatement => cashFlowStatement.OperationsCashFlow.TaxPaid),
+       new ("Net Cash From Operations", cashFlowStatement => cashFlowStatement.OperationsCashFlow.NetCashFlow),
+       new ("Capital Expenditure", cashFlowStatement => cashFlowStatement.InvestingCashFlow.CapitalExpenditure),
+       new ("Sale Of Fixed Assets", cashFlowStatement => cashFlowStatement.InvestingCashFlow.SaleOfFixedAssets),
+       new ("Acquisitions", cashFlowStatement => cashFlowStatement.InvestingCashFlow.Aquisitions),
+       new ("Sale Of Businesses", cashFlowStatement => cashFlowStatement.InvestingCashFlow.SaleOfBusinesses),
+       new ("Interest Received", cashFlowStatement => cashFlowStatement.InvestingCashFlow.InterestReceived),
+       new ("Other Investments Received", cashFlowStatement => cashFlowStatement.InvestingCashFlow.OtherInvestmentsReceived),
+       new ("Dividends From Joint Ventures", cashFlowStatement => cashFlowStatement.InvestingCashFlow.DividendsFromJointVentures),
+       new ("Other (Investing)", cashFlowStatement => cashFlowStatement.InvestingCashFlow.Other),
+       new ("Net Cash From Investing", cashFlowStatement => cashFlowStatement.InvestingCashFlow.NetCashFlow),
+       new ("New Share Issues", cashFlowStatement => cashFlowStatement.FinancingCashFlow.NewShareIssues),
+       new ("Share Buyback", cashFlowStatement => cashFlowStatement.FinancingCashFlow.ShareBuyBack),
+       new ("New Borrowing", cashFlowStatement => cashFlowStatement.FinancingCashFlow.NewBorrowing),
+       new ("Repayment Of Borrowing", cashFlowStatement => cashFlowStatement.FinancingCashFlow.RepaymentOfBorrowing),
+       new ("Equity Dividends Paid", cashFlowStatement => cashFlowStatement.FinancingCashFlow.EquityDividendsPaid),
+       new ("Dividends Paid To Minorities", cashFlowStatement => cashFlowStatement.FinancingCashFlow.DividendsPaidToMinorities),
+       new ("Interest Paid", cashFlowStatement => cashFlowStatement.FinancingCashFlow.InterestPaid),
+       new ("Other (Financing)", cashFlowStatement => cashFlowStatement.FinancingCashFlow.Other),
+       new ("Net Cash From Financing", cashFlowStatement => cashFlowStatement.FinancingCashFlow.NetCashFlow),
+       new ("Net Change In Cash", cashFlowStatement => cashFlowStatement.NetCashFlow)
+    };
+
+    [Parameter]
+    [EditorRequired]
+    public List<CashFlowStatement> CashFlowStatements { get; set; } = new();
+}
