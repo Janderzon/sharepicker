@@ -1,6 +1,7 @@
 ﻿namespace SharePicker.Models;
 
 public record CashFlowStatement(
+    DateTimeOffset DateTimeOffset,
     OperationsCashFlow OperationsCashFlow,
     InvestingCashFlow InvestingCashFlow,
     FinancingCashFlow FinancingCashFlow,

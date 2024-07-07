@@ -95,6 +95,7 @@ public class FmpClient(
 
                 return dtos
                     .Select(dto => new CashFlowStatement(
+                        DateTimeOffset.ParseExact(dto.Date, "yyyy-MM-dd", null),
                         new OperationsCashFlow(
                             dto.NetIncome,
                             dto.DepreciationAndAmortization,
