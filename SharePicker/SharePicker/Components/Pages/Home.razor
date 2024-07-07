@@ -11,36 +11,7 @@
             </CardHeaderContent>
         </MudCardHeader>
         <MudCardContent>
-            <MudDataGrid
-                T="Company"
-                Items="@_companies"
-                QuickFilter="@GlobalSearch"
-                Virtualize="true"
-                FixedHeader="true" 
-                Filterable="true"
-                SelectedItemChanged="OnSelectedCompanyChange"
-                Hover="true"
-                RowStyleFunc="SetRowStyle"
-                Height="350px">
-                <ToolBarContent>
-                    <MudText Typo="Typo.h6">Companies</MudText>
-                    <MudSpacer />
-                    <MudTextField 
-                        @bind-Value="_searchString" 
-                        Placeholder="Search" 
-                        Adornment="Adornment.Start" 
-                        Immediate="true"
-                        AdornmentIcon="@Icons.Material.Filled.Search"
-                        IconSize="Size.Medium" 
-                        Class="mt-0" />
-                </ToolBarContent>
-                <Columns>
-                    <PropertyColumn Property="company => company.Symbol" Title="Symbol" />
-                    <PropertyColumn Property="company => company.Name" Title="Name" />
-                    <PropertyColumn Property="company => company.Exchange.Name" Title="Exchange" />
-                    <PropertyColumn Property="company => company.Exchange.ShortName" Title="Exchange Short Name" />
-                </Columns>
-            </MudDataGrid>
+            <CompanySelector OnCompanySelect="OnSelectedCompanyChange" />
         </MudCardContent>
     </MudCard>
 
@@ -116,50 +87,20 @@
 </MudStack>
 
 @code {
-    private IEnumerable<Company>? _companies;
-    private Company? _selectedCompany;
-    private string? _searchString;
     private List<IncomeStatement>? _incomeStatements;
     private IncomeStatement? _selectedIncomeStatement;
     private List<Ratios>? _ratios;
     private List<BalanceSheetStatement>? _balanceSheetStatements;
     private List<CashFlowStatement>? _cashFlowStatements;
 
-    protected override async Task OnInitializedAsync() =>
-        _companies = await FinancialStatementRepository.GetCompaniesAsync(CancellationToken.None);
-
-    private bool GlobalSearch(Company company) 
-    {
-        if (string.IsNullOrWhiteSpace(_searchString))
-            return true;
-
-        if (company.Symbol.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
-            return true;
-
-        if (company.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
-            return true;
-
-        if (company.Exchange.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
-            return true;
-
-        if (company.Exchange.ShortName.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
-            return true;
-
-        return false;
-    }
-
     private async Task OnSelectedCompanyChange(Company company)
     {
-        _selectedCompany = company;
         _incomeStatements = await FinancialStatementRepository.GetIncomeStatementsAsync(company, CancellationToken.None);
         _selectedIncomeStatement = _incomeStatements.First();
         _ratios = await FinancialStatementRepository.GetRatiosAsync(company, CancellationToken.None);
         _balanceSheetStatements = await FinancialStatementRepository.GetBalanceSheetStatementsAsync(company, CancellationToken.None);
         _cashFlowStatements = await FinancialStatementRepository.GetCashFlowStatementsAsync(company, CancellationToken.None);
     }
-
-    private string SetRowStyle(Company company, int _) =>
-        company == _selectedCompany ? "background: #D3D3D3" : "";
 
     private string GetDateString(IncomeStatement? incomeStatement) =>
         incomeStatement?.DateTimeOffset.ToString("yyyy-MM-dd") ?? string.Empty;
