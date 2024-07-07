@@ -1,0 +1,37 @@
+﻿@using SharePicker.Models
+
+<MudDataGrid 
+    Items="@_rows" 
+    Dense="true" 
+    Hover="true" 
+    Bordered="true">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" StickyLeft="true" Sortable="false" Title="" />
+        @foreach(var incomeStatement in IncomeStatements.Reverse())
+        {
+            <PropertyColumn
+                Property="x => x.ValueFactory(incomeStatement)" 
+                Sortable="false"
+                Title="@incomeStatement.DateTimeOffset.ToString("yyyy")" />
+        }
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private record Row(string Name, Func<IncomeStatement, decimal> ValueFactory);
+    private List<Row> _rows = new()
+    {
+        new ("Revenue", incomeStatement => incomeStatement.Revenue),
+        new ("Gross Profit", incomeStatement => incomeStatement.GrossProfit),
+        new ("Operating Profit", incomeStatement => incomeStatement.OperatingProfits),
+        new ("Earnings Before Interest And Tax (EBIT)", incomeStatement => incomeStatement.Ebit),
+        new ("Profit Before Tax (PBT)", incomeStatement => incomeStatement.ProfitBeforeTax),
+        new ("Profit After Tax (PAT)", incomeStatement => incomeStatement.ProfitBeforeTax),
+        new ("Earnings Per Share (EPS)", incomeStatement => incomeStatement.EarningsPerShare),
+        new ("Diluted Earnings Per Share", incomeStatement => incomeStatement.DilutedEarningsPerShare)
+    };
+
+    [Parameter]
+    [EditorRequired]
+    public IEnumerable<IncomeStatement> IncomeStatements { get; set; } = new List<IncomeStatement>();
+}
