@@ -8,7 +8,7 @@ using System.Collections.Concurrent;
 namespace SharePicker.Components;
 
 public class FmpClient(
-    IOptions<FmpClientOptions> fmpClientOptions, 
+    IOptions<FmpClientOptions> fmpClientOptions,
     HttpClient httpClient,
     IMemoryCache memoryCache) : IDisposable
 {
@@ -75,9 +75,51 @@ public class FmpClient(
                 return dtos
                     .Select(dto => new BalanceSheetStatement(
                         DateTimeOffset.ParseExact(dto.Date, "yyyy-MM-dd", null),
-                        dto.TotalAssets,
-                        dto.TotalCurrentLiabilities,
-                        dto.ShortTermDebt))
+                        new Assets(
+                            new CurrentAssets(
+                                dto.CashAndCashEquivalents,
+                                dto.ShortTermInvestments,
+                                dto.CashAndShortTermInvestments,
+                                dto.NetReceivables,
+                                dto.Inventory,
+                                dto.OtherCurrentAssets,
+                                dto.TotalCurrentAssets),
+                            new NonCurrentAssets(
+                                dto.PropertyPlantEquipmentNet,
+                                dto.Goodwill,
+                                dto.IntangibleAssets,
+                                dto.GoodwillAndIntangibleAssets,
+                                dto.LongTermInvestments,
+                                dto.TaxAssets,
+                                dto.OtherNonCurrentAssets,
+                                dto.TotalNonCurrentAssets),
+                            dto.OtherAssets,
+                            dto.TotalAssets),
+                        new Liabilities(
+                            new CurrentLiabilities(
+                                dto.AccountPayables,
+                                dto.ShortTermDebt,
+                                dto.TaxPayables,
+                                dto.DeferredRevenue,
+                                dto.OtherCurrentLiabilities,
+                                dto.TotalCurrentLiabilities),
+                            new NonCurrentLiabilities(
+                                dto.LongTermDebt,
+                                dto.DeferredRevenueNonCurrent,
+                                dto.DeferredTaxLiabilitiesNonCurrent,
+                                dto.OtherNonCurrentLiabilities,
+                                dto.TotalNonCurrentLiabilities),
+                            dto.OtherLiabilities,
+                            dto.CapitalLeaseObligations,
+                            dto.TotalLiabilities),
+                        new Equity(
+                            dto.PreferredStock,
+                            dto.CommonStock,
+                            dto.RetainedEarnings,
+                            dto.AccumulatedOtherComprehensiveIncomeLoss,
+                            dto.OtherTotalStockholdersEquity,
+                            dto.TotalStockholdersEquity,
+                            dto.TotalEquity)))
                     .ToList();
             });
 
@@ -134,7 +176,7 @@ public class FmpClient(
             });
 
     private record RatiosCacheKey(Company Company);
-    public async Task<List<Ratios>> GetRatiosAsync(Company company, CancellationToken cancellationToken) => 
+    public async Task<List<Ratios>> GetRatiosAsync(Company company, CancellationToken cancellationToken) =>
         await GetFromOrPopulateCache(
             new RatiosCacheKey(company),
             async () =>
@@ -152,8 +194,8 @@ public class FmpClient(
                     .ToList();
             });
 
-    public void Dispose() 
-    { 
+    public void Dispose()
+    {
         httpClient.Dispose();
         _lockCreationLock.Dispose();
         foreach (var cacheLock in _cacheLocks.Values)
@@ -211,8 +253,8 @@ public class FmpClient(
         GetWithAuth<T>(url, new Dictionary<string, string?>(), cancellationToken);
 
     private async Task<T> GetWithAuth<T>(
-        string url, 
-        IReadOnlyDictionary<string, string?> parameters, 
+        string url,
+        IReadOnlyDictionary<string, string?> parameters,
         CancellationToken cancellationToken)
     {
         var parametersWithApiKey = parameters.Append(
@@ -263,11 +305,81 @@ public class FmpClient(
     {
         public required string Date { get; init; }
 
-        public required decimal TotalCurrentLiabilities { get; init; }
+        public required decimal CashAndCashEquivalents { get; init; }
+
+        public required decimal ShortTermInvestments { get; init; }
+
+        public required decimal CashAndShortTermInvestments { get; init; }
+
+        public required decimal NetReceivables { get; init; }
+
+        public required decimal Inventory { get; init; }
+
+        public required decimal OtherCurrentAssets { get; init; }
+
+        public required decimal TotalCurrentAssets { get; init; }
+
+        public required decimal PropertyPlantEquipmentNet { get; init; }
+
+        public required decimal Goodwill { get; init; }
+
+        public required decimal IntangibleAssets { get; init; }
+
+        public required decimal GoodwillAndIntangibleAssets { get; init; }
+
+        public required decimal LongTermInvestments { get; init; }
+
+        public required decimal TaxAssets { get; init; }
+
+        public required decimal OtherNonCurrentAssets { get; init; }
+
+        public required decimal TotalNonCurrentAssets { get; init; }
+
+        public required decimal OtherAssets { get; init; }
+
+        public required decimal TotalAssets { get; init; }
+
+        public required decimal AccountPayables { get; init; }
 
         public required decimal ShortTermDebt { get; init; }
 
-        public required decimal TotalAssets { get; init; }
+        public required decimal TaxPayables { get; init; }
+
+        public required decimal DeferredRevenue { get; init; }
+
+        public required decimal OtherCurrentLiabilities { get; init; }
+
+        public required decimal TotalCurrentLiabilities { get; init; }
+
+        public required decimal LongTermDebt { get; init; }
+
+        public required decimal DeferredRevenueNonCurrent { get; init; }
+
+        public required decimal DeferredTaxLiabilitiesNonCurrent { get; init; }
+
+        public required decimal OtherNonCurrentLiabilities { get; init; }
+
+        public required decimal TotalNonCurrentLiabilities { get; init; }
+
+        public required decimal OtherLiabilities { get; init; }
+
+        public required decimal CapitalLeaseObligations { get; init; }
+
+        public required decimal TotalLiabilities { get; init; }
+
+        public required decimal PreferredStock { get; init; }
+
+        public required decimal CommonStock { get; init; }
+
+        public required decimal RetainedEarnings { get; init; }
+
+        public required decimal AccumulatedOtherComprehensiveIncomeLoss { get; init; }
+
+        public required decimal OtherTotalStockholdersEquity { get; init; }
+
+        public required decimal TotalStockholdersEquity { get; init; }
+
+        public required decimal TotalEquity { get; init; }
     }
 
     private class CashFlowStatementDto
@@ -320,11 +432,11 @@ public class FmpClient(
 
         public required decimal NetCashUsedProvidedByFinancingActivities { get; init; }
 
-        public required decimal NetChangeInCash { get; init;  }
+        public required decimal NetChangeInCash { get; init; }
 
         public required decimal OperatingCashFlow { get; init; }
 
-        public required decimal CapitalExpenditure { get; init; } 
+        public required decimal CapitalExpenditure { get; init; }
     }
 
     private class RatiosDto

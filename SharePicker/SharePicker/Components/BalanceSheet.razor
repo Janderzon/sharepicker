@@ -1,0 +1,56 @@
+﻿@using SharePicker.Models
+
+<MudDataGrid 
+    Items="@_rows"
+    Dense="true"
+    Hover="true"
+    Bordered="true"
+    Groupable="true"
+    GroupExpanded="true">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" StickyLeft="true" Sortable="false" Title="" />
+        @foreach (var balanceSheetStatement in BalanceSheetStatements.Reverse())
+        {
+            <PropertyColumn Property="x => x.ValueFactory(balanceSheetStatement)"
+                            Sortable="false"
+                            Title="@balanceSheetStatement.DateTimeOffset.ToString("yyyy")" />
+        }
+        <PropertyColumn Property="x => x.Group" Grouping Hidden="true">
+            <GroupTemplate>
+                <span style="font-weight:bold">@GetGroupName(context.Grouping.Key)</span>
+            </GroupTemplate>
+        </PropertyColumn>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private record Row(string Name, Func<BalanceSheetStatement, decimal> ValueFactory, Group Group);
+    private List<Row> _rows = new()
+    {
+       new (
+           "Cash And Cash Equivalents",
+           balanceSheetStatement => balanceSheetStatement.Assets.CurrentAssets.CashAndCashEquivalents,
+           Group.CurrentAssets),
+    };
+
+    [Parameter]
+    [EditorRequired]
+    public IEnumerable<BalanceSheetStatement> BalanceSheetStatements { get; set; } = new List<BalanceSheetStatement>();
+
+    private enum Group
+    {
+        CurrentAssets,
+        NonCurrentAssets,
+        CurrentLiabilities,
+        NonCurrentLiabilities
+    }
+
+    private string GetGroupName(object group) => group switch
+    {
+        Group.CurrentAssets => "Current Assets",
+        Group.NonCurrentAssets => "Non-Current Assets",
+        Group.CurrentLiabilities => "Current Liabilities",
+        Group.NonCurrentLiabilities => "Non-Current Liabilities",
+        _ => throw new Exception($"Unsupported type: {group.GetType()}")
+    };
+}
