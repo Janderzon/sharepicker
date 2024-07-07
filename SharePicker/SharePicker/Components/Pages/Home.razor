@@ -49,56 +49,11 @@
         <MudCard>
             <MudCardHeader>
                 <CardHeaderContent>
-                    <MudText Typo="Typo.h2">Financial Statements</MudText>
+                    <MudText Typo="Typo.h2">Income</MudText>
                 </CardHeaderContent>
             </MudCardHeader>
             <MudCardContent>
-                <MudStack Row="true" Justify="Justify.SpaceBetween">
-                    <MudText>@_selectedCompany?.Name (@_selectedCompany?.Symbol)</MudText>
-                    <MudSpacer />
-                    <MudSelect @bind-Value="_selectedIncomeStatement" ToStringFunc="GetDateString">
-                        @foreach (var incomeStatement in _incomeStatements)
-                        {
-                            <MudSelectItem Value="@incomeStatement" />
-                        }
-                    </MudSelect>
-                </MudStack>
-                <MudSimpleTable Hover="true" Dense="true">
-                    <tbody>
-                        <tr>
-                            <td>Revenue:</td>
-                            <td>@_selectedIncomeStatement?.Revenue</td>
-                        </tr>
-                        <tr>
-                            <td>Gross Profit:</td>
-                            <td>@_selectedIncomeStatement?.GrossProfit</td>
-                        </tr>
-                        <tr>
-                            <td>Profit Before Tax (PBT):</td>
-                            <td>@_selectedIncomeStatement?.ProfitBeforeTax</td>
-                        </tr>
-                        <tr>
-                            <td>Profit After Tax (PAT):</td>
-                            <td>@_selectedIncomeStatement?.ProfitAfterTax</td>
-                        </tr>
-                        <tr>
-                            <td>Operating Profits:</td>
-                            <td>@_selectedIncomeStatement?.OperatingProfits</td>
-                        </tr>
-                        <tr>
-                            <td>Earnings Before Interest And Tax (EBIT):</td>
-                            <td>@_selectedIncomeStatement?.Ebit</td>
-                        </tr>
-                        <tr>
-                            <td>Earnings Per Share:</td>
-                            <td>@_selectedIncomeStatement?.EarningsPerShare</td>
-                        </tr>
-                        <tr>
-                            <td>Diluted Earnings Per Share:</td>
-                            <td>@_selectedIncomeStatement?.DilutedEarningsPerShare</td>
-                        </tr>
-                    </tbody>
-                </MudSimpleTable>
+                <Income IncomeStatements="@_incomeStatements" />
             </MudCardContent>
         </MudCard>
         <MudCard>
