@@ -104,6 +104,16 @@
         <MudCard>
             <MudCardHeader>
                 <CardHeaderContent>
+                    <MudText Typo="Typo.h2">Cash Flow</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <CashFlow CashFlowStatements="@_cashFlowStatements" />
+            </MudCardContent>
+        </MudCard>
+        <MudCard>
+            <MudCardHeader>
+                <CardHeaderContent>
                     <MudText Typo="Typo.h2">EBIT Chart</MudText>
                 </CardHeaderContent>
             </MudCardHeader>
@@ -158,6 +168,7 @@
     private IncomeStatement? _selectedIncomeStatement;
     private List<Ratios>? _ratios;
     private List<BalanceSheetStatement>? _balanceSheetStatements;
+    private List<CashFlowStatement>? _cashFlowStatements;
 
     protected override async Task OnInitializedAsync() =>
         _companies = await FinancialStatementRepository.GetCompaniesAsync(CancellationToken.None);
@@ -189,6 +200,7 @@
         _selectedIncomeStatement = _incomeStatements.First();
         _ratios = await FinancialStatementRepository.GetRatiosAsync(company, CancellationToken.None);
         _balanceSheetStatements = await FinancialStatementRepository.GetBalanceSheetStatementsAsync(company, CancellationToken.None);
+        _cashFlowStatements = await FinancialStatementRepository.GetCashFlowStatementsAsync(company, CancellationToken.None);
     }
 
     private string SetRowStyle(Company company, int _) =>

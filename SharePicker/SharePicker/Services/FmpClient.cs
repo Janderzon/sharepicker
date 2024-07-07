@@ -81,6 +81,58 @@ public class FmpClient(
                     .ToList();
             });
 
+    private record CashFlowStatementsCacheKey(Company Company);
+    public async Task<List<CashFlowStatement>> GetCashFlowStatementsAsync(
+        Company company,
+        CancellationToken cancellationToken) => await GetFromOrPopulateCache(
+            new CashFlowStatementsCacheKey(company),
+            async () =>
+            {
+                var dtos = await GetWithAuth<List<CashFlowStatementDto>>(
+                    $"cash-flow-statement/{company.Symbol}",
+                    new Dictionary<string, string?>() { { "period", "annual" } },
+                    cancellationToken);
+
+                return dtos
+                    .Select(dto => new CashFlowStatement(
+                        DateTimeOffset.ParseExact(dto.Date, "yyyy-MM-dd", null),
+                        new OperationsCashFlow(
+                            dto.NetIncome,
+                            dto.DepreciationAndAmortization,
+                            dto.StockBasedCompensation,
+                            dto.Inventory,
+                            dto.AccountsReceivables,
+                            dto.AccountsPayables,
+                            dto.OtherWorkingCapital,
+                            dto.ChangeInWorkingCapital,
+                            dto.OtherNonCashItems,
+                            dto.OperatingCashFlow,
+                            dto.DeferredIncomeTax,
+                            dto.NetCashProvidedByOperatingActivities),
+                        new InvestingCashFlow(
+                            dto.CapitalExpenditure,
+                            dto.InvestmentsInPropertyPlantAndEquipment,
+                            dto.AcquisitionsNet,
+                            dto.PurchasesOfInvestments,
+                            0,
+                            dto.SalesMaturitiesOfInvestments,
+                            0,
+                            dto.OtherInvestingActivites,
+                            dto.NetCashUsedForInvestingActivites),
+                        new FinancingCashFlow(
+                            dto.CommonStockIssued,
+                            dto.CommonStockRepurchased,
+                            0,
+                            dto.DebtRepayment,
+                            dto.DividendsPaid,
+                            0,
+                            0,
+                            dto.OtherFinancingActivites,
+                            dto.NetCashUsedProvidedByFinancingActivities),
+                        dto.NetChangeInCash))
+                    .ToList();
+            });
+
     private record RatiosCacheKey(Company Company);
     public async Task<List<Ratios>> GetRatiosAsync(Company company, CancellationToken cancellationToken) => 
         await GetFromOrPopulateCache(
@@ -216,6 +268,63 @@ public class FmpClient(
         public required decimal ShortTermDebt { get; init; }
 
         public required decimal TotalAssets { get; init; }
+    }
+
+    private class CashFlowStatementDto
+    {
+        public required string Date { get; init; }
+
+        public required decimal NetIncome { get; init; }
+
+        public required decimal DepreciationAndAmortization { get; init; }
+
+        public required decimal DeferredIncomeTax { get; init; }
+
+        public required decimal StockBasedCompensation { get; init; }
+
+        public required decimal ChangeInWorkingCapital { get; init; }
+
+        public required decimal AccountsReceivables { get; init; }
+
+        public required decimal Inventory { get; init; }
+
+        public required decimal AccountsPayables { get; init; }
+
+        public required decimal OtherWorkingCapital { get; init; }
+
+        public required decimal OtherNonCashItems { get; init; }
+
+        public required decimal NetCashProvidedByOperatingActivities { get; init; }
+
+        public required decimal InvestmentsInPropertyPlantAndEquipment { get; init; }
+
+        public required decimal AcquisitionsNet { get; init; }
+
+        public required decimal PurchasesOfInvestments { get; init; }
+
+        public required decimal SalesMaturitiesOfInvestments { get; init; }
+
+        public required decimal OtherInvestingActivites { get; init; }
+
+        public required decimal NetCashUsedForInvestingActivites { get; init; }
+
+        public required decimal DebtRepayment { get; init; }
+
+        public required decimal CommonStockIssued { get; init; }
+
+        public required decimal CommonStockRepurchased { get; init; }
+
+        public required decimal DividendsPaid { get; init; }
+
+        public required decimal OtherFinancingActivites { get; init; }
+
+        public required decimal NetCashUsedProvidedByFinancingActivities { get; init; }
+
+        public required decimal NetChangeInCash { get; init;  }
+
+        public required decimal OperatingCashFlow { get; init; }
+
+        public required decimal CapitalExpenditure { get; init; } 
     }
 
     private class RatiosDto
