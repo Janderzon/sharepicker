@@ -1,0 +1,84 @@
+﻿@using SharePicker.Models
+@using SharePicker.Services
+@inject FinancialStatementRepository FinancialStatementRepository
+
+<style>
+    .selected {
+        background-color: #1E88E5 !important;
+    }
+
+    .selected > td {
+        color: white !important;
+    }
+
+    .selected > td .mud-input {
+        color: white !important;
+    }
+</style>
+
+<MudDataGrid 
+    @ref=_dataGrid
+    T="Company"
+    Items="@_companies"
+    QuickFilter="@GlobalSearch"
+    Virtualize="true"
+    FixedHeader="true"
+    Filterable="true"
+    SelectedItemChanged="OnCompanySelect"
+    Hover="true"
+    RowClassFunc="SelectedRowClassFunc"
+    Height="350px">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Companies</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="_searchString"
+                      Placeholder="Search"
+                      Adornment="Adornment.Start"
+                      Immediate="true"
+                      AdornmentIcon="@Icons.Material.Filled.Search"
+                      IconSize="Size.Medium"
+                      Class="mt-0" />
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="company => company.Symbol" Title="Symbol" />
+        <PropertyColumn Property="company => company.Name" Title="Name" />
+        <PropertyColumn Property="company => company.Exchange.Name" Title="Exchange" />
+        <PropertyColumn Property="company => company.Exchange.ShortName" Title="Exchange Short Name" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private MudDataGrid<Company> _dataGrid = null!;
+    private IEnumerable<Company>? _companies;
+    private string _searchString = string.Empty;
+
+    protected override async Task OnInitializedAsync() =>
+        _companies = await FinancialStatementRepository.GetCompaniesAsync(CancellationToken.None);
+
+    private bool GlobalSearch(Company company)
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+
+        if (company.Symbol.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (company.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (company.Exchange.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (company.Exchange.ShortName.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        return false;
+    }
+
+    private string SelectedRowClassFunc(Company company, int _) =>
+        _dataGrid.SelectedItem == company ? "selected" : string.Empty;
+
+    [Parameter]
+    [EditorRequired]
+    public EventCallback<Company> OnCompanySelect { get; set; }
+}
