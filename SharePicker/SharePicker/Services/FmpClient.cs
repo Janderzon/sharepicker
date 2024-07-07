@@ -126,7 +126,7 @@ public class FmpClient(
                             dto.DividendsPaid,
                             0,
                             0,
-                            dto.OtherFinancingActivities,
+                            dto.OtherFinancingActivites,
                             dto.NetCashUsedProvidedByFinancingActivities),
                         dto.NetChangeInCash))
                     .ToList();
@@ -315,7 +315,7 @@ public class FmpClient(
 
         public required decimal DividendsPaid { get; init; }
 
-        public required decimal OtherFinancingActivities { get; init; }
+        public required decimal OtherFinancingActivites { get; init; }
 
         public required decimal NetCashUsedProvidedByFinancingActivities { get; init; }
 

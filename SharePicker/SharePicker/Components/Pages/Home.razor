@@ -200,7 +200,7 @@
         _selectedIncomeStatement = _incomeStatements.First();
         _ratios = await FinancialStatementRepository.GetRatiosAsync(company, CancellationToken.None);
         _balanceSheetStatements = await FinancialStatementRepository.GetBalanceSheetStatementsAsync(company, CancellationToken.None);
-       // _cashFlowStatements = await FinancialStatementRepository.GetCashFlowStatementsAsync(company, CancellationToken.None);
+        _cashFlowStatements = await FinancialStatementRepository.GetCashFlowStatementsAsync(company, CancellationToken.None);
     }
 
     private string SetRowStyle(Company company, int _) =>
