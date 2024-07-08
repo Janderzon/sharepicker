@@ -4,7 +4,8 @@ public record BalanceSheetStatement(
     DateTimeOffset DateTimeOffset,
     Assets Assets,
     Liabilities Liabilities,
-    Equity Equity);
+    Equity Equity,
+    BalanceSheetSummary Summary);
 
 public record Assets(
     CurrentAssets CurrentAssets,
@@ -61,3 +62,11 @@ public record Equity(
     decimal OtherTotalStockholdersEquity,
     decimal TotalStockholdersEquity,
     decimal TotalEquity);
+
+public record BalanceSheetSummary(
+    decimal TotalLiabilitiesAndStockholdersEquity,
+    decimal MinorityInterest,
+    decimal TotalLiabilitiesAndTotalEquity,
+    decimal TotalInvestments,
+    decimal TotalDebt,
+    decimal NetDebt);

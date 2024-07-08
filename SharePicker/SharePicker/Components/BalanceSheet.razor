@@ -175,6 +175,30 @@
            "Total Equity",
            balanceSheetStatement => balanceSheetStatement.Equity.TotalEquity,
            Group.Equity),
+        new (
+           "Total Liabilities And Stockholders Equity",
+           balanceSheetStatement => balanceSheetStatement.Summary.TotalLiabilitiesAndStockholdersEquity,
+           Group.Summary),
+        new (
+           "Minority Interest",
+           balanceSheetStatement => balanceSheetStatement.Summary.MinorityInterest,
+           Group.Summary),
+        new (
+           "Total Liabilities And Total Equity",
+           balanceSheetStatement => balanceSheetStatement.Summary.TotalLiabilitiesAndTotalEquity,
+           Group.Summary),
+        new (
+           "Total Investments",
+           balanceSheetStatement => balanceSheetStatement.Summary.TotalInvestments,
+           Group.Summary),
+        new (
+           "Total Debt",
+           balanceSheetStatement => balanceSheetStatement.Summary.TotalDebt,
+           Group.Summary),
+        new (
+           "Net Debt",
+           balanceSheetStatement => balanceSheetStatement.Summary.NetDebt,
+           Group.Summary),
     };
 
     [Parameter]
@@ -189,7 +213,8 @@
         CurrentLiabilities,
         NonCurrentLiabilities,
         LiabilitiesSummary,
-        Equity
+        Equity,
+        Summary
     }
 
     private string GetGroupName(object group) => group switch
@@ -201,6 +226,7 @@
         Group.NonCurrentLiabilities => "Non-Current Liabilities",
         Group.LiabilitiesSummary => "Liabilities Summary",
         Group.Equity => "Equity",
+        Group.Summary => "Summary",
         _ => throw new Exception($"Unsupported type: {group.GetType()}")
     };
 }

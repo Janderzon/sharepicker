@@ -119,7 +119,14 @@ public class FmpClient(
                             dto.AccumulatedOtherComprehensiveIncomeLoss,
                             dto.OtherTotalStockholdersEquity,
                             dto.TotalStockholdersEquity,
-                            dto.TotalEquity)))
+                            dto.TotalEquity),
+                        new BalanceSheetSummary(
+                            dto.TotalLiabilitiesAndStockholdersEquity,
+                            dto.MinorityInterest,
+                            dto.TotalLiabilitiesAndTotalEquity,
+                            dto.TotalInvestments,
+                            dto.TotalDebt,
+                            dto.NetDebt)))
                     .ToList();
             });
 
@@ -380,6 +387,18 @@ public class FmpClient(
         public required decimal TotalStockholdersEquity { get; init; }
 
         public required decimal TotalEquity { get; init; }
+
+        public required decimal TotalLiabilitiesAndStockholdersEquity { get; init; }
+
+        public required decimal MinorityInterest { get; init; }
+
+        public required decimal TotalLiabilitiesAndTotalEquity { get; init; }
+
+        public required decimal TotalInvestments { get; init; }
+
+        public required decimal TotalDebt { get; init; }
+
+        public required decimal NetDebt { get; init; }
     }
 
     private class CashFlowStatementDto
