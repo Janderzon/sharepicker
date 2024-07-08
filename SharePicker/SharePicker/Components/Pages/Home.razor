@@ -30,6 +30,16 @@
         <MudCard>
             <MudCardHeader>
                 <CardHeaderContent>
+                    <MudText Typo="Typo.h2">Balance Sheet</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <BalanceSheet BalanceSheetStatements="@_balanceSheetStatements" />
+            </MudCardContent>
+        </MudCard>
+        <MudCard>
+            <MudCardHeader>
+                <CardHeaderContent>
                     <MudText Typo="Typo.h2">Cash Flow</MudText>
                 </CardHeaderContent>
             </MudCardHeader>
@@ -80,7 +90,7 @@
                     The profit margin should be consistently at least 10-15%.
                     Companies with higher profit margins are better placed withstand tempory periods of difficulty that may depress profits.
                 </MudText>
-                <MudChart ChartType="ChartType.Bar" ChartSeries="@([GetRoceSeries(), GetRoceSeries2()])" XAxisLabels="GetXAxisLabels()" />
+                @* <MudChart ChartType="ChartType.Bar" ChartSeries="@([GetRoceSeries(), GetRoceSeries2()])" XAxisLabels="GetXAxisLabels()" /> *@
             </MudCardContent>
         </MudCard>
     }
@@ -141,16 +151,16 @@
             .ToArray() ?? []
     };
 
-    private ChartSeries GetRoceSeries() => new ChartSeries
-    {
-        Name = "ROCE (%)",
-        Data = _balanceSheetStatements?
-            .Zip(_incomeStatements)
-            .Select(tp => (double)(100m * tp.Second.Ebit
-                / (tp.First.TotalAssets - tp.First.CurrentLiabilities + tp.First.ShortTermDebt)))
-            .Reverse()
-            .ToArray() ?? []
-    };
+    // private ChartSeries GetRoceSeries() => new ChartSeries
+    // {
+    //     Name = "ROCE (%)",
+    //     Data = _balanceSheetStatements?
+    //         .Zip(_incomeStatements)
+    //         .Select(tp => (double)(100m * tp.Second.Ebit
+    //             / (tp.First.TotalAssets - tp.First.CurrentLiabilities + tp.First.ShortTermDebt)))
+    //         .Reverse()
+    //         .ToArray() ?? []
+    // };
 
     private ChartSeries GetRoceSeries2() => new ChartSeries
     {
