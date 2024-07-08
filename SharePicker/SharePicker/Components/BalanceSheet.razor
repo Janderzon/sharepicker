@@ -27,10 +27,154 @@
     private record Row(string Name, Func<BalanceSheetStatement, decimal> ValueFactory, Group Group);
     private List<Row> _rows = new()
     {
-       new (
+        new (
            "Cash And Cash Equivalents",
            balanceSheetStatement => balanceSheetStatement.Assets.CurrentAssets.CashAndCashEquivalents,
            Group.CurrentAssets),
+        new (
+           "Short-Term Investments",
+           balanceSheetStatement => balanceSheetStatement.Assets.CurrentAssets.ShortTermInvestments,
+           Group.CurrentAssets),
+        new (
+           "Cash And Short-Term Investments",
+           balanceSheetStatement => balanceSheetStatement.Assets.CurrentAssets.CashAndShortTermInvestments,
+           Group.CurrentAssets),
+        new (
+           "Net Receivables",
+           balanceSheetStatement => balanceSheetStatement.Assets.CurrentAssets.NetReceivables,
+           Group.CurrentAssets),
+        new (
+           "Inventory",
+           balanceSheetStatement => balanceSheetStatement.Assets.CurrentAssets.Inventory,
+           Group.CurrentAssets),
+        new (
+           "Other Current Assets",
+           balanceSheetStatement => balanceSheetStatement.Assets.CurrentAssets.OtherCurrentAssets,
+           Group.CurrentAssets),
+        new (
+           "Total Current Assets",
+           balanceSheetStatement => balanceSheetStatement.Assets.CurrentAssets.TotalCurrentAssets,
+           Group.CurrentAssets),
+        new (
+           "Property And Plant Equipment Net",
+           balanceSheetStatement => balanceSheetStatement.Assets.NonCurrentAssets.PropertyPlantEquipmentNet,
+           Group.NonCurrentAssets),
+        new (
+           "Goodwill",
+           balanceSheetStatement => balanceSheetStatement.Assets.NonCurrentAssets.Goodwill,
+           Group.NonCurrentAssets),
+        new (
+           "Intangible Assets",
+           balanceSheetStatement => balanceSheetStatement.Assets.NonCurrentAssets.IntangibleAssets,
+           Group.NonCurrentAssets),
+        new (
+           "Long-Term Investments",
+           balanceSheetStatement => balanceSheetStatement.Assets.NonCurrentAssets.LongTermInvestments,
+           Group.NonCurrentAssets),
+        new (
+           "Tax Assets",
+           balanceSheetStatement => balanceSheetStatement.Assets.NonCurrentAssets.TaxAssets,
+           Group.NonCurrentAssets),
+        new (
+           "Other Non-Current Assets",
+           balanceSheetStatement => balanceSheetStatement.Assets.NonCurrentAssets.OtherNonCurrentAssets,
+           Group.NonCurrentAssets),
+        new (
+           "Total Non-Current Assets",
+           balanceSheetStatement => balanceSheetStatement.Assets.NonCurrentAssets.TotalNonCurrentAssets,
+           Group.NonCurrentAssets),
+        new (
+           "Other Assets",
+           balanceSheetStatement => balanceSheetStatement.Assets.OtherAssets,
+           Group.AssetsSummary),
+        new (
+           "Total Assets",
+           balanceSheetStatement => balanceSheetStatement.Assets.TotalAssets,
+           Group.AssetsSummary),
+        new (
+           "Account Payables",
+           balanceSheetStatement => balanceSheetStatement.Liabilities.CurrentLiabilities.AccountPayables,
+           Group.CurrentLiabilities),
+        new (
+           "Short-Term Debt",
+           balanceSheetStatement => balanceSheetStatement.Liabilities.CurrentLiabilities.ShortTermDebt,
+           Group.CurrentLiabilities),
+        new (
+           "Tax Payables",
+           balanceSheetStatement => balanceSheetStatement.Liabilities.CurrentLiabilities.TaxPayables,
+           Group.CurrentLiabilities),
+        new (
+           "Deferred Revenue",
+           balanceSheetStatement => balanceSheetStatement.Liabilities.CurrentLiabilities.DeferredRevenue,
+           Group.CurrentLiabilities),
+        new (
+           "Other Current Liabilities",
+           balanceSheetStatement => balanceSheetStatement.Liabilities.CurrentLiabilities.OtherCurrentLiabilities,
+           Group.CurrentLiabilities),
+        new (
+           "Total Current Liabilities",
+           balanceSheetStatement => balanceSheetStatement.Liabilities.CurrentLiabilities.AccountPayables,
+           Group.CurrentLiabilities),
+        new (
+           "Long-Term Debt",
+           balanceSheetStatement => balanceSheetStatement.Liabilities.NonCurrentLiabilities.LongTermDebt,
+           Group.NonCurrentLiabilities),
+        new (
+           "Deferred Revenue Non-Current",
+           balanceSheetStatement => balanceSheetStatement.Liabilities.NonCurrentLiabilities.DeferredRevenueNonCurrent,
+           Group.NonCurrentLiabilities),
+        new (
+           "Deferred Tax Liabilities Non-Current",
+           balanceSheetStatement => balanceSheetStatement.Liabilities.NonCurrentLiabilities.DeferredTaxLiabilitiesNonCurrent,
+           Group.NonCurrentLiabilities),
+        new (
+           "Other Non-Current Liabilities",
+           balanceSheetStatement => balanceSheetStatement.Liabilities.NonCurrentLiabilities.OtherNonCurrentLiabilities,
+           Group.NonCurrentLiabilities),
+        new (
+           "Total Non-Current Liabilities",
+           balanceSheetStatement => balanceSheetStatement.Liabilities.NonCurrentLiabilities.TotalNonCurrentLiabilities,
+           Group.NonCurrentLiabilities),
+        new (
+           "Other Liabilities",
+           balanceSheetStatement => balanceSheetStatement.Liabilities.OtherLiabilities,
+           Group.LiabilitiesSummary),
+        new (
+           "Capital Lease Obligations",
+           balanceSheetStatement => balanceSheetStatement.Liabilities.CapitalLeaseObligations,
+           Group.LiabilitiesSummary),
+        new (
+           "Total Liabilities",
+           balanceSheetStatement => balanceSheetStatement.Liabilities.TotalLiabilities,
+           Group.LiabilitiesSummary),
+        new (
+           "Preferred Stock",
+           balanceSheetStatement => balanceSheetStatement.Equity.PreferredStock,
+           Group.Equity),
+        new (
+           "Common Stock",
+           balanceSheetStatement => balanceSheetStatement.Equity.CommonStock,
+           Group.Equity),
+        new (
+           "Retained Earnings",
+           balanceSheetStatement => balanceSheetStatement.Equity.ReatainedEarnings,
+           Group.Equity),
+        new (
+           "Accumulated Other Comprehensive Income Loss",
+           balanceSheetStatement => balanceSheetStatement.Equity.AccumulatedOtherComprehensiveIncomeLoss,
+           Group.Equity),
+        new (
+           "Other Total Stockholders Equity",
+           balanceSheetStatement => balanceSheetStatement.Equity.OtherTotalStockholdersEquity,
+           Group.Equity),
+        new (
+           "Total Stockholders Equity",
+           balanceSheetStatement => balanceSheetStatement.Equity.TotalStockholdersEquity,
+           Group.Equity),
+        new (
+           "Total Equity",
+           balanceSheetStatement => balanceSheetStatement.Equity.TotalEquity,
+           Group.Equity),
     };
 
     [Parameter]
@@ -41,16 +185,22 @@
     {
         CurrentAssets,
         NonCurrentAssets,
+        AssetsSummary,
         CurrentLiabilities,
-        NonCurrentLiabilities
+        NonCurrentLiabilities,
+        LiabilitiesSummary,
+        Equity
     }
 
     private string GetGroupName(object group) => group switch
     {
         Group.CurrentAssets => "Current Assets",
         Group.NonCurrentAssets => "Non-Current Assets",
+        Group.AssetsSummary => "Assets Summary",
         Group.CurrentLiabilities => "Current Liabilities",
         Group.NonCurrentLiabilities => "Non-Current Liabilities",
+        Group.LiabilitiesSummary => "Liabilities Summary",
+        Group.Equity => "Equity",
         _ => throw new Exception($"Unsupported type: {group.GetType()}")
     };
 }

@@ -59,5 +59,5 @@ public record Equity(
     decimal ReatainedEarnings,
     decimal AccumulatedOtherComprehensiveIncomeLoss,
     decimal OtherTotalStockholdersEquity,
-    decimal TotalStockholdersEquitey,
+    decimal TotalStockholdersEquity,
     decimal TotalEquity);
