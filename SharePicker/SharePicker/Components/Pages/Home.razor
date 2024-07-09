@@ -93,6 +93,24 @@
                 @* <MudChart ChartType="ChartType.Bar" ChartSeries="@([GetRoceSeries(), GetRoceSeries2()])" XAxisLabels="GetXAxisLabels()" /> *@
             </MudCardContent>
         </MudCard>
+        <MudCard>
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h2">DuPont Analysis</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudText>
+                    Profit margin is calculated as 100 * EBIT / Revenue.
+                    The profit margin should be consistently at least 10-15%.
+                    Companies with higher profit margins are better placed withstand tempory periods of difficulty that may depress profits.
+                </MudText>
+                <DuPont 
+                    RoceSeries="_profitMarginSeries" 
+                    CapitalTurnoverSeries="_profitMarginSeries" 
+                    ProfitMarginSeries="_profitMarginSeries"/>
+            </MudCardContent>
+        </MudCard>
     }
 </MudStack>
 
@@ -102,6 +120,7 @@
     private List<Ratios>? _ratios;
     private List<BalanceSheetStatement>? _balanceSheetStatements;
     private List<CashFlowStatement>? _cashFlowStatements;
+    private List<LabeledValue>? _profitMarginSeries;
 
     private async Task OnSelectedCompanyChange(Company company)
     {
@@ -110,6 +129,7 @@
         _ratios = await FinancialStatementRepository.GetRatiosAsync(company, CancellationToken.None);
         _balanceSheetStatements = await FinancialStatementRepository.GetBalanceSheetStatementsAsync(company, CancellationToken.None);
         _cashFlowStatements = await FinancialStatementRepository.GetCashFlowStatementsAsync(company, CancellationToken.None);
+        _profitMarginSeries = await FinancialStatementRepository.GetProfitMarginSeries(company, CancellationToken.None);
     }
 
     private string GetDateString(IncomeStatement? incomeStatement) =>

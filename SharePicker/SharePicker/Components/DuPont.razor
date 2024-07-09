@@ -1,0 +1,39 @@
+﻿@using ApexCharts
+@using SharePicker.Models
+
+<ApexChart TItem="LabeledValue">
+    <ApexPointSeries
+        Items="RoceSeries"
+        Name="ROCE" 
+        XValue="@(x => x.Label)"
+        YValue="@(x => x.Value)"
+        SeriesType="SeriesType.Line" />
+
+    <ApexPointSeries 
+        Items="ProfitMarginSeries"
+        Name="Profit Margin"
+        XValue="@(x => x.Label)"
+        YValue="@(x => x.Value)"
+        SeriesType="SeriesType.Bar"/>
+
+    <ApexPointSeries 
+        Items="CapitalTurnoverSeries"
+        Name="Capital Turnover"
+        XValue="@(x => x.Label)"
+        YValue="@(x => x.Value)"
+        SeriesType="SeriesType.Bar" />
+</ApexChart>
+
+@code {
+    [Parameter]
+    [EditorRequired]
+    public IEnumerable<LabeledValue> RoceSeries { get; set; } = new List<LabeledValue>();
+
+    [Parameter]
+    [EditorRequired]
+    public IEnumerable<LabeledValue> ProfitMarginSeries { get; set; } = new List<LabeledValue>();
+
+    [Parameter]
+    [EditorRequired]
+    public IEnumerable<LabeledValue> CapitalTurnoverSeries { get; set; } = new List<LabeledValue>();
+}
