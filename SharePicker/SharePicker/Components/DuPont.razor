@@ -1,23 +1,23 @@
 ﻿@using ApexCharts
 @using SharePicker.Models
 
-<ApexChart TItem="LabeledValue">
+<ApexChart @ref=_chart Options="_chartOptions">
     <ApexPointSeries
-        Items="RoceSeries"
+        Items="RoceSeries.Reverse()"
         Name="ROCE" 
         XValue="@(x => x.Label)"
         YValue="@(x => x.Value)"
         SeriesType="SeriesType.Line" />
 
     <ApexPointSeries 
-        Items="ProfitMarginSeries"
+        Items="ProfitMarginSeries.Reverse()"
         Name="Profit Margin"
         XValue="@(x => x.Label)"
         YValue="@(x => x.Value)"
         SeriesType="SeriesType.Bar"/>
 
     <ApexPointSeries 
-        Items="CapitalTurnoverSeries"
+        Items="CapitalTurnoverSeries.Reverse()"
         Name="Capital Turnover"
         XValue="@(x => x.Label)"
         YValue="@(x => x.Value)"
@@ -25,6 +25,32 @@
 </ApexChart>
 
 @code {
+    private ApexChart<LabeledValue>? _chart;
+    private ApexChartOptions<LabeledValue> _chartOptions = new()
+    {
+        Chart = new()
+        {
+            Toolbar = new() { Show = false }
+        },
+        Theme = new() { Mode = Mode.Dark },
+        Yaxis = new()
+        {
+            new()
+            {
+                Title = new(){ Text = "EBIT Margin/ROCE (%)" },
+                SeriesName = [ "ROCE", "Profit Margin" ]
+            },
+            new()
+            {
+                Title = new(){ Text = "Capital Turnover" },
+                Opposite = true,
+                SeriesName = "Capital Turnover"
+            }
+        }
+    };
+
+    protected override Task OnParametersSetAsync() => _chart?.RenderAsync() ?? Task.CompletedTask;
+
     [Parameter]
     [EditorRequired]
     public IEnumerable<LabeledValue> RoceSeries { get; set; } = new List<LabeledValue>();

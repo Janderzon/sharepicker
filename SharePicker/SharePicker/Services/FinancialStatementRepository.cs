@@ -28,12 +28,30 @@ public class FinancialStatementRepository(FmpClient fmpClient)
     public Task<List<CashFlowStatement>> GetCashFlowStatementsAsync(Company company, CancellationToken cancellationToken) =>
         fmpClient.GetCashFlowStatementsAsync(company, cancellationToken);
 
-    public async Task<List<LabeledValue>> GetProfitMarginSeries(Company company, CancellationToken cancellationToken)
+    public async Task<List<LabeledValue>> GetEbitPerRevenueSeries(Company company, CancellationToken cancellationToken)
     {
         var ratios = await fmpClient.GetRatiosAsync(company, cancellationToken);
 
         return ratios
-            .Select(x => new LabeledValue(x.DateTimeOffset.ToString("yyyy"), x.ProfitMargin))
+            .Select(x => new LabeledValue(x.DateTimeOffset.ToString("yyyy"), x.EbitPerRevenue))
+            .ToList();
+    }
+
+    public async Task<List<LabeledValue>> GetRoceSeries(Company company, CancellationToken cancellationToken)
+    {
+        var ratios = await fmpClient.GetRatiosAsync(company, cancellationToken);
+
+        return ratios
+            .Select(x => new LabeledValue(x.DateTimeOffset.ToString("yyyy"), x.ReturnOnCapitalEmployed))
+            .ToList();
+    }
+
+    public async Task<List<LabeledValue>> GetCapitalTurnoverSeries(Company company, CancellationToken cancellationToken)
+    {
+        var ratios = await fmpClient.GetRatiosAsync(company, cancellationToken);
+
+        return ratios
+            .Select(x => new LabeledValue(x.DateTimeOffset.ToString("yyyy"), x.ReturnOnCapitalEmployed / x.EbitPerRevenue))
             .ToList();
     }
 }

@@ -106,9 +106,9 @@
                     Companies with higher profit margins are better placed withstand tempory periods of difficulty that may depress profits.
                 </MudText>
                 <DuPont 
-                    RoceSeries="_profitMarginSeries" 
-                    CapitalTurnoverSeries="_profitMarginSeries" 
-                    ProfitMarginSeries="_profitMarginSeries"/>
+                    RoceSeries="@_roceSeries" 
+                    CapitalTurnoverSeries="@_capitalTurnoverSeries" 
+                    ProfitMarginSeries="@_ebitPerRevenueSeries"/>
             </MudCardContent>
         </MudCard>
     }
@@ -120,7 +120,9 @@
     private List<Ratios>? _ratios;
     private List<BalanceSheetStatement>? _balanceSheetStatements;
     private List<CashFlowStatement>? _cashFlowStatements;
-    private List<LabeledValue>? _profitMarginSeries;
+    private List<LabeledValue>? _ebitPerRevenueSeries;
+    private List<LabeledValue>? _roceSeries;
+    private List<LabeledValue>? _capitalTurnoverSeries;
 
     private async Task OnSelectedCompanyChange(Company company)
     {
@@ -129,7 +131,9 @@
         _ratios = await FinancialStatementRepository.GetRatiosAsync(company, CancellationToken.None);
         _balanceSheetStatements = await FinancialStatementRepository.GetBalanceSheetStatementsAsync(company, CancellationToken.None);
         _cashFlowStatements = await FinancialStatementRepository.GetCashFlowStatementsAsync(company, CancellationToken.None);
-        _profitMarginSeries = await FinancialStatementRepository.GetProfitMarginSeries(company, CancellationToken.None);
+        _ebitPerRevenueSeries = await FinancialStatementRepository.GetEbitPerRevenueSeries(company, CancellationToken.None);
+        _capitalTurnoverSeries = await FinancialStatementRepository.GetCapitalTurnoverSeries(company, CancellationToken.None);
+        _roceSeries = await FinancialStatementRepository.GetRoceSeries(company, CancellationToken.None);
     }
 
     private string GetDateString(IncomeStatement? incomeStatement) =>
@@ -166,7 +170,7 @@
     {
         Name = "Profit Margin 2 (%)",
         Data = _ratios?
-            .Select(ratios => (double)(100m * ratios.ProfitMargin))
+            .Select(ratios => (double)(100m * ratios.EbitPerRevenue))
             .Reverse()
             .ToArray() ?? []
     };
@@ -186,7 +190,7 @@
     {
         Name = "ROCE 2 (%)",
         Data = _ratios?
-            .Select(ratios => (double)(100m * ratios.Roce))
+            .Select(ratios => (double)(100m * ratios.ReturnOnCapitalEmployed))
             .Reverse()
             .ToArray() ?? []
     };
