@@ -54,4 +54,22 @@ public class FinancialStatementRepository(FmpClient fmpClient)
             .Select(x => new LabeledValue(x.DateTimeOffset.ToString("yyyy"), x.ReturnOnCapitalEmployed / x.EbitPerRevenue))
             .ToList();
     }
+
+    public async Task<List<LabeledValue>> GetRevenueSeries(Company company, CancellationToken cancellationToken)
+    {
+        var ratios = await fmpClient.GetIncomeStatementsAsync(company, cancellationToken);
+
+        return ratios
+            .Select(x => new LabeledValue(x.DateTimeOffset.ToString("yyyy"), x.Revenue))
+            .ToList();
+    }
+
+    public async Task<List<LabeledValue>> GetEbitSeries(Company company, CancellationToken cancellationToken)
+    {
+        var ratios = await fmpClient.GetIncomeStatementsAsync(company, cancellationToken);
+
+        return ratios
+            .Select(x => new LabeledValue(x.DateTimeOffset.ToString("yyyy"), x.Ebit))
+            .ToList();
+    }
 }

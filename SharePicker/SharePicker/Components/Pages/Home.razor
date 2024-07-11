@@ -60,7 +60,7 @@
                     Ideally we'd view data for 10 years as it will include different parts of the economic cycle.
                     One-off gains/costs are not excluded and may account for any spikes/dips in the below chart.
                 </MudText>
-                <MudChart ChartType="ChartType.Bar" ChartSeries="@([GetEbitSeries(), GetRevenueSeries()])" XAxisLabels="GetXAxisLabels()" />
+                <ProfitsAndSales ProfitSeries="@_ebitSeries" SalesSeries="@_revenueSeries" />
             </MudCardContent>
         </MudCard>
         <MudCard>
@@ -123,6 +123,8 @@
     private List<LabeledValue>? _ebitPerRevenueSeries;
     private List<LabeledValue>? _roceSeries;
     private List<LabeledValue>? _capitalTurnoverSeries;
+    private List<LabeledValue>? _revenueSeries;
+    private List<LabeledValue>? _ebitSeries;
 
     private async Task OnSelectedCompanyChange(Company company)
     {
@@ -134,6 +136,8 @@
         _ebitPerRevenueSeries = await FinancialStatementRepository.GetEbitPerRevenueSeries(company, CancellationToken.None);
         _capitalTurnoverSeries = await FinancialStatementRepository.GetCapitalTurnoverSeries(company, CancellationToken.None);
         _roceSeries = await FinancialStatementRepository.GetRoceSeries(company, CancellationToken.None);
+        _revenueSeries = await FinancialStatementRepository.GetRevenueSeries(company, CancellationToken.None);
+        _ebitSeries = await FinancialStatementRepository.GetEbitSeries(company, CancellationToken.None);
     }
 
     private string GetDateString(IncomeStatement? incomeStatement) =>
@@ -159,7 +163,7 @@
 
     private ChartSeries GetProfitMarginSeries() => new ChartSeries
     {
-        Name = "Profit Margin (%)",
+        Name = "Profit",
         Data = _incomeStatements?
             .Select(incomeStatement => (double)(100m * incomeStatement.Ebit / incomeStatement.Revenue))
             .Reverse()

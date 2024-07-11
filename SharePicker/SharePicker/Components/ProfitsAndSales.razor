@@ -1,0 +1,43 @@
+﻿@using ApexCharts
+@using SharePicker.Models
+
+<ApexChart @ref=_chart Options="_chartOptions">
+    <ApexPointSeries Items="SalesSeries.Reverse()"
+                     Name="Sales"
+                     XValue="@(x => x.Label)"
+                     YValue="@(x => x.Value)"
+                     SeriesType="SeriesType.Bar" />
+
+    <ApexPointSeries Items="ProfitSeries.Reverse()"
+                     Name="Profit"
+                     XValue="@(x => x.Label)"
+                     YValue="@(x => x.Value)"
+                     SeriesType="SeriesType.Bar" />
+</ApexChart>
+
+@code {
+    private ApexChart<LabeledValue>? _chart;
+    private ApexChartOptions<LabeledValue> _chartOptions = new()
+    {
+        Chart = new()
+        {
+            Toolbar = new() { Show = false }
+        },
+        Theme = new() { Mode = Mode.Dark },
+        Yaxis = new()
+        {
+            new()
+            {
+                Title = new(){ Text = "Money" }
+            }
+        }
+    };
+
+    [Parameter]
+    [EditorRequired]
+    public IEnumerable<LabeledValue> SalesSeries { get; set; } = new List<LabeledValue>();
+
+    [Parameter]
+    [EditorRequired]
+    public IEnumerable<LabeledValue> ProfitSeries { get; set; } = new List<LabeledValue>();
+}
