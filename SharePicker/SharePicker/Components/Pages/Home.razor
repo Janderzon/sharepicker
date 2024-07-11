@@ -81,29 +81,14 @@
         <MudCard>
             <MudCardHeader>
                 <CardHeaderContent>
-                    <MudText Typo="Typo.h2">ROCE</MudText>
-                </CardHeaderContent>
-            </MudCardHeader>
-            <MudCardContent>
-                <MudText>
-                    ROCE (return on capital employed) is calculated as 100 * EBIT / Capital Employed, where Capital Employed = Total Assets - Current Liabilities + Short-Term Borrowings.
-                    The profit margin should be consistently at least 10-15%.
-                    Companies with higher profit margins are better placed withstand tempory periods of difficulty that may depress profits.
-                </MudText>
-                @* <MudChart ChartType="ChartType.Bar" ChartSeries="@([GetRoceSeries(), GetRoceSeries2()])" XAxisLabels="GetXAxisLabels()" /> *@
-            </MudCardContent>
-        </MudCard>
-        <MudCard>
-            <MudCardHeader>
-                <CardHeaderContent>
                     <MudText Typo="Typo.h2">DuPont Analysis</MudText>
                 </CardHeaderContent>
             </MudCardHeader>
             <MudCardContent>
                 <MudText>
-                    Profit margin is calculated as 100 * EBIT / Revenue.
-                    The profit margin should be consistently at least 10-15%.
-                    Companies with higher profit margins are better placed withstand tempory periods of difficulty that may depress profits.
+                    ROCE (return on capital employed) is calculated as EBIT / Capital Employed.
+                    Capital Employed = Total Assets - Current Liabilities + Short-Term Borrowings.
+                    ROCE should be consistently above 15%.
                 </MudText>
                 <DuPont 
                     RoceSeries="@_roceSeries" 

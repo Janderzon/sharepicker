@@ -37,14 +37,14 @@
         {
             new()
             {
-                Title = new(){ Text = "EBIT Margin/ROCE (%)" },
-                SeriesName = [ "ROCE", "Profit Margin" ]
+                Title = new(){ Text = "ROCE" },
+                SeriesName = "ROCE"
             },
             new()
             {
-                Title = new(){ Text = "Capital Turnover" },
-                Opposite = true,
-                SeriesName = "Capital Turnover"
+                Title = new(){ Text = "Profit Margin And Capital Turnover" },
+                SeriesName = [ "Profit Margin", "Capital Turnover" ],
+                Opposite = true
             }
         }
     };

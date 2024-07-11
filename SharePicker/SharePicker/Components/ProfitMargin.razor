@@ -27,6 +27,8 @@
         }
     };
 
+    protected override Task OnParametersSetAsync() => _chart?.RenderAsync() ?? Task.CompletedTask;
+
     [Parameter]
     [EditorRequired]
     public IEnumerable<LabeledValue> ProfitMarginSeries { get; set; } = new List<LabeledValue>();
