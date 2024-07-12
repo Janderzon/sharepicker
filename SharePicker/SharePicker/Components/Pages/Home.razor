@@ -71,8 +71,8 @@
             </MudCardHeader>
             <MudCardContent>
                 <MudText>
-                    Profit margin here is measured as EBIT per revenue. 
-                    The profit margin should be consistently at least 10-15%.
+                    Profit margin here is measured as EBIT per Revenue. 
+                    The profit margin should be consistently at least 10%.
                     Companies with higher profit margins are better placed withstand tempory periods of difficulty that may depress profits.
                 </MudText>
                 <ProfitMargin ProfitMarginSeries="_ebitPerRevenueSeries" />
@@ -86,9 +86,33 @@
             </MudCardHeader>
             <MudCardContent>
                 <MudText>
-                    ROCE (return on capital employed) is calculated as EBIT / Capital Employed.
+                    ROCE (return on capital employed) is calculated as EBIT per Capital Employed.
                     Capital Employed = Total Assets - Current Liabilities + Short-Term Borrowings.
                     ROCE should be consistently above 15%.
+                    ROCE can be broken down into the multiple of Profit Margins and Capital Turnover.
+                </MudText>
+                <MudText>
+                    Profit Margins are usuall influenced by the following:
+                    <MudList T="string">
+                        <MudListItem>
+                            Prices: higher prices boost margins.
+                        </MudListItem>
+                        <MudListItem>
+                            Costs: lower costs boost margins.
+                            The split between fixed costs and variable costs is important, 
+                            a high proportion of fixed costs can cause the margins to change rapidly in response to small changes in turnover.
+                        </MudListItem>
+                        <MudListItem>
+                            Mix Of Products: some sales will be more profitable than others.
+                            Things like spare parts can be very profitable.
+                        </MudListItem>
+                        <MudListItem>
+                            Volume Sold: selling a large volume of products can boost margins if a company has a large proportion of fixed costs.
+                        </MudListItem>
+                    </MudList>
+                    We want to understand what drives the profit numbers, and how tied it is to the general economy.
+                    A company who's profits are not tied to the general economy will make a safer investment.
+                    We also want to see that the company is selling more, not just increasing prices.
                 </MudText>
                 <DuPont 
                     RoceSeries="@_roceSeries" 
