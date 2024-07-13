@@ -1,0 +1,65 @@
+﻿@using ApexCharts
+@using SharePicker.Models
+
+<ApexChart @ref=_chart Options="_chartOptions">
+    <ApexPointSeries
+        Items="RoceSeries.Reverse()"
+        Name="ROCE" 
+        XValue="@(x => x.Label)"
+        YValue="@(x => x.Value)"
+        SeriesType="SeriesType.Line" />
+
+    <ApexPointSeries 
+        Items="ProfitMarginSeries.Reverse()"
+        Name="Profit Margin"
+        XValue="@(x => x.Label)"
+        YValue="@(x => x.Value)"
+        SeriesType="SeriesType.Bar"/>
+
+    <ApexPointSeries 
+        Items="CapitalTurnoverSeries.Reverse()"
+        Name="Capital Turnover"
+        XValue="@(x => x.Label)"
+        YValue="@(x => x.Value)"
+        SeriesType="SeriesType.Bar" />
+</ApexChart>
+
+@code {
+    private ApexChart<LabeledValue>? _chart;
+    private ApexChartOptions<LabeledValue> _chartOptions = new()
+    {
+        Chart = new()
+        {
+            Toolbar = new() { Show = false }
+        },
+        Theme = new() { Mode = Mode.Dark },
+        Yaxis = new()
+        {
+            new()
+            {
+                Title = new(){ Text = "ROCE" },
+                SeriesName = "ROCE"
+            },
+            new()
+            {
+                Title = new(){ Text = "Profit Margin And Capital Turnover" },
+                SeriesName = [ "Profit Margin", "Capital Turnover" ],
+                Opposite = true
+            }
+        }
+    };
+
+    protected override Task OnParametersSetAsync() => _chart?.RenderAsync() ?? Task.CompletedTask;
+
+    [Parameter]
+    [EditorRequired]
+    public IEnumerable<LabeledValue> RoceSeries { get; set; } = new List<LabeledValue>();
+
+    [Parameter]
+    [EditorRequired]
+    public IEnumerable<LabeledValue> ProfitMarginSeries { get; set; } = new List<LabeledValue>();
+
+    [Parameter]
+    [EditorRequired]
+    public IEnumerable<LabeledValue> CapitalTurnoverSeries { get; set; } = new List<LabeledValue>();
+}

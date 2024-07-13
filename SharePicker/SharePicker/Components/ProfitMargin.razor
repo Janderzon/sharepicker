@@ -1,0 +1,35 @@
+﻿@using ApexCharts
+@using SharePicker.Models
+
+<ApexChart @ref=_chart Options="_chartOptions">
+    <ApexPointSeries Items="ProfitMarginSeries.Reverse()"
+                     Name="Profit Margin"
+                     XValue="@(x => x.Label)"
+                     YValue="@(x => x.Value)"
+                     SeriesType="SeriesType.Bar" />
+</ApexChart>
+
+@code {
+    private ApexChart<LabeledValue>? _chart;
+    private ApexChartOptions<LabeledValue> _chartOptions = new()
+    {
+        Chart = new()
+        {
+            Toolbar = new() { Show = false }
+        },
+        Theme = new() { Mode = Mode.Dark },
+        Yaxis = new()
+        {
+            new()
+            {
+                Title = new(){ Text = "Ratio" }
+            }
+        }
+    };
+
+    protected override Task OnParametersSetAsync() => _chart?.RenderAsync() ?? Task.CompletedTask;
+
+    [Parameter]
+    [EditorRequired]
+    public IEnumerable<LabeledValue> ProfitMarginSeries { get; set; } = new List<LabeledValue>();
+}
