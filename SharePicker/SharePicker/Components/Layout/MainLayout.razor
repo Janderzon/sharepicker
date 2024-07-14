@@ -14,10 +14,13 @@
             OnClick="@ToggleDrawer" />
         Share Picker
         <MudSpacer/>
-        <MudFab StartIcon="@Icons.Material.Filled.AccountCircle" Label="Login" Href="/login" />
+        <MudFab StartIcon="@Icons.Material.Filled.AccountCircle" Label="Login" Href="/Login" />
     </MudAppBar>
     <MudDrawer @bind-Open="@_drawerOpen" ClipMode="DrawerClipMode.Docked">
-        
+        <MudNavMenu>
+            <MudNavLink Href="/" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+            <MudNavLink Href="/CompanyAnalysis"></MudNavLink>
+        </MudNavMenu>
     </MudDrawer>
     <MudMainContent>
         <MudContainer MaxWidth="MaxWidth.Medium">
