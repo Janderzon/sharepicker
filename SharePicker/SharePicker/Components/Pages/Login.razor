@@ -1,7 +1,33 @@
 ﻿@page "/Login"
+
 @using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Identity
+@using SharePicker.Models
+
+@* @inject SignInManager<ApplicationUser> SignInManager *@
+
+<EditForm Model="@_input" OnValidSubmit="LoginUser">
+    <DataAnnotationsValidator/>
+    <MudCard>
+        <MudCardContent>
+            <MudTextField Label="Email" Class="mt-3" @bind-Value="_input.Email" For="@(() => _input.Email)" />
+            <MudTextField Label="Password" Class="mt-3" @bind-Value="_input.Password" For="@(() => _input.Password)" InputType="InputType.Password" />
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Login</MudButton>
+        </MudCardActions>
+    </MudCard>
+</EditForm>
 
 @code {
+    private InputModel _input { get; set; } = new();
+
+    private async Task LoginUser()
+    {
+        // var result = await SignInManager.PasswordSignInAsync(_input.Email, _input.Password, _input.RememberMe, false);
+    }
+
     private class InputModel
     {
         [Required]
@@ -11,5 +37,8 @@
         [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; } = "";
+
+        [Display(Name = "Remember me?")]
+        public bool RememberMe { get; set; }
     }
 }

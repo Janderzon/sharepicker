@@ -1,6 +1,10 @@
 ﻿@page "/CompanyAnalysis"
+
+@using Microsoft.AspNetCore.Authorization
 @using SharePicker.Models
 @using SharePicker.Services
+
+@attribute [Authorize]
 @inject FinancialStatementRepository FinancialStatementRepository
 
 <MudStack>
