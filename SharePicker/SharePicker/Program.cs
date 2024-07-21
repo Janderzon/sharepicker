@@ -26,7 +26,9 @@ builder.Services
     .AddMemoryCache()
     .Configure<FmpClientOptions>(builder.Configuration.GetSection(FmpClientOptions.Name))
     .AddTransient<FinancialStatementRepository>()
-    .AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+    .AddScoped<CustomAuthenticationStateProvider>()
+    .AddScoped<AuthenticationStateProvider>(services =>
+        services.GetRequiredService<CustomAuthenticationStateProvider>());
 
 var app = builder.Build();
 
