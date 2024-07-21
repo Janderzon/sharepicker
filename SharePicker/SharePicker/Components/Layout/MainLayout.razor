@@ -24,13 +24,13 @@
     </MudDrawer>
     <MudMainContent>
         <MudContainer MaxWidth="MaxWidth.Medium">
-            @Body
+            @Body                
         </MudContainer>
     </MudMainContent>
 </MudLayout>
 
 @code {
-    bool _drawerOpen = true;
+    private bool _drawerOpen = true;
 
-    void ToggleDrawer() => _drawerOpen = !_drawerOpen;
+    private void ToggleDrawer() => _drawerOpen = !_drawerOpen;
 }
