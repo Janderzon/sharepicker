@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor.Services;
 using SharePicker.Components;
 using SharePicker.Models.Options;
@@ -24,7 +25,8 @@ builder.Services
     .AddMudServices()
     .AddMemoryCache()
     .Configure<FmpClientOptions>(builder.Configuration.GetSection(FmpClientOptions.Name))
-    .AddTransient<FinancialStatementRepository>();
+    .AddTransient<FinancialStatementRepository>()
+    .AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 
 var app = builder.Build();
 
