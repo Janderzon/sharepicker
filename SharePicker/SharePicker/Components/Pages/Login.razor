@@ -2,12 +2,13 @@
 
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authentication.Cookies
 @using Microsoft.AspNetCore.Identity
 @using SharePicker.Models
+@using System.Security.Claims
+@using SharePicker.Services
 
-@* @inject SignInManager<ApplicationUser> SignInManager *@
-
-<EditForm Model="@_input" OnValidSubmit="LoginUser">
+<EditForm Model="@_input" OnValidSubmit="LoginUser" FormName="Login">
     <DataAnnotationsValidator/>
     <MudCard>
         <MudCardContent>
@@ -23,9 +24,21 @@
 @code {
     private InputModel _input { get; set; } = new();
 
+    [CascadingParameter]
+    private HttpContext _httpContext { get; set; } = null!;
+
     private async Task LoginUser()
     {
-        // var result = await SignInManager.PasswordSignInAsync(_input.Email, _input.Password, _input.RememberMe, false);
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Email, _input.Email)
+        };
+
+        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+        await _httpContext.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            new ClaimsPrincipal(claimsIdentity));
     }
 
     private class InputModel
