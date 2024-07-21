@@ -8,6 +8,8 @@
 @using System.Security.Claims
 @using SharePicker.Services
 
+@inject CustomAuthenticationStateProvider AuthenticationStateProvider
+
 <EditForm Model="@_input" OnValidSubmit="LoginUser" FormName="Login">
     <DataAnnotationsValidator/>
     <MudCard>
@@ -24,21 +26,9 @@
 @code {
     private InputModel _input { get; set; } = new();
 
-    [CascadingParameter]
-    private HttpContext _httpContext { get; set; } = null!;
-
-    private async Task LoginUser()
+    private void LoginUser()
     {
-        var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Email, _input.Email)
-        };
-
-        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-        await _httpContext.SignInAsync(
-            CookieAuthenticationDefaults.AuthenticationScheme,
-            new ClaimsPrincipal(claimsIdentity));
+        AuthenticationStateProvider.AuthenticateUser(_input.Email, _input.Password);
     }
 
     private class InputModel

@@ -24,7 +24,8 @@ builder.Services
     .AddCascadingAuthenticationState()
     .AddMudServices()
     .AddMemoryCache()
-    .Configure<FmpClientOptions>(builder.Configuration.GetSection(FmpClientOptions.Name))
+    .Configure<FmpClientOptions>(builder.Configuration.GetRequiredSection(FmpClientOptions.Name))
+    .Configure<UserAuthenticationOptions>(builder.Configuration.GetRequiredSection(UserAuthenticationOptions.Name))
     .AddTransient<FinancialStatementRepository>()
     .AddScoped<CustomAuthenticationStateProvider>()
     .AddScoped<AuthenticationStateProvider>(services =>
