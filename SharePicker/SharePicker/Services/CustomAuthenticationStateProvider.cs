@@ -32,12 +32,17 @@ public class CustomAuthenticationStateProvider(
             ],
             "Custom Authentication");
 
-        var user = new ClaimsPrincipal(identity);
+        _user = new ClaimsPrincipal(identity);
 
-        _user = user;
-
-        NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
+        NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(_user)));
 
         return true;
+    }
+
+    public void Logout()
+    {
+        _user = new ClaimsPrincipal();
+
+        NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(_user)));
     }
 }
