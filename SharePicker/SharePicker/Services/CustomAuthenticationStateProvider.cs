@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using SharePicker.Models.Options;
 using System.Security.Claims;
@@ -14,26 +15,29 @@ public class CustomAuthenticationStateProvider(
     public override Task<AuthenticationState> GetAuthenticationStateAsync() =>
         Task.FromResult(new AuthenticationState(_user));
 
-    public bool AuthenticateUser(string Email, string Password)
+    public bool AuthenticateUser(string email, string password)
     {
-        if (!authenticationOptions.Value.Users.Contains(new UserAuthenticationOptions.User
-        { 
-            Email = Email,
-            PasswordHash = Password
-        }))
+        var passwordHasher = new PasswordHasher<string>();
+
+        if(!authenticationOptions.Value.UserHashes.TryGetValue(email, out var userHash))
+            return false;
+
+        var passwordVerificationResult = passwordHasher.VerifyHashedPassword(email, userHash, password);
+
+        if (passwordVerificationResult == PasswordVerificationResult.Failed)
             return false;
 
         var identity = new ClaimsIdentity(
-        [
-            new Claim(ClaimTypes.Email, Email),
-        ], "Custom Authentication");
+            [
+                new Claim(ClaimTypes.Email, email),
+            ],
+            "Custom Authentication");
 
         var user = new ClaimsPrincipal(identity);
 
         _user = user;
 
-        NotifyAuthenticationStateChanged(
-            Task.FromResult(new AuthenticationState(user)));
+        NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
 
         return true;
     }
