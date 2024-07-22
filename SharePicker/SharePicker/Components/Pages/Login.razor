@@ -11,22 +11,29 @@
 @inject CustomAuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
 
-<EditForm Model="@_input" OnValidSubmit="LoginUser" FormName="Login">
-    <DataAnnotationsValidator/>
-    <MudCard>
-        <MudCardContent>
-            <MudTextField Label="Email" Class="mt-3" @bind-Value="_input.Email" For="@(() => _input.Email)" />
-            <MudTextField Label="Password" Class="mt-3" @bind-Value="_input.Password" For="@(() => _input.Password)" InputType="InputType.Password" />
-            @if (_unrecognisedDetailsEntered)
-            {
-                <MudText Color="@Color.Error">Unrecognised credentials</MudText>
-            }
-        </MudCardContent>
-        <MudCardActions>
-            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Login</MudButton>
-        </MudCardActions>
-    </MudCard>
-</EditForm>
+<AuthorizeView>
+    <Authorized>
+        <MudText>Logged In!</MudText>
+    </Authorized>
+    <NotAuthorized>
+        <EditForm Model="@_input" OnValidSubmit="LoginUser" FormName="Login" Context="formContext">
+            <DataAnnotationsValidator/>
+            <MudCard>
+                <MudCardContent>
+                    <MudTextField Label="Email" Class="mt-3" @bind-Value="_input.Email" For="@(() => _input.Email)" />
+                    <MudTextField Label="Password" Class="mt-3" @bind-Value="_input.Password" For="@(() => _input.Password)" InputType="InputType.Password" />
+                    @if (_unrecognisedDetailsEntered)
+                    {
+                        <MudText Color="@Color.Error">Unrecognised credentials</MudText>
+                    }
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Login</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </EditForm>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
     private InputModel _input { get; set; } = new();
