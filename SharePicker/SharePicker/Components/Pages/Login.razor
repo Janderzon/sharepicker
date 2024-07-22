@@ -9,6 +9,7 @@
 @using SharePicker.Services
 
 @inject CustomAuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
 
 <EditForm Model="@_input" OnValidSubmit="LoginUser" FormName="Login">
     <DataAnnotationsValidator/>
@@ -26,9 +27,16 @@
 @code {
     private InputModel _input { get; set; } = new();
 
+    [SupplyParameterFromQuery(Name = "returnUrl")]
+    private string? _returnUrl { get; set; }
+
     private void LoginUser()
     {
-        AuthenticationStateProvider.AuthenticateUser(_input.Email, _input.Password);
+        if (!AuthenticationStateProvider.AuthenticateUser(_input.Email, _input.Password))
+            return;
+
+        if (_returnUrl != null)
+            NavigationManager.NavigateTo(_returnUrl);
     }
 
     private class InputModel

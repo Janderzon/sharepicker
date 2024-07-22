@@ -9,7 +9,6 @@ namespace SharePicker.Services;
 public class CustomAuthenticationStateProvider(
     IOptions<UserAuthenticationOptions> authenticationOptions) : AuthenticationStateProvider
 {
-
     private ClaimsPrincipal _user = new();
 
     public override Task<AuthenticationState> GetAuthenticationStateAsync() =>
