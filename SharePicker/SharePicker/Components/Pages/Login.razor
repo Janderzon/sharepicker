@@ -17,6 +17,10 @@
         <MudCardContent>
             <MudTextField Label="Email" Class="mt-3" @bind-Value="_input.Email" For="@(() => _input.Email)" />
             <MudTextField Label="Password" Class="mt-3" @bind-Value="_input.Password" For="@(() => _input.Password)" InputType="InputType.Password" />
+            @if (_unrecognisedDetailsEntered)
+            {
+                <MudText Color="@Color.Error">Unrecognised credentials</MudText>
+            }
         </MudCardContent>
         <MudCardActions>
             <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Login</MudButton>
@@ -26,6 +30,7 @@
 
 @code {
     private InputModel _input { get; set; } = new();
+    private bool _unrecognisedDetailsEntered;
 
     [SupplyParameterFromQuery(Name = "returnUrl")]
     private string? _returnUrl { get; set; }
@@ -33,7 +38,12 @@
     private void LoginUser()
     {
         if (!AuthenticationStateProvider.AuthenticateUser(_input.Email, _input.Password))
+        {
+            _unrecognisedDetailsEntered = true;
             return;
+        }
+
+        _unrecognisedDetailsEntered = false;
 
         if (_returnUrl != null)
             NavigationManager.NavigateTo(_returnUrl);
