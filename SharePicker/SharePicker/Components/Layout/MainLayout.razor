@@ -1,4 +1,8 @@
-﻿@inherits LayoutComponentBase
+﻿@using SharePicker.Services
+
+@inherits LayoutComponentBase
+@inject IDialogService DialogService
+@inject CustomAuthenticationStateProvider CustomAuthenticationStateProvider
 
 <MudThemeProvider IsDarkMode="true" />
 <MudPopoverProvider />
@@ -13,9 +17,21 @@
             Edge="Edge.Start"
             OnClick="@ToggleDrawer" />
         Share Picker
+        <MudSpacer/>
+        <AuthorizeView>
+            <Authorized>
+                <MudFab StartIcon="@Icons.Material.Filled.AccountCircle" Label="Logout" OnClick="Logout" />
+            </Authorized>
+            <NotAuthorized>
+                <MudFab StartIcon="@Icons.Material.Filled.AccountCircle" Label="Login" Href="/Login" />
+            </NotAuthorized>
+        </AuthorizeView>
     </MudAppBar>
     <MudDrawer @bind-Open="@_drawerOpen" ClipMode="DrawerClipMode.Docked">
-        
+        <MudNavMenu>
+            <MudNavLink Href="/" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+            <MudNavLink Href="/CompanyAnalysis" Icon="@Icons.Material.Filled.ShowChart">Company Analysis</MudNavLink>
+        </MudNavMenu>
     </MudDrawer>
     <MudMainContent>
         <MudContainer MaxWidth="MaxWidth.Medium">
@@ -25,7 +41,22 @@
 </MudLayout>
 
 @code {
-    bool _drawerOpen = true;
+    private bool _drawerOpen = true;
 
-    void ToggleDrawer() => _drawerOpen = !_drawerOpen;
+    private void ToggleDrawer() => _drawerOpen = !_drawerOpen;
+
+    private async Task Logout()
+    {
+        var result = await DialogService.ShowMessageBox(
+            null,
+            "Are you sure you want to logout?",
+            yesText: "Logout",
+            cancelText: "Cancel",
+            options: new DialogOptions { NoHeader = true });
+
+        if (result == true)
+            CustomAuthenticationStateProvider.Logout();
+
+        StateHasChanged();
+    }
 }

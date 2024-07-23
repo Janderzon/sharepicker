@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor.Services;
 using SharePicker.Components;
 using SharePicker.Models.Options;
@@ -5,20 +7,29 @@ using SharePicker.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services
+    .AddRazorComponents()
+    .AddInteractiveServerComponents();
+
+builder.Services
+    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie();
+
 builder.Services.AddHttpClient<FmpClient>(client =>
 {
     client.BaseAddress = new Uri("https://financialmodelingprep.com/api/v3/");
 });
 
 builder.Services
-    .AddRazorComponents()
-    .AddInteractiveServerComponents();
-
-builder.Services
+    .AddCascadingAuthenticationState()
     .AddMudServices()
     .AddMemoryCache()
-    .Configure<FmpClientOptions>(builder.Configuration.GetSection(FmpClientOptions.Name))
-    .AddTransient<FinancialStatementRepository>();
+    .Configure<FmpClientOptions>(builder.Configuration.GetRequiredSection(FmpClientOptions.Name))
+    .Configure<UserAuthenticationOptions>(builder.Configuration.GetRequiredSection(UserAuthenticationOptions.Name))
+    .AddTransient<FinancialStatementRepository>()
+    .AddScoped<CustomAuthenticationStateProvider>()
+    .AddScoped<AuthenticationStateProvider>(services =>
+        services.GetRequiredService<CustomAuthenticationStateProvider>());
 
 var app = builder.Build();
 
@@ -29,10 +40,12 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
-
-app.UseStaticFiles();
-app.UseAntiforgery();
+app
+    .UseHttpsRedirection()
+    .UseStaticFiles()
+    .UseAuthentication()
+    .UseAuthorization()
+    .UseAntiforgery();
 
 app
     .MapRazorComponents<App>()
