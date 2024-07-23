@@ -7,21 +7,65 @@
 @* @attribute [Authorize] *@
 @inject FinancialStatementRepository FinancialStatementRepository
 
-<MudSelect T="Exchange"
-           Label="Exchanges"
-           MultiSelection="true"
-           SelectAll="true"
-           MultiSelectionTextFunc="GetExchangeSelectionText"
-           @bind-SelectedValues=_selectedExchanges>
-    @foreach (var exchange in _exchanges)
+<MudStack>
+    <MudCard>
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h2">Filter Builder</MudText>
+            </CardHeaderContent>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudSelect T="Exchange"
+                       Label="Exchanges"
+                       MultiSelection="true"
+                       SelectAll="true"
+                       MultiSelectionTextFunc="GetExchangeSelectionText"
+                       @bind-SelectedValues=_selectedExchanges>
+                @foreach (var exchange in _exchanges)
+                {
+                    <MudSelectItem Value="@exchange">@exchange.ShortName</MudSelectItem>
+                }
+            </MudSelect>
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton Disabled="_processing" Variant="Variant.Filled" Color="Color.Primary" OnClick="GetResults">
+                @if (_processing)
+                {
+                    <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                    <MudText Class="ms-2">Processing</MudText>
+                }
+                else
+                {
+                    <MudText>Filter</MudText>
+                }
+            </MudButton>
+        </MudCardActions>
+    </MudCard>
+    @if (_results != null)
     {
-        <MudSelectItem Value="@exchange">@exchange.ShortName</MudSelectItem>
+        <MudCard>
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h2">Results</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudList T="Company">
+                    @foreach (var result in _results)
+                    {
+                        <MudListItem>@result.Name</MudListItem>
+                    }
+                </MudList>
+            </MudCardContent>
+        </MudCard>
     }
-</MudSelect>
+</MudStack>
 
 @code {
     private IEnumerable<Exchange> _exchanges = new List<Exchange>();
     private IEnumerable<Exchange> _selectedExchanges = new List<Exchange>();
+    private IEnumerable<Company>? _results;
+    private bool _processing;
 
     protected override async Task OnInitializedAsync()
     {
@@ -32,5 +76,14 @@
 
     private string GetExchangeSelectionText(List<string> selectedValues) => selectedValues.Count == 0 
         ? "No exchanges selected"
-        : $"{selectedValues.Count} exchange{(selectedValues.Count > 1 ? "s have" : " has")} been selected";
+        : $"{selectedValues.Count} exchange{(selectedValues.Count > 1 ? "s" : "")} selected";
+
+    private async Task GetResults()
+    {
+        _processing = true;
+        var companies = await FinancialStatementRepository.GetCompaniesAsync(CancellationToken.None);
+        var selectedExchanges = _selectedExchanges.ToHashSet();
+        _results = companies.Where(company => selectedExchanges.Contains(company.Exchange));
+        _processing = false;
+    }
 }
