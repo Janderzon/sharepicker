@@ -1,8 +1,36 @@
 ﻿@page "/CompanyFilter"
-@using Microsoft.AspNetCore.Authorization
 
-@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
+@using SharePicker.Models
+@using SharePicker.Services
+
+@* @attribute [Authorize] *@
+@inject FinancialStatementRepository FinancialStatementRepository
+
+<MudSelect T="Exchange"
+           Label="Exchanges"
+           MultiSelection="true"
+           SelectAll="true"
+           MultiSelectionTextFunc="GetExchangeSelectionText"
+           @bind-SelectedValues=_selectedExchanges>
+    @foreach (var exchange in _exchanges)
+    {
+        <MudSelectItem Value="@exchange">@exchange.ShortName</MudSelectItem>
+    }
+</MudSelect>
 
 @code {
+    private IEnumerable<Exchange> _exchanges = new List<Exchange>();
+    private IEnumerable<Exchange> _selectedExchanges = new List<Exchange>();
 
+    protected override async Task OnInitializedAsync()
+    {
+        var exchanges = await FinancialStatementRepository.GetExchanges(CancellationToken.None);
+
+        _exchanges = exchanges.OrderBy(exchange => exchange.ShortName);
+    }
+
+    private string GetExchangeSelectionText(List<string> selectedValues) => selectedValues.Count == 0 
+        ? "No exchanges selected"
+        : $"{selectedValues.Count} exchange{(selectedValues.Count > 1 ? "s have" : " has")} been selected";
 }

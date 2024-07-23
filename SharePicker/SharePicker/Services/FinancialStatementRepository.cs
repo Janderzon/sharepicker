@@ -72,4 +72,13 @@ public class FinancialStatementRepository(FmpClient fmpClient)
             .Select(x => new LabeledValue(x.DateTimeOffset.ToString("yyyy"), x.Ebit))
             .ToList();
     }
+
+    public async Task<HashSet<Exchange>> GetExchanges(CancellationToken cancellationToken)
+    {
+        var companies = await GetCompaniesAsync(cancellationToken);
+
+        return companies
+            .Select(company => company.Exchange)
+            .ToHashSet();
+    }
 }

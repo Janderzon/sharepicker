@@ -21,10 +21,11 @@ public class FmpClient(
                 var dtos = await GetWithAuth<List<TradableCompanyDto>>("available-traded/list", cancellationToken);
 
                 return dtos
+                    .Where(dto => dto.ExchangeShortName != null)
                     .Select(dto => new Company(
                         dto.Symbol,
                         dto.Name,
-                        new Exchange(dto.Exchange ?? string.Empty, dto.ExchangeShortName ?? string.Empty)))
+                        new Exchange(dto.ExchangeShortName ?? throw new Exception("Exchange short name should not be null"))))
                     .ToHashSet();
             });
 
