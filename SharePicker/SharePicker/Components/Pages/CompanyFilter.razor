@@ -50,12 +50,13 @@
                 </CardHeaderContent>
             </MudCardHeader>
             <MudCardContent>
-                <MudList T="Company">
-                    @foreach (var result in _results)
-                    {
-                        <MudListItem>@result.Name</MudListItem>
-                    }
-                </MudList>
+                <MudDataGrid Items="_results" Virtualize="true" FixedHeader="true" Height="350px">
+                    <Columns>
+                        <PropertyColumn Property="company => company.Symbol" Title="Symbol" />
+                        <PropertyColumn Property="company => company.Name" Title="Name"/>
+                        <PropertyColumn Property="company => company.Exchange.ShortName" Title="Exchange" />
+                    </Columns>
+                </MudDataGrid>
             </MudCardContent>
         </MudCard>
     }
