@@ -18,10 +18,12 @@ public class CustomAuthenticationStateProvider(
     {
         var passwordHasher = new PasswordHasher<string>();
 
-        if(!authenticationOptions.Value.UserHashes.TryGetValue(email, out var userHash))
+        var user = authenticationOptions.Value.Users.SingleOrDefault(x => x.Email == email);
+
+        if(user == null)
             return false;
 
-        var passwordVerificationResult = passwordHasher.VerifyHashedPassword(email, userHash, password);
+        var passwordVerificationResult = passwordHasher.VerifyHashedPassword(email, user.Password, password);
 
         if (passwordVerificationResult == PasswordVerificationResult.Failed)
             return false;
