@@ -14,23 +14,21 @@ public class CustomAuthenticationStateProvider(
     public override Task<AuthenticationState> GetAuthenticationStateAsync() =>
         Task.FromResult(new AuthenticationState(_user));
 
-    public bool AuthenticateUser(string email, string password)
+    public bool AuthenticateUser(string username, string password)
     {
         var passwordHasher = new PasswordHasher<string>();
 
-        var user = authenticationOptions.Value.Users.SingleOrDefault(x => x.Email == email);
-
-        if(user == null)
+        if(!authenticationOptions.Value.Users.TryGetValue(username, out var hash))
             return false;
 
-        var passwordVerificationResult = passwordHasher.VerifyHashedPassword(email, user.Password, password);
+        var passwordVerificationResult = passwordHasher.VerifyHashedPassword(username, hash, password);
 
         if (passwordVerificationResult == PasswordVerificationResult.Failed)
             return false;
 
         var identity = new ClaimsIdentity(
             [
-                new Claim(ClaimTypes.Email, email),
+                new Claim(ClaimTypes.Name, username),
             ],
             "Custom Authentication");
 
