@@ -26,6 +26,7 @@
                     <MudSelectItem Value="@exchange">@exchange.ShortName</MudSelectItem>
                 }
             </MudSelect>
+            <MudNumericField @bind-Value="_minProfitMargin" Label="Min Profit Margin" />
         </MudCardContent>
         <MudCardActions>
             <MudButton Disabled="_processing" Variant="Variant.Filled" Color="Color.Primary" OnClick="GetResults">
@@ -51,6 +52,9 @@
             </MudCardHeader>
             <MudCardContent>
                 <MudDataGrid Items="_results" Virtualize="true" FixedHeader="true" Height="350px">
+                    <ToolBarContent>
+                        <MudText>Results Count: @_results.Count()</MudText>
+                    </ToolBarContent>
                     <Columns>
                         <PropertyColumn Property="company => company.Symbol" Title="Symbol" />
                         <PropertyColumn Property="company => company.Name" Title="Name"/>
@@ -65,8 +69,9 @@
 @code {
     private IEnumerable<Exchange> _exchanges = new List<Exchange>();
     private IEnumerable<Exchange> _selectedExchanges = new List<Exchange>();
-    private IEnumerable<Company>? _results;
+    private List<Company>? _results;
     private bool _processing;
+    private double? _minProfitMargin;
 
     protected override async Task OnInitializedAsync()
     {
@@ -82,9 +87,25 @@
     private async Task GetResults()
     {
         _processing = true;
+
         var companies = await FinancialStatementRepository.GetCompaniesAsync(CancellationToken.None);
         var selectedExchanges = _selectedExchanges.ToHashSet();
-        _results = companies.Where(company => selectedExchanges.Contains(company.Exchange));
+        companies = companies
+            .Where(company => selectedExchanges.Contains(company.Exchange))
+            .ToHashSet();
+
+        _results = companies.ToList();
+
+        // if (_minProfitMargin != null)
+        // {
+        //     var incomeStatementsPerCompany = new Dictionary<Company, List<IncomeStatement>>();
+        //     foreach (var company in companies)
+        //     {
+        //         incomeStatementsPerCompany[company] = await FinancialStatementRepository
+        //             .GetIncomeStatementsAsync(company, CancellationToken.None);
+        //     }
+        // }
+
         _processing = false;
     }
 }
