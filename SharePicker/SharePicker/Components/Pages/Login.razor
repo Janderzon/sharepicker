@@ -20,7 +20,7 @@
             <DataAnnotationsValidator/>
             <MudCard>
                 <MudCardContent>
-                    <MudTextField Label="Email" Class="mt-3" @bind-Value="_input.Email" For="@(() => _input.Email)" />
+                    <MudTextField Label="Username" Class="mt-3" @bind-Value="_input.Username" For="@(() => _input.Username)" />
                     <MudTextField Label="Password" Class="mt-3" @bind-Value="_input.Password" For="@(() => _input.Password)" InputType="InputType.Password" />
                     @if (_unrecognisedDetailsEntered)
                     {
@@ -44,7 +44,7 @@
 
     private void LoginUser()
     {
-        if (!AuthenticationStateProvider.AuthenticateUser(_input.Email, _input.Password))
+        if (!AuthenticationStateProvider.AuthenticateUser(_input.Username, _input.Password))
         {
             _unrecognisedDetailsEntered = true;
             return;
@@ -59,8 +59,7 @@
     private class InputModel
     {
         [Required]
-        [EmailAddress]
-        public string Email { get; set; } = "";
+        public string Username { get; set; } = "";
 
         [Required]
         [DataType(DataType.Password)]
