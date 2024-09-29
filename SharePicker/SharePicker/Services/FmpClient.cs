@@ -7,7 +7,7 @@ namespace SharePicker.Services;
 
 public class FmpClient(IOptions<FmpClientOptions> fmpClientOptions, HttpClient httpClient)
 {
-    public async Task<HashSet<Company>> GetTradableCompaniesAsync(CancellationToken cancellationToken)
+    public async Task<HashSet<string>> GetTradableCompaniesAsync(CancellationToken cancellationToken)
     {
         var dtos = await GetWithAuth<List<TradableCompanyDto>>("available-traded/list", cancellationToken);
 
