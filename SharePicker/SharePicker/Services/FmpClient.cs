@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using SharePicker.Models;
+using SharePicker.Models.Fmp;
 using SharePicker.Models.Options;
 
 namespace SharePicker.Services;
@@ -33,16 +34,7 @@ public class FmpClient(IOptions<FmpClientOptions> fmpClientOptions, HttpClient h
             cancellationToken);
 
         return dtos
-            .Select(dto => new IncomeStatement(
-                DateTimeOffset.ParseExact(dto.Date, "yyyy-MM-dd", null),
-                dto.EbitDa - dto.DepreciationAndAmortization,
-                dto.Revenue,
-                dto.GrossProfit,
-                dto.OperatingIncome,
-                dto.IncomeBeforeTax,
-                dto.IncomeBeforeTax - dto.IncomeTaxExpense,
-                dto.Eps,
-                dto.EpsDiluted))
+            .Select(dto => dto.ToDomain())
             .ToList();
     }
 
@@ -56,60 +48,7 @@ public class FmpClient(IOptions<FmpClientOptions> fmpClientOptions, HttpClient h
             cancellationToken);
 
         return dtos
-            .Select(dto => new BalanceSheetStatement(
-                DateTimeOffset.ParseExact(dto.Date, "yyyy-MM-dd", null),
-                new Assets(
-                    new CurrentAssets(
-                        dto.CashAndCashEquivalents,
-                        dto.ShortTermInvestments,
-                        dto.CashAndShortTermInvestments,
-                        dto.NetReceivables,
-                        dto.Inventory,
-                        dto.OtherCurrentAssets,
-                        dto.TotalCurrentAssets),
-                    new NonCurrentAssets(
-                        dto.PropertyPlantEquipmentNet,
-                        dto.Goodwill,
-                        dto.IntangibleAssets,
-                        dto.GoodwillAndIntangibleAssets,
-                        dto.LongTermInvestments,
-                        dto.TaxAssets,
-                        dto.OtherNonCurrentAssets,
-                        dto.TotalNonCurrentAssets),
-                    dto.OtherAssets,
-                    dto.TotalAssets),
-                new Liabilities(
-                    new CurrentLiabilities(
-                        dto.AccountPayables,
-                        dto.ShortTermDebt,
-                        dto.TaxPayables,
-                        dto.DeferredRevenue,
-                        dto.OtherCurrentLiabilities,
-                        dto.TotalCurrentLiabilities),
-                    new NonCurrentLiabilities(
-                        dto.LongTermDebt,
-                        dto.DeferredRevenueNonCurrent,
-                        dto.DeferredTaxLiabilitiesNonCurrent,
-                        dto.OtherNonCurrentLiabilities,
-                        dto.TotalNonCurrentLiabilities),
-                    dto.OtherLiabilities,
-                    dto.CapitalLeaseObligations,
-                    dto.TotalLiabilities),
-                new Equity(
-                    dto.PreferredStock,
-                    dto.CommonStock,
-                    dto.RetainedEarnings,
-                    dto.AccumulatedOtherComprehensiveIncomeLoss,
-                    dto.OtherTotalStockholdersEquity,
-                    dto.TotalStockholdersEquity,
-                    dto.TotalEquity),
-                new BalanceSheetSummary(
-                    dto.TotalLiabilitiesAndStockholdersEquity,
-                    dto.MinorityInterest,
-                    dto.TotalLiabilitiesAndTotalEquity,
-                    dto.TotalInvestments,
-                    dto.TotalDebt,
-                    dto.NetDebt)))
+            .Select(dto => dto.ToDomain())
             .ToList();
     }
 
@@ -123,42 +62,7 @@ public class FmpClient(IOptions<FmpClientOptions> fmpClientOptions, HttpClient h
             cancellationToken);
 
         return dtos
-            .Select(dto => new CashFlowStatement(
-                DateTimeOffset.ParseExact(dto.Date, "yyyy-MM-dd", null),
-                new OperationsCashFlow(
-                    dto.NetIncome,
-                    dto.DepreciationAndAmortization,
-                    dto.StockBasedCompensation,
-                    dto.Inventory,
-                    dto.AccountsReceivables,
-                    dto.AccountsPayables,
-                    dto.OtherWorkingCapital,
-                    dto.ChangeInWorkingCapital,
-                    dto.OtherNonCashItems,
-                    dto.OperatingCashFlow,
-                    dto.DeferredIncomeTax,
-                    dto.NetCashProvidedByOperatingActivities),
-                new InvestingCashFlow(
-                    dto.CapitalExpenditure,
-                    dto.InvestmentsInPropertyPlantAndEquipment,
-                    dto.AcquisitionsNet,
-                    dto.PurchasesOfInvestments,
-                    0,
-                    dto.SalesMaturitiesOfInvestments,
-                    0,
-                    dto.OtherInvestingActivites,
-                    dto.NetCashUsedForInvestingActivites),
-                new FinancingCashFlow(
-                    dto.CommonStockIssued,
-                    dto.CommonStockRepurchased,
-                    0,
-                    dto.DebtRepayment,
-                    dto.DividendsPaid,
-                    0,
-                    0,
-                    dto.OtherFinancingActivites,
-                    dto.NetCashUsedProvidedByFinancingActivities),
-                dto.NetChangeInCash))
+            .Select(dto => dto.ToDomain())
             .ToList();
     }
 

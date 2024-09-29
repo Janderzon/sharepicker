@@ -13,4 +13,15 @@ public record IncomeStatementDto
     public required decimal IncomeTaxExpense { get; init; }
     public required decimal Eps { get; init; }
     public required decimal EpsDiluted { get; init; }
+
+    public IncomeStatement ToDomain() => new(
+        DateTimeOffset.ParseExact(Date, "yyyy-MM-dd", null),
+        EbitDa - DepreciationAndAmortization,
+        Revenue,
+        GrossProfit,
+        OperatingIncome,
+        IncomeBeforeTax,
+        IncomeBeforeTax - IncomeTaxExpense,
+        Eps,
+        EpsDiluted);
 }

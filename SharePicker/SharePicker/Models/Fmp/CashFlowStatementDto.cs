@@ -29,4 +29,41 @@ public  record CashFlowStatementDto
     public required decimal NetChangeInCash { get; init; }
     public required decimal OperatingCashFlow { get; init; }
     public required decimal CapitalExpenditure { get; init; }
+
+    public CashFlowStatement ToDomain() => new(
+        DateTimeOffset.ParseExact(Date, "yyyy-MM-dd", null),
+        new OperationsCashFlow(
+            NetIncome,
+            DepreciationAndAmortization,
+            StockBasedCompensation,
+            Inventory,
+            AccountsReceivables,
+            AccountsPayables,
+            OtherWorkingCapital,
+            ChangeInWorkingCapital,
+            OtherNonCashItems,
+            OperatingCashFlow,
+            DeferredIncomeTax,
+            NetCashProvidedByOperatingActivities),
+        new InvestingCashFlow(
+            CapitalExpenditure,
+            InvestmentsInPropertyPlantAndEquipment,
+            AcquisitionsNet,
+            PurchasesOfInvestments,
+            0,
+            SalesMaturitiesOfInvestments,
+            0,
+            OtherInvestingActivites,
+            NetCashUsedForInvestingActivites),
+        new FinancingCashFlow(
+            CommonStockIssued,
+            CommonStockRepurchased,
+            0,
+            DebtRepayment,
+            DividendsPaid,
+            0,
+            0,
+            OtherFinancingActivites,
+            NetCashUsedProvidedByFinancingActivities),
+        NetChangeInCash);
 }
