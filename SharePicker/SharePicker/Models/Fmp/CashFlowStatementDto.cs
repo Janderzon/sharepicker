@@ -1,6 +1,6 @@
 ﻿namespace SharePicker.Models.Fmp;
 
-public  record CashFlowStatementDto
+public record CashFlowStatementDto
 {
     public required string Date { get; init; }
     public required decimal NetIncome { get; init; }
