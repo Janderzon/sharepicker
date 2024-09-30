@@ -8,75 +8,35 @@ namespace SharePicker.Services;
 
 public class FmpClient(IOptions<FmpClientOptions> fmpClientOptions, HttpClient httpClient)
 {
-    public async Task<HashSet<string>> GetTradableCompaniesAsync(CancellationToken cancellationToken)
-    {
-        var dtos = await GetWithAuth<List<TradableCompanyDto>>("available-traded/list", cancellationToken);
-
-        return dtos
-            .Where(dto => dto.ExchangeShortName != null)
-            .Select(dto => new Company(
-                dto.Symbol,
-                dto.Name,
-                new Exchange(dto.ExchangeShortName ?? throw new Exception("Exchange short name should not be null"))))
-            .ToHashSet();
-    }
+    public Task<List<TradableCompanyDto>> GetTradableCompaniesAsync(CancellationToken cancellationToken) => 
+        GetWithAuth<List<TradableCompanyDto>>("available-traded/list", cancellationToken);
 
     public Task<HashSet<string>> GetSymbolsWithFinancialStatementsAsync(CancellationToken cancellationToken) =>
         GetWithAuth<HashSet<string>>("financial-statement-symbol-lists", cancellationToken);
 
-    public async Task<List<IncomeStatement>> GetIncomeStatementsAsync(
-        Company company,
-        CancellationToken cancellationToken)
-    {
-        var dtos = await GetWithAuth<List<IncomeStatementDto>>(
+    public Task<List<IncomeStatementDto>> GetIncomeStatementsAsync(Company company, CancellationToken cancellationToken) =>
+        GetWithAuth<List<IncomeStatementDto>>(
             $"income-statement/{company.Symbol}",
             new Dictionary<string, string?>() { { "period", "annual" } },
             cancellationToken);
 
-        return dtos
-            .Select(dto => dto.ToDomain())
-            .ToList();
-    }
-
-    public async Task<List<BalanceSheetStatement>> GetBalanceSheetStatementsAsync(
-        Company company,
-        CancellationToken cancellationToken)
-    {
-        var dtos = await GetWithAuth<List<BalanceSheetStatementDto>>(
+    public Task<List<BalanceSheetStatementDto>> GetBalanceSheetStatementsAsync(Company company, CancellationToken cancellationToken) => 
+        GetWithAuth<List<BalanceSheetStatementDto>>(
             $"balance-sheet-statement/{company.Symbol}",
             new Dictionary<string, string?>() { { "period", "annual" } },
             cancellationToken);
 
-        return dtos
-            .Select(dto => dto.ToDomain())
-            .ToList();
-    }
-
-    public async Task<List<CashFlowStatement>> GetCashFlowStatementsAsync(
-        Company company,
-        CancellationToken cancellationToken)
-    {
-        var dtos = await GetWithAuth<List<CashFlowStatementDto>>(
+    public Task<List<CashFlowStatementDto>> GetCashFlowStatementsAsync(Company company, CancellationToken cancellationToken) =>
+        GetWithAuth<List<CashFlowStatementDto>>(
             $"cash-flow-statement/{company.Symbol}",
             new Dictionary<string, string?>() { { "period", "annual" } },
             cancellationToken);
 
-        return dtos
-            .Select(dto => dto.ToDomain())
-            .ToList();
-    }
-
-    public async Task<List<Ratios>> GetRatiosAsync(Company company, CancellationToken cancellationToken)
-    {
-        var dtos = await GetWithAuth<List<RatiosDto>>(
+    public Task<List<RatiosDto>> GetRatiosAsync(Company company, CancellationToken cancellationToken) => 
+        GetWithAuth<List<RatiosDto>>(
             $"ratios/{company.Symbol}",
             new Dictionary<string, string?>() { { "period", "annual" } },
             cancellationToken);
-
-        return dtos
-            .Select(dto => dto.ToDomain())
-            .ToList();
-    }
 
     private Task<T> GetWithAuth<T>(string url, CancellationToken cancellationToken) =>
         GetWithAuth<T>(url, new Dictionary<string, string?>(), cancellationToken);
