@@ -93,12 +93,4 @@ public class FmpClient(IOptions<FmpClientOptions> fmpClientOptions, HttpClient h
             QueryHelpers.AddQueryString(url, parametersWithApiKey),
             cancellationToken) ?? throw new Exception("Json deserialised to null");
     }
-
-    private class TradableCompanyDto
-    {
-        public required string Symbol { get; init; }
-        public required string Name { get; init; }
-        public string? Exchange { get; init; }
-        public string? ExchangeShortName { get; init; }
-    }
 }
