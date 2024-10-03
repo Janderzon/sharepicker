@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
-using SharePicker.Models;
 using SharePicker.Models.Fmp;
 using SharePicker.Models.Options;
 
@@ -14,27 +13,27 @@ public class FmpClient(IOptions<FmpClientOptions> fmpClientOptions, HttpClient h
     public Task<HashSet<string>> GetSymbolsWithFinancialStatementsAsync(CancellationToken cancellationToken) =>
         GetWithAuth<HashSet<string>>("financial-statement-symbol-lists", cancellationToken);
 
-    public Task<List<IncomeStatementDto>> GetIncomeStatementsAsync(Company company, CancellationToken cancellationToken) =>
+    public Task<List<IncomeStatementDto>> GetIncomeStatementsAsync(string symbol, CancellationToken cancellationToken) =>
         GetWithAuth<List<IncomeStatementDto>>(
-            $"income-statement/{company.Symbol}",
+            $"income-statement/{symbol}",
             new Dictionary<string, string?>() { { "period", "annual" } },
             cancellationToken);
 
-    public Task<List<BalanceSheetStatementDto>> GetBalanceSheetStatementsAsync(Company company, CancellationToken cancellationToken) => 
+    public Task<List<BalanceSheetStatementDto>> GetBalanceSheetStatementsAsync(string symbol, CancellationToken cancellationToken) => 
         GetWithAuth<List<BalanceSheetStatementDto>>(
-            $"balance-sheet-statement/{company.Symbol}",
+            $"balance-sheet-statement/{symbol}",
             new Dictionary<string, string?>() { { "period", "annual" } },
             cancellationToken);
 
-    public Task<List<CashFlowStatementDto>> GetCashFlowStatementsAsync(Company company, CancellationToken cancellationToken) =>
+    public Task<List<CashFlowStatementDto>> GetCashFlowStatementsAsync(string symbol, CancellationToken cancellationToken) =>
         GetWithAuth<List<CashFlowStatementDto>>(
-            $"cash-flow-statement/{company.Symbol}",
+            $"cash-flow-statement/{symbol}",
             new Dictionary<string, string?>() { { "period", "annual" } },
             cancellationToken);
 
-    public Task<List<RatiosDto>> GetRatiosAsync(Company company, CancellationToken cancellationToken) => 
+    public Task<List<RatiosDto>> GetRatiosAsync(string symbol, CancellationToken cancellationToken) => 
         GetWithAuth<List<RatiosDto>>(
-            $"ratios/{company.Symbol}",
+            $"ratios/{symbol}",
             new Dictionary<string, string?>() { { "period", "annual" } },
             cancellationToken);
 

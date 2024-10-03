@@ -16,8 +16,16 @@ public class CompanyRepository(FmpClient fmpClient) : BackgroundService
         var tradableCompanies = await fmpClient.GetTradableCompaniesAsync(cancellationToken);
         var symbolsWithFinancialStatements = await fmpClient.GetSymbolsWithFinancialStatementsAsync(cancellationToken);
 
-        return tradableCompanies
-            .Where(company => symbolsWithFinancialStatements.Contains(company.Symbol))
-            .ToHashSet();
+        foreach (var company in tradableCompanies
+            .Where(company => symbolsWithFinancialStatements.Contains(company.Symbol)))
+        {
+            var balanceSheetStatements = await fmpClient.GetBalanceSheetStatementsAsync(company.Symbol, cancellationToken);
+            _companies.Add(new Company(
+                company.Symbol,
+                company.Name, 
+                new Exchange(company.ExchangeShortName),
+                new YearlyStatements()
+                ));
+        }
     }
 }
