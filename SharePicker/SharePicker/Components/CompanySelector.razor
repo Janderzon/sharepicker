@@ -1,6 +1,6 @@
 ﻿@using SharePicker.Models
 @using SharePicker.Services
-@inject CompanyRepository CompanyRepository
+@inject CompanyProvider CompanyRepository
 
 <style>
     .selected {
@@ -19,7 +19,7 @@
 <MudDataGrid 
     @ref=_dataGrid
     T="Company"
-    Items="@_companies"
+    Items="@CompanyRepository.GetCompanies()"
     QuickFilter="@GlobalSearch"
     Virtualize="true"
     FixedHeader="true"
@@ -49,11 +49,7 @@
 
 @code {
     private MudDataGrid<Company> _dataGrid = null!;
-    private IEnumerable<Company>? _companies;
     private string _searchString = string.Empty;
-
-    protected override async Task OnInitializedAsync() =>
-        _companies = await FinancialStatementRepository.GetCompaniesAsync(CancellationToken.None);
 
     private bool GlobalSearch(Company company)
     {
@@ -66,7 +62,7 @@
         if (company.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
             return true;
 
-        if (company.Exchange.ShortName.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+        if (company.Exchange.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
             return true;
 
         return false;

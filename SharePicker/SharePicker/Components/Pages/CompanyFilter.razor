@@ -5,7 +5,7 @@
 @using SharePicker.Services
 
 @* @attribute [Authorize] *@
-@inject FinancialStatementRepository FinancialStatementRepository
+@inject CompanyProvider CompanyProvider
 
 <MudStack>
     <MudCard>
@@ -73,26 +73,28 @@
     private bool _processing;
     private double? _minProfitMargin;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        var exchanges = await FinancialStatementRepository.GetExchanges();
-
-        _exchanges = exchanges.OrderBy(exchange => exchange.ShortName);
+        _exchanges = CompanyProvider
+            .GetCompanies()
+            .Select(company => company.Exchange)
+            .Order()
+            .ToHashSet();
     }
 
     private string GetExchangeSelectionText(List<string> selectedValues) => selectedValues.Count == 0 
         ? "No exchanges selected"
         : $"{selectedValues.Count} exchange{(selectedValues.Count > 1 ? "s" : "")} selected";
 
-    private async Task GetResults()
+    private void GetResults()
     {
         _processing = true;
 
-        var companies = await FinancialStatementRepository.GetCompaniesAsync(CancellationToken.None);
+        var companies = CompanyProvider.GetCompanies();
         var selectedExchanges = _selectedExchanges.ToHashSet();
         companies = companies
             .Where(company => selectedExchanges.Contains(company.Exchange))
-            .ToHashSet();
+            .ToList();
 
         _results = companies.ToList();
 
