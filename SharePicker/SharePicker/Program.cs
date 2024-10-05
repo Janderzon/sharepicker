@@ -28,7 +28,8 @@ builder.Services
     .AddMemoryCache()
     .Configure<FmpClientOptions>(builder.Configuration.GetRequiredSection(FmpClientOptions.Name))
     .Configure<UserAuthenticationOptions>(builder.Configuration.GetRequiredSection(UserAuthenticationOptions.Name))
-    .AddHostedService<CompanyProvider>()
+    .AddSingleton<CompanyProvider>()
+    .AddHostedService(sp => sp.GetRequiredService<CompanyProvider>())
     .AddScoped<CustomAuthenticationStateProvider>()
     .AddScoped<AuthenticationStateProvider>(services =>
         services.GetRequiredService<CustomAuthenticationStateProvider>());
