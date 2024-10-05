@@ -5,7 +5,7 @@ public record CashFlowStatement(
     OperationsCashFlow OperationsCashFlow,
     InvestingCashFlow InvestingCashFlow,
     FinancingCashFlow FinancingCashFlow,
-    decimal NetCashFlow) : Statement;
+    decimal NetCashFlow);
 
 public record OperationsCashFlow(
     decimal OperatingProfit,

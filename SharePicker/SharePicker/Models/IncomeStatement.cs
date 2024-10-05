@@ -9,4 +9,4 @@ public record IncomeStatement(
     decimal ProfitBeforeTax,
     decimal ProfitAfterTax,
     decimal EarningsPerShare,
-    decimal DilutedEarningsPerShare) : Statement;
+    decimal DilutedEarningsPerShare);

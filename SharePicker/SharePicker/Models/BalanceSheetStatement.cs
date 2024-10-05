@@ -5,7 +5,7 @@ public record BalanceSheetStatement(
     Assets Assets,
     Liabilities Liabilities,
     Equity Equity,
-    BalanceSheetSummary Summary) : Statement;
+    BalanceSheetSummary Summary);
 
 public record Assets(
     CurrentAssets CurrentAssets,
