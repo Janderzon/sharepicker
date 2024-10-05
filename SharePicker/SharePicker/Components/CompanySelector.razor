@@ -1,6 +1,6 @@
 ﻿@using SharePicker.Models
 @using SharePicker.Services
-@inject FinancialStatementRepository FinancialStatementRepository
+@inject CompanyRepository CompanyRepository
 
 <style>
     .selected {
@@ -43,7 +43,7 @@
     <Columns>
         <PropertyColumn Property="company => company.Symbol" Title="Symbol" />
         <PropertyColumn Property="company => company.Name" Title="Name" />
-        <PropertyColumn Property="company => company.Exchange.ShortName" Title="Exchange Short Name" />
+        <PropertyColumn Property="company => company.Exchange" Title="Exchange Short Name" />
     </Columns>
 </MudDataGrid>
 

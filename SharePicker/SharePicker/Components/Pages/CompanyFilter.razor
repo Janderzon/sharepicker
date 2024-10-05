@@ -75,7 +75,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var exchanges = await FinancialStatementRepository.GetExchanges(CancellationToken.None);
+        var exchanges = await FinancialStatementRepository.GetExchanges();
 
         _exchanges = exchanges.OrderBy(exchange => exchange.ShortName);
     }

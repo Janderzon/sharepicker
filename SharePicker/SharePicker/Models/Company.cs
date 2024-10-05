@@ -6,4 +6,5 @@ public record Company(
     string? Exchange,
     List<BalanceSheetStatement> BalanceSheetStatements,
     List<CashFlowStatement> CashFlowStatements,
-    List<IncomeStatement> IncomeStatements);
+    List<IncomeStatement> IncomeStatements,
+    List<Ratios> ratios);
