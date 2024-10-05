@@ -15,7 +15,7 @@
             </CardHeaderContent>
         </MudCardHeader>
         <MudCardContent>
-            <MudSelect T="Exchange"
+            <MudSelect T="string"
                        Label="Exchanges"
                        MultiSelection="true"
                        SelectAll="true"
@@ -23,7 +23,7 @@
                        @bind-SelectedValues=_selectedExchanges>
                 @foreach (var exchange in _exchanges)
                 {
-                    <MudSelectItem Value="@exchange">@exchange.ShortName</MudSelectItem>
+                    <MudSelectItem Value="@exchange">@exchange</MudSelectItem>
                 }
             </MudSelect>
             <MudNumericField @bind-Value="_minProfitMargin" Label="Min Profit Margin" />
@@ -58,7 +58,7 @@
                     <Columns>
                         <PropertyColumn Property="company => company.Symbol" Title="Symbol" />
                         <PropertyColumn Property="company => company.Name" Title="Name"/>
-                        <PropertyColumn Property="company => company.Exchange.ShortName" Title="Exchange" />
+                        <PropertyColumn Property="company => company.Exchange" Title="Exchange" />
                     </Columns>
                 </MudDataGrid>
             </MudCardContent>
@@ -67,8 +67,8 @@
 </MudStack>
 
 @code {
-    private IEnumerable<Exchange> _exchanges = new List<Exchange>();
-    private IEnumerable<Exchange> _selectedExchanges = new List<Exchange>();
+    private IEnumerable<string> _exchanges = new List<string>();
+    private IEnumerable<string> _selectedExchanges = new List<string>();
     private List<Company>? _results;
     private bool _processing;
     private double? _minProfitMargin;

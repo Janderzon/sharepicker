@@ -49,7 +49,7 @@ public class FinancialStatementRepository(FmpClient fmpClient)
             .ToList();
     }
 
-    public async Task<HashSet<Exchange>> GetExchanges(CancellationToken cancellationToken)
+    public async Task<HashSet<string>> GetExchanges(CancellationToken cancellationToken)
     {
         var companies = await GetCompaniesAsync(cancellationToken);
 
