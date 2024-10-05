@@ -7,6 +7,8 @@ using SharePicker.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddJsonFile("appsettings.LocalDev.json", optional: true);
+
 builder.Services
     .AddRazorComponents()
     .AddInteractiveServerComponents();
