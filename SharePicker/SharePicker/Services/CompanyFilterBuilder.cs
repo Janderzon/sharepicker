@@ -17,6 +17,12 @@ public class CompanyFilterBuilder
         return this;
     }
 
+    public CompanyFilterBuilder WithMinReturnOnCapitalEmployed(decimal percentage)
+    {
+        _filters.Add(company => company.Ratios.All(ratios => ratios.ReturnOnCapitalEmployed * 100 >= percentage));
+        return this;
+    }
+
     public ICompanyFilter Build() => new CompanyFilter([.._filters]);
 
     private class CompanyFilter(List<Func<Company, bool>> filters) : ICompanyFilter

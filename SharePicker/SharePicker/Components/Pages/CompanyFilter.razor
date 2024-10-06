@@ -26,7 +26,8 @@
                     <MudSelectItem Value="@exchange">@exchange</MudSelectItem>
                 }
             </MudSelect>
-            <MudNumericField @bind-Value="_minProfitMargin" Label="Min Profit Margin" />
+            <MudNumericField @bind-Value="_minProfitMargin" Label="Min Profit Margin (Suggested min: 10%)" />
+            <MudNumericField @bind-Value="_minRoce" Label="Min ROCE (Suggested min: 15%)" />
         </MudCardContent>
         <MudCardActions>
             <MudButton Disabled="_processing" Variant="Variant.Filled" Color="Color.Primary" OnClick="GetResults">
@@ -72,6 +73,7 @@
     private List<Company>? _results;
     private bool _processing;
     private decimal? _minProfitMargin;
+    private decimal? _minRoce;
 
     protected override void OnInitialized()
     {
@@ -94,6 +96,8 @@
 
         if (_minProfitMargin.HasValue)
             companyFilterBuilder.WithMinProfitMargin(_minProfitMargin.Value);
+        if (_minRoce.HasValue)
+            companyFilterBuilder.WithMinReturnOnCapitalEmployed(_minRoce.Value);
 
         var companyFilter = companyFilterBuilder.Build();
 
