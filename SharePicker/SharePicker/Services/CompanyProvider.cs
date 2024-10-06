@@ -38,7 +38,7 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
                     ratios.Select(statement => statement.ToDomain()).ToList()));
 
                 companyCount++;
-                if (companyCount > 5)
+                if (companyCount >= 20)
                     break;
             }
 

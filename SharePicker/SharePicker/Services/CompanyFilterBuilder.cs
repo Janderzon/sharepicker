@@ -23,6 +23,23 @@ public class CompanyFilterBuilder
         return this;
     }
 
+    public CompanyFilterBuilder WithIncreasingProfits()
+    {
+        _filters.Add(company =>
+        {
+            var lastProfit = 0m;
+            var decresingProfitCount = 0;
+            foreach (var incomeStatement in company.IncomeStatements)
+            {
+                if (incomeStatement.Ebit < lastProfit)
+                    decresingProfitCount++;
+                lastProfit = incomeStatement.Ebit;
+            }
+            return decresingProfitCount == 0;
+        });
+        return this;
+    }
+
     public ICompanyFilter Build() => new CompanyFilter([.._filters]);
 
     private class CompanyFilter(List<Func<Company, bool>> filters) : ICompanyFilter
