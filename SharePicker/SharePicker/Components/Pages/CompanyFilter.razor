@@ -4,7 +4,7 @@
 @using SharePicker.Models
 @using SharePicker.Services
 
-@* @attribute [Authorize] *@
+@attribute [Authorize]
 @inject CompanyProvider CompanyProvider
 
 <MudStack>
@@ -71,7 +71,7 @@
     private IEnumerable<string> _selectedExchanges = new List<string>();
     private List<Company>? _results;
     private bool _processing;
-    private double? _minProfitMargin;
+    private decimal? _minProfitMargin;
 
     protected override void OnInitialized()
     {
@@ -90,23 +90,14 @@
     {
         _processing = true;
 
-        var companies = CompanyProvider.GetCompanies();
-        var selectedExchanges = _selectedExchanges.ToHashSet();
-        companies = companies
-            .Where(company => selectedExchanges.Contains(company.Exchange))
-            .ToList();
+        var companyFilterBuilder = new CompanyFilterBuilder();
 
-        _results = companies.ToList();
+        if (_minProfitMargin.HasValue)
+            companyFilterBuilder.WithMinProfitMargin(_minProfitMargin.Value);
 
-        // if (_minProfitMargin != null)
-        // {
-        //     var incomeStatementsPerCompany = new Dictionary<Company, List<IncomeStatement>>();
-        //     foreach (var company in companies)
-        //     {
-        //         incomeStatementsPerCompany[company] = await FinancialStatementRepository
-        //             .GetIncomeStatementsAsync(company, CancellationToken.None);
-        //     }
-        // }
+        var companyFilter = companyFilterBuilder.Build();
+
+        _results = companyFilter.FilterCompanies(CompanyProvider.GetCompanies());
 
         _processing = false;
     }
