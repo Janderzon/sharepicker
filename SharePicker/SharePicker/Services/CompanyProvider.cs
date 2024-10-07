@@ -12,7 +12,7 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
     {
         while (!cancellationToken.IsCancellationRequested)
         {
-            using var timer = new PeriodicTimer(TimeSpan.FromHours(1));
+            using var timer = new PeriodicTimer(TimeSpan.FromDays(1));
             var tradableCompanies = await fmpClient.GetTradableCompaniesAsync(cancellationToken);
             var symbolsWithFinancialStatements = await fmpClient.GetSymbolsWithFinancialStatementsAsync(cancellationToken);
 
