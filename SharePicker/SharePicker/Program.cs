@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor.Services;
+using Polly;
+using Polly.Extensions.Http;
 using SharePicker.Components;
 using SharePicker.Models.Options;
 using SharePicker.Services;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,10 +20,15 @@ builder.Services
     .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie();
 
-builder.Services.AddHttpClient<FmpClient>(client =>
-{
-    client.BaseAddress = new Uri("https://financialmodelingprep.com/api/v3/");
-});
+builder.Services
+    .AddHttpClient<FmpClient>(client =>
+    {
+        client.BaseAddress = new Uri("https://financialmodelingprep.com/api/v3/");
+    })
+    .AddPolicyHandler(HttpPolicyExtensions
+        .HandleTransientHttpError()
+        .OrResult(msg => msg.StatusCode == HttpStatusCode.TooManyRequests)
+        .WaitAndRetryAsync(6, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))));
 
 builder.Services
     .AddCascadingAuthenticationState()

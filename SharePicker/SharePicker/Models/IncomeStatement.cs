@@ -8,5 +8,5 @@ public record IncomeStatement(
     decimal OperatingProfits,
     decimal ProfitBeforeTax,
     decimal ProfitAfterTax,
-    decimal EarningsPerShare,
-    decimal DilutedEarningsPerShare);
+    decimal? EarningsPerShare,
+    decimal? DilutedEarningsPerShare);

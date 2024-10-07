@@ -18,7 +18,7 @@
 </MudDataGrid>
 
 @code {
-    private record Row(string Name, Func<IncomeStatement, decimal> ValueFactory);
+    private record Row(string Name, Func<IncomeStatement, decimal?> ValueFactory);
     private List<Row> _rows = new()
     {
         new ("Revenue", incomeStatement => incomeStatement.Revenue),
@@ -27,8 +27,8 @@
         new ("Earnings Before Interest And Tax (EBIT)", incomeStatement => incomeStatement.Ebit),
         new ("Profit Before Tax (PBT)", incomeStatement => incomeStatement.ProfitBeforeTax),
         new ("Profit After Tax (PAT)", incomeStatement => incomeStatement.ProfitBeforeTax),
-        new ("Earnings Per Share (EPS)", incomeStatement => incomeStatement.EarningsPerShare),
-        new ("Diluted Earnings Per Share", incomeStatement => incomeStatement.DilutedEarningsPerShare)
+        new ("Earnings Per Share (EPS)", incomeStatement => incomeStatement?.EarningsPerShare),
+        new ("Diluted Earnings Per Share", incomeStatement => incomeStatement?.DilutedEarningsPerShare)
     };
 
     [Parameter]

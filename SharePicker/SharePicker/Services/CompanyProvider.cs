@@ -17,7 +17,6 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
             var symbolsWithFinancialStatements = await fmpClient.GetSymbolsWithFinancialStatementsAsync(cancellationToken);
 
             var companies = new List<Company>();
-            var companyCount = 0;
             foreach (var company in tradableCompanies
                 .Where(company => symbolsWithFinancialStatements.Contains(company.Symbol)))
             {
@@ -36,10 +35,6 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
                     cashFlowStatements.Select(statement => statement.ToDomain()).ToList(),
                     incomeStatements.Select(statement => statement.ToDomain()).ToList(),
                     ratios.Select(statement => statement.ToDomain()).ToList()));
-
-                companyCount++;
-                if (companyCount >= 20)
-                    break;
             }
 
             _companies = companies;
