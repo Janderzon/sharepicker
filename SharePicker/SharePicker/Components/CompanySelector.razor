@@ -1,6 +1,6 @@
 ﻿@using SharePicker.Models
 @using SharePicker.Services
-@inject FinancialStatementRepository FinancialStatementRepository
+@inject CompanyProvider CompanyRepository
 
 <style>
     .selected {
@@ -19,7 +19,7 @@
 <MudDataGrid 
     @ref=_dataGrid
     T="Company"
-    Items="@_companies"
+    Items="@CompanyRepository.GetCompanies()"
     QuickFilter="@GlobalSearch"
     Virtualize="true"
     FixedHeader="true"
@@ -43,18 +43,13 @@
     <Columns>
         <PropertyColumn Property="company => company.Symbol" Title="Symbol" />
         <PropertyColumn Property="company => company.Name" Title="Name" />
-        <PropertyColumn Property="company => company.Exchange.Name" Title="Exchange" />
-        <PropertyColumn Property="company => company.Exchange.ShortName" Title="Exchange Short Name" />
+        <PropertyColumn Property="company => company.Exchange" Title="Exchange Short Name" />
     </Columns>
 </MudDataGrid>
 
 @code {
     private MudDataGrid<Company> _dataGrid = null!;
-    private IEnumerable<Company>? _companies;
     private string _searchString = string.Empty;
-
-    protected override async Task OnInitializedAsync() =>
-        _companies = await FinancialStatementRepository.GetCompaniesAsync(CancellationToken.None);
 
     private bool GlobalSearch(Company company)
     {
@@ -67,10 +62,7 @@
         if (company.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
             return true;
 
-        if (company.Exchange.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
-            return true;
-
-        if (company.Exchange.ShortName.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+        if (company.Exchange.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
             return true;
 
         return false;

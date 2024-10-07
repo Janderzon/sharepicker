@@ -29,8 +29,9 @@
     </MudAppBar>
     <MudDrawer @bind-Open="@_drawerOpen" ClipMode="DrawerClipMode.Docked">
         <MudNavMenu>
-            <MudNavLink Href="/" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
-            <MudNavLink Href="/CompanyAnalysis" Icon="@Icons.Material.Filled.ShowChart">Company Analysis</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Href="/" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Href="/CompanyAnalysis" Icon="@Icons.Material.Filled.ShowChart">Company Analysis</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Href="/CompanyFilter" Icon="@Icons.Material.Filled.FilterAlt">Company Filter</MudNavLink>
         </MudNavMenu>
     </MudDrawer>
     <MudMainContent>
