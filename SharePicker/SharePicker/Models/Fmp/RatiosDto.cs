@@ -18,7 +18,7 @@ public record RatiosDto
     //public required decimal EffectiveTaxRate { get; init; }
     //public required decimal ReturnOnAssets { get; init; }
     //public required decimal ReturnOnEquity { get; init; }
-    public required decimal ReturnOnCapitalEmployed { get; init; }
+    public required decimal? ReturnOnCapitalEmployed { get; init; }
     //public required decimal NetIncomePerEBT { get; init; }
     //public required decimal EbtPerEbit { get; init; }
     public required decimal EbitPerRevenue { get; init; }

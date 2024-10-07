@@ -21,7 +21,7 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
             foreach (var company in tradableCompanies
                 .Where(company => symbolsWithFinancialStatements.Contains(company.Symbol)))
             {
-                if (company.ExchangeShortName == null || company.ExchangeShortName != "NYSE")
+                if (company.ExchangeShortName == null || company.ExchangeShortName != "LSE")
                     continue;
 
                 var balanceSheetStatements = await fmpClient.GetBalanceSheetStatementsAsync(company.Symbol, cancellationToken);

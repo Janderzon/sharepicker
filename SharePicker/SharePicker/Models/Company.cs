@@ -14,11 +14,13 @@ public record Company(
         .ToList();
 
     public List<LabeledValue> GetRoceSeries() => Ratios
-        .Select(x => new LabeledValue(x.DateTimeOffset.ToString("yyyy"), x.ReturnOnCapitalEmployed))
+        .Where(x => x.ReturnOnCapitalEmployed != null)
+        .Select(x => new LabeledValue(x.DateTimeOffset.ToString("yyyy"), x.ReturnOnCapitalEmployed!.Value))
         .ToList();
 
     public List<LabeledValue> GetCapitalTurnoverSeries() => Ratios
-        .Select(x => new LabeledValue(x.DateTimeOffset.ToString("yyyy"), x.ReturnOnCapitalEmployed / x.EbitPerRevenue))
+        .Where(x => x.ReturnOnCapitalEmployed != null)
+        .Select(x => new LabeledValue(x.DateTimeOffset.ToString("yyyy"), x.ReturnOnCapitalEmployed!.Value / x.EbitPerRevenue))
         .ToList();
 
     public List<LabeledValue> GetRevenueSeries() => IncomeStatements

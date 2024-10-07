@@ -2,5 +2,5 @@
 
 public record Ratios(
     DateTimeOffset DateTimeOffset,
-    decimal ReturnOnCapitalEmployed,
+    decimal? ReturnOnCapitalEmployed,
     decimal EbitPerRevenue);
