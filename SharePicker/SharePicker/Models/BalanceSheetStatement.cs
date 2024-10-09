@@ -1,7 +1,7 @@
 ﻿namespace SharePicker.Models;
 
 public record BalanceSheetStatement(
-    DateTimeOffset DateTimeOffset,
+    DateOnly Date,
     Assets Assets,
     Liabilities Liabilities,
     Equity Equity,

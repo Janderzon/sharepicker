@@ -31,21 +31,21 @@ public class FullFinancialStatementDto
     public required decimal CashAndCashEquivalentsAtCarryingValue { get; init; }
     public required decimal MarketableSecuritiesCurrent { get; init; }
     public required decimal AccountsReceivableNetCurrent { get; init; }
-    public required decimal inventorynet { get; init; }
-    public required decimal nontradereceivablescurrent { get; init; }
-    public required decimal otherassetscurrent { get; init; }
-    public required decimal assetscurrent { get; init; }
-    public required decimal marketablesecuritiesnoncurrent { get; init; }
-    public required decimal propertyplantandequipmentnet { get; init; }
-    public required decimal otherassetsnoncurrent { get; init; }
-    public required decimal assetsnoncurrent { get; init; }
-    public required decimal assets { get; init; }
-    public required decimal accountspayablecurrent { get; init; }
-    public required decimal otherliabilitiescurrent { get; init; }
-    public required decimal contractwithcustomerliabilitycurrent { get; init; }
-    public required decimal commercialpaper { get; init; }
-    public required decimal longtermdebtcurrent { get; init; }
-    public required decimal liabilitiescurrent { get; init; }
+    public required decimal InventoryNet { get; init; }
+    public required decimal NonTradeReceivablesCurrent { get; init; }
+    public required decimal OtherAssetsCurrent { get; init; }
+    public required decimal AssetsCurrent { get; init; }
+    public required decimal MarketableSecuritiesNonCurrent { get; init; }
+    public required decimal PropertyPlantAndEquipmentNet { get; init; }
+    public required decimal OtherAssetsNonCurrent { get; init; }
+    public required decimal AssetsNonCurrent { get; init; }
+    public required decimal Assets { get; init; }
+    public required decimal AccountsPayableCurrent { get; init; }
+    public required decimal OtherLiabilitiesCurrent { get; init; }
+    public required decimal ContractWithCustomerLiabilityCurrent { get; init; }
+    public required decimal CommercialPaper { get; init; }
+    public required decimal LongTermDebtCurrent { get; init; }
+    public required decimal LiabilitiesCurrent { get; init; }
     public required decimal longtermdebtnoncurrent { get; init; }
     public required decimal otherliabilitiesnoncurrent { get; init; }
     public required decimal liabilitiesnoncurrent { get; init; }
@@ -66,7 +66,7 @@ public class FullFinancialStatementDto
     public required decimal stockrepurchasedandretiredduringperiodvalue { get; init; }
     public required decimal commonstockdividendspersharedeclared { get; init; }
     public required decimal cashcashequivalentsrestrictedcashandrestrictedcashequivalents { get; init; }
-    public required decimal depreciationdepletionandamortization { get; init; }
+    public required decimal DepreciationDepletionAndAmortization { get; init; }
     public required decimal sharebasedcompensation { get; init; }
     public required decimal deferredincometaxexpensebenefit { get; init; }
     public required decimal othernoncashincomeexpense { get; init; }
@@ -98,13 +98,13 @@ public class FullFinancialStatementDto
     public required decimal interestpaidnet { get; init; }
     public required decimal performanceobligationsinarrangements { get; init; }
     public required decimal propertyplantandequipmentusefullife { get; init; }
-    public required decimal depreciation { get; init; }
+    public required decimal Depreciation { get; init; }
     public required decimal weightedaveragenumberdilutedsharesoutstandingadjustment { get; init; }
     public required decimal contractwithcustomerliabilityrevenuerecognized { get; init; }
     public required decimal contractwithcustomerliability { get; init; }
     public required decimal revenueremainingperformanceobligationpercentage { get; init; }
     public required decimal revenueremainingperformanceobligationexpectedtimingofsatisfactionperiod1 { get; init; }
-    public required decimal cash { get; init; }
+    public required decimal Cash { get; init; }
     public required decimal equitysecuritiesfvnicost { get; init; }
     public required decimal equitysecuritiesfvniaccumulatedgrossunrealizedlossbeforetax { get; init; }
     public required decimal equitysecuritiesfvnicurrentandnoncurrent { get; init; }
@@ -289,7 +289,7 @@ public class FullFinancialStatementDto
     public required decimal unrecordedunconditionalpurchaseobligationbalanceonthirdanniversary { get; init; }
     public required decimal unrecordedunconditionalpurchaseobligationbalanceonfourthanniversary { get; init; }
     public required decimal unrecordedunconditionalpurchaseobligationbalanceonfifthanniversary { get; init; }
-    public required decimal unrecordedunconditionalpurchaseobligationdueafterfiveyears { get; init; }
+    public required decimal UnrecordedUnconditionalPurchaseObligationDueAfterFiveYears { get; init; }
     public required decimal UnrecordedUnconditionalPurchaseObligationBalanceSheetAmount { get; init; }
     public required decimal OtherGeneralAndAdministrativeExpense { get; init; }
     public required decimal NonCurrentAssets { get; init; }
