@@ -16,6 +16,12 @@ public class FmpClient(IOptions<FmpClientOptions> fmpClientOptions, HttpClient h
     public Task<List<string>> GetSymbolsWithFinancialStatementsAsync(CancellationToken cancellationToken) =>
         GetWithAuth<List<string>>("financial-statement-symbol-lists", cancellationToken);
 
+    public Task<List<FullFinancialStatementDto>> GetFullFinancialStatementsAsync(string symbol, CancellationToken cancellationToken) =>
+        GetWithAuth<List<FullFinancialStatementDto>>(
+            $"financial-statement-full-as-reported/{symbol}",
+            new Dictionary<string, string?>() { { "period", "annual" } },
+            cancellationToken);
+
     public Task<List<IncomeStatementDto>> GetIncomeStatementsAsync(string symbol, CancellationToken cancellationToken) =>
         GetWithAuth<List<IncomeStatementDto>>(
             $"income-statement/{symbol}",

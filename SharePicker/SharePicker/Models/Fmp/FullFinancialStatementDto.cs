@@ -22,15 +22,15 @@ public class FullFinancialStatementDto
     public required decimal OtherComprehensiveIncomeLossForeignCurrencyTransactionAndTranslationAdjustmentNetOfTax { get; init; }
     public required decimal OtherComprehensiveIncomeLossDerivativeInstrumentGainLossBeforereClassificationAfterTax { get; init; }
     public required decimal OtherComprehensiveIncomeLossDerivativeInstrumentGainLossReclassificationAfterTax { get; init; }
-    public required decimal othercomprehensiveincomelossderivativeinstrumentgainlossafterreclassificationandtax { get; init; }
-    public required decimal othercomprehensiveincomeunrealizedholdinggainlossonsecuritiesarisingduringperiodnetoftax { get; init; }
-    public required decimal othercomprehensiveincomelossreclassificationadjustmentfromaociforsaleofsecuritiesnetoftax { get; init; }
-    public required decimal othercomprehensiveincomelossavailableforsalesecuritiesadjustmentnetoftax { get; init; }
-    public required decimal othercomprehensiveincomelossnetoftaxportionattributabletoparent { get; init; }
-    public required decimal comprehensiveincomenetoftax { get; init; }
-    public required decimal cashandcashequivalentsatcarryingvalue { get; init; }
-    public required decimal marketablesecuritiescurrent { get; init; }
-    public required decimal accountsreceivablenetcurrent { get; init; }
+    public required decimal OtherComprehensiveIncomeLossDerivativeInstrumentGainLossAfterReclassificationAndTax { get; init; }
+    public required decimal OtherComprehensiveIncomeUnrealizedHoldingGainLossOnSecuritiesArisingDuringPeriodNetOfTax { get; init; }
+    public required decimal OtherComprehensiveIncomeLossReclassificationAdjustmentFromAociForSaleOfSecuritiesNetOfTax { get; init; }
+    public required decimal OtherComprehensiveIncomeLossAvailableForSaleSecuritiesAdjustmentNetOfTax { get; init; }
+    public required decimal OtherComprehensiveIncomeLossNetOfTaxPortionAttributableToParent { get; init; }
+    public required decimal ComprehensiveIncomeNetOfTax { get; init; }
+    public required decimal CashAndCashEquivalentsAtCarryingValue { get; init; }
+    public required decimal MarketableSecuritiesCurrent { get; init; }
+    public required decimal AccountsReceivableNetCurrent { get; init; }
     public required decimal inventorynet { get; init; }
     public required decimal nontradereceivablescurrent { get; init; }
     public required decimal otherassetscurrent { get; init; }

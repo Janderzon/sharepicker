@@ -27,6 +27,8 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
                 if (stock.ExchangeShortName == null || stock.ExchangeShortName != "LSE")
                     continue;
 
+                await fmpClient.GetFullFinancialStatementsAsync(stock.Symbol, cancellationToken);
+
                 var balanceSheetStatements = await fmpClient.GetBalanceSheetStatementsAsync(stock.Symbol, cancellationToken);
                 var cashFlowStatements = await fmpClient.GetCashFlowStatementsAsync(stock.Symbol, cancellationToken);
                 var incomeStatements = await fmpClient.GetIncomeStatementsAsync(stock.Symbol, cancellationToken);
