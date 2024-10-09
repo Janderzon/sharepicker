@@ -7,11 +7,14 @@ namespace SharePicker.Services;
 
 public class FmpClient(IOptions<FmpClientOptions> fmpClientOptions, HttpClient httpClient)
 {
-    public Task<List<TradableCompanyDto>> GetTradableCompaniesAsync(CancellationToken cancellationToken) => 
-        GetWithAuth<List<TradableCompanyDto>>("available-traded/list", cancellationToken);
+    public Task<List<StockDto>> GetStocksAsync(CancellationToken cancellationToken) =>
+        GetWithAuth<List<StockDto>>("stock/list", cancellationToken);
 
-    public Task<HashSet<string>> GetSymbolsWithFinancialStatementsAsync(CancellationToken cancellationToken) =>
-        GetWithAuth<HashSet<string>>("financial-statement-symbol-lists", cancellationToken);
+    public Task<List<TradableSymbolDto>> GetTradableSymbolsAsync(CancellationToken cancellationToken) => 
+        GetWithAuth<List<TradableSymbolDto>>("available-traded/list", cancellationToken);
+
+    public Task<List<string>> GetSymbolsWithFinancialStatementsAsync(CancellationToken cancellationToken) =>
+        GetWithAuth<List<string>>("financial-statement-symbol-lists", cancellationToken);
 
     public Task<List<IncomeStatementDto>> GetIncomeStatementsAsync(string symbol, CancellationToken cancellationToken) =>
         GetWithAuth<List<IncomeStatementDto>>(
