@@ -14,14 +14,14 @@ public record IncomeStatementDto
     public required decimal? Eps { get; init; }
     public required decimal? EpsDiluted { get; init; }
 
-    public IncomeStatement ToDomain() => new(
-        DateOnly.ParseExact(Date, "yyyy-MM-dd"),
-        EbitDa - DepreciationAndAmortization,
-        Revenue,
-        GrossProfit,
-        OperatingIncome,
-        IncomeBeforeTax,
-        IncomeBeforeTax - IncomeTaxExpense,
-        Eps,
-        EpsDiluted);
+    //public IncomeStatement ToDomain() => new(
+    //    DateOnly.ParseExact(Date, "yyyy-MM-dd"),
+    //    EbitDa - DepreciationAndAmortization,
+    //    Revenue,
+    //    GrossProfit,
+    //    OperatingIncome,
+    //    IncomeBeforeTax,
+    //    IncomeBeforeTax - IncomeTaxExpense,
+    //    Eps,
+    //    EpsDiluted);
 }

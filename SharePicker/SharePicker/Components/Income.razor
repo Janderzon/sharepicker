@@ -21,8 +21,9 @@
     private record Row(string Name, Func<IncomeStatement, decimal?> ValueFactory);
     private List<Row> _rows = new()
     {
-        // new ("Revenue", incomeStatement => incomeStatement.Revenue),
-        // new ("Gross Profit", incomeStatement => incomeStatement.GrossProfit),
+        new ("Revenue", incomeStatement => incomeStatement.Revenue),
+        new ("Cost Of Sales", incomeStatement => incomeStatement.CostOfSales),
+        new ("Gross Profit", incomeStatement => incomeStatement.GrossProfit),
         // new ("Operating Profit", incomeStatement => incomeStatement.OperatingProfits),
         // new ("Earnings Before Interest And Tax (EBIT)", incomeStatement => incomeStatement.Ebit),
         // new ("Profit Before Tax (PBT)", incomeStatement => incomeStatement.ProfitBeforeTax),

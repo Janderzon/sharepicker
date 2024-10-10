@@ -13,13 +13,13 @@ public class CompanyFilterBuilder
 
     public CompanyFilterBuilder WithMinProfitMargin(decimal percentage)
     {
-        _filters.Add(company => company.Ratios.All(ratios => ratios.EbitPerRevenue * 100 >= percentage));
+        //_filters.Add(company => company.Ratios.All(ratios => ratios.EbitPerRevenue * 100 >= percentage));
         return this;
     }
 
     public CompanyFilterBuilder WithMinReturnOnCapitalEmployed(decimal percentage)
     {
-        _filters.Add(company => company.Ratios.All(ratios => ratios.ReturnOnCapitalEmployed * 100 >= percentage));
+        //_filters.Add(company => company.Ratios.All(ratios => ratios.ReturnOnCapitalEmployed * 100 >= percentage));
         return this;
     }
 
@@ -27,14 +27,14 @@ public class CompanyFilterBuilder
     {
         _filters.Add(company =>
         {
-            var lastProfit = 0m;
+            //var lastProfit = 0m;
             var decresingProfitCount = 0;
-            foreach (var incomeStatement in company.IncomeStatements)
-            {
-                if (incomeStatement.Ebit < lastProfit)
-                    decresingProfitCount++;
-                lastProfit = incomeStatement.Ebit;
-            }
+            //foreach (var incomeStatement in company.IncomeStatements)
+            //{
+            //    if (incomeStatement.Ebit < lastProfit)
+            //        decresingProfitCount++;
+            //    lastProfit = incomeStatement.Ebit;
+            //}
             return decresingProfitCount == 0;
         });
         return this;

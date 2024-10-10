@@ -21,6 +21,7 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
             var symbolsWithFinancialStatements = (await fmpClient.GetSymbolsWithFinancialStatementsAsync(cancellationToken)).ToHashSet();
 
             var companies = new List<Company>();
+            var count = 0;
             foreach (var stock in stocks
                 .Where(stock => tradableSymbols.Contains(stock.Symbol))
                 .Where(stock => symbolsWithFinancialStatements.Contains(stock.Symbol)))
@@ -28,18 +29,21 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
                 if (stock.ExchangeShortName == null || stock.ExchangeShortName != "LSE")
                     continue;
 
-                var fullFinancialStatements = await fmpClient.GetFullFinancialStatementsAsync(stock.Symbol, cancellationToken);
+                var incomeStatements = await fmpClient.GetIncomeStatementsAsync(stock.Symbol, cancellationToken);
+                var balanceSheetStatements = await fmpClient.GetBalanceSheetStatementsAsync(stock.Symbol, cancellationToken);
+                var cashFlowStatements = await fmpClient.GetCashFlowStatementsAsync(stock.Symbol, cancellationToken);
 
-                var ratios = await fmpClient.GetRatiosAsync(stock.Symbol, cancellationToken);
                 companies.Add(new Company(
                     stock.Symbol,
                     stock.Name,
                     stock.ExchangeShortName,
-                    fullFinancialStatements.Select(ExtractBalanceSheetStatement).ToList(),
-                    fullFinancialStatements.Select(ExtractCashFlowStatement).ToList(),
-                    fullFinancialStatements.Select(ExtractIncomStatement).ToList()
+                    incomeStatements.Select(ToDomain).ToList(),
+                    balanceSheetStatements.Select(ToDomain).ToList(),
+                    cashFlowStatements.Select(ToDomain).ToList()
                     //ratios.Select(statement => statement.ToDomain()).ToList()
                     ));
+                if (++count > 5)
+                    break;
             }
 
             _companies = companies;
@@ -48,10 +52,11 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
         }
     }
 
-    private IncomeStatement ExtractIncomStatement(FullFinancialStatementDto dto) => new(
-        DateOnly.ParseExact(dto.Date, "yyyy-MM-dd")
-        //dto.RevenueFromContractWithCustomerExcludingAssessedTax,
-        //dto.GrossProfit,
+    private IncomeStatement ToDomain(IncomeStatementDto dto) => new(
+        DateOnly.ParseExact(dto.Date, "yyyy-MM-dd"),
+        dto.RevenueFromContractWithCustomerExcludingAssessedTax,
+        dto.CostOfGoodsAndServicesSold,
+        dto.GrossProfit
         //dto.OperatingIncomeLoss,
         //dto.income,
         //dto.beforetax,
@@ -60,7 +65,7 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
         //dto.EarningsPerShareDiluted
         );
 
-    private BalanceSheetStatement ExtractBalanceSheetStatement(FullFinancialStatementDto dto) => new(
+    private BalanceSheetStatement ToDomain(BalanceSheetStatementDto dto) => new(
         DateOnly.ParseExact(dto.Date, "yyyy-MM-dd")
         //new Assets(),
         //new Liabilities(),
@@ -68,7 +73,7 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
         //new BalanceSheetSummary()
         );
 
-    private CashFlowStatement ExtractCashFlowStatement(FullFinancialStatementDto dto) => new(
+    private CashFlowStatement ToDomain(CashFlowStatementDto dto) => new(
         DateOnly.ParseExact(dto.Date, "yyyy-MM-dd")
         //new OperationsCashFlow(
         //    dto.OperatingIncomeLoss,

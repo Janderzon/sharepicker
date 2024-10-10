@@ -63,7 +63,7 @@
                     Revenue should also be increasing year on year as it indicates that the EBIT growth is due to an increase in sales rather than cutting costs.
                     One-off gains/costs are not excluded and may account for any spikes/dips in the below chart.
                 </MudText>
-                <ProfitsAndSales ProfitSeries="@_selectedCompany.GetEbitSeries()" SalesSeries="@_selectedCompany.GetRevenueSeries()" />
+                @* <ProfitsAndSales ProfitSeries="@_selectedCompany.GetEbitSeries()" SalesSeries="@_selectedCompany.GetRevenueSeries()" /> *@
             </MudCardContent>
         </MudCard>
         <MudCard>
@@ -78,7 +78,7 @@
                     The profit margin should be consistently at least 10%.
                     Companies with higher profit margins are better placed withstand tempory periods of difficulty that may depress profits.
                 </MudText>
-                <ProfitMargin ProfitMarginSeries="@_selectedCompany.GetEbitPerRevenueSeries()" />
+                @* <ProfitMargin ProfitMarginSeries="@_selectedCompany.GetEbitPerRevenueSeries()" /> *@
             </MudCardContent>
         </MudCard>
         <MudCard>
@@ -117,10 +117,10 @@
                     A company who's profits are not tied to the general economy will make a safer investment.
                     We also want to see that the company is selling more, not just increasing prices.
                 </MudText>
-                <DuPont 
+@*                 <DuPont 
                     RoceSeries="@_selectedCompany.GetRoceSeries()" 
                     CapitalTurnoverSeries="@_selectedCompany.GetCapitalTurnoverSeries()" 
-                    ProfitMarginSeries="@_selectedCompany.GetEbitPerRevenueSeries()"/>
+                    ProfitMarginSeries="@_selectedCompany.GetEbitPerRevenueSeries()"/> *@
             </MudCardContent>
         </MudCard>
     }

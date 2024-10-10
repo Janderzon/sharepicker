@@ -4,9 +4,9 @@ public record Company(
     string Symbol,
     string Name,
     string Exchange,
+    List<IncomeStatement> IncomeStatements,
     List<BalanceSheetStatement> BalanceSheetStatements,
-    List<CashFlowStatement> CashFlowStatements,
-    List<IncomeStatement> IncomeStatements
+    List<CashFlowStatement> CashFlowStatements
     //List<Ratios> Ratios
     )
 {
