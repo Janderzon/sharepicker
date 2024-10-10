@@ -15,7 +15,7 @@ public record IncomeStatementDto
     public required decimal? EpsDiluted { get; init; }
 
     public IncomeStatement ToDomain() => new(
-        DateTimeOffset.ParseExact(Date, "yyyy-MM-dd", null),
+        DateOnly.ParseExact(Date, "yyyy-MM-dd"),
         EbitDa - DepreciationAndAmortization,
         Revenue,
         GrossProfit,

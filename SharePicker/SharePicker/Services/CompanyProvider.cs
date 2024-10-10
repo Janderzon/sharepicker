@@ -31,18 +31,16 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
 
                 var fullFinancialStatements = await fmpClient.GetFullFinancialStatementsAsync(stock.Symbol, cancellationToken);
 
-                var balanceSheetStatements = await fmpClient.GetBalanceSheetStatementsAsync(stock.Symbol, cancellationToken);
-                var cashFlowStatements = await fmpClient.GetCashFlowStatementsAsync(stock.Symbol, cancellationToken);
-                var incomeStatements = await fmpClient.GetIncomeStatementsAsync(stock.Symbol, cancellationToken);
                 var ratios = await fmpClient.GetRatiosAsync(stock.Symbol, cancellationToken);
                 companies.Add(new Company(
                     stock.Symbol,
                     stock.Name,
                     stock.ExchangeShortName,
-                    balanceSheetStatements.Select(statement => statement.ToDomain()).ToList(),
+                    fullFinancialStatements.Select(ExtractBalanceSheetStatement).ToList(),
                     fullFinancialStatements.Select(ExtractCashFlowStatement).ToList(),
-                    fullFinancialStatements.Select(ExtractIncomStatement).ToList(),
-                    ratios.Select(statement => statement.ToDomain()).ToList()));
+                    fullFinancialStatements.Select(ExtractIncomStatement).ToList()
+                    //ratios.Select(statement => statement.ToDomain()).ToList()
+                    ));
             }
 
             _companies = companies;
@@ -52,37 +50,40 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
     }
 
     private IncomeStatement ExtractIncomStatement(FullFinancialStatementDto dto) => new(
-        DateOnly.ParseExact(dto.Date, "yyyy-MM-dd"),
-        dto.RevenueFromContractWithCustomerExcludingAssessedTax,
-        dto.GrossProfit,
-        dto.OperatingIncomeLoss,
-        dto.income,
-        dto.beforetax,
-        dto.AfterTax,
-        dto.EarningsPerShareBasic,
-        dto.EarningsPerShareDiluted);
+        DateOnly.ParseExact(dto.Date, "yyyy-MM-dd")
+        //dto.RevenueFromContractWithCustomerExcludingAssessedTax,
+        //dto.GrossProfit,
+        //dto.OperatingIncomeLoss,
+        //dto.income,
+        //dto.beforetax,
+        //dto.AfterTax,
+        //dto.EarningsPerShareBasic,
+        //dto.EarningsPerShareDiluted
+        );
 
     private BalanceSheetStatement ExtractBalanceSheetStatement(FullFinancialStatementDto dto) => new(
-        DateOnly.ParseExact(dto.Date, "yyyy-MM-dd"),
-        new Assets(),
-        new Liabilities(),
-        new Equity(),
-        new BalanceSheetSummary());
+        DateOnly.ParseExact(dto.Date, "yyyy-MM-dd")
+        //new Assets(),
+        //new Liabilities(),
+        //new Equity(),
+        //new BalanceSheetSummary()
+        );
 
     private CashFlowStatement ExtractCashFlowStatement(FullFinancialStatementDto dto) => new(
-        DateOnly.ParseExact(dto.Date, "yyyy-MM-dd"),
-        new OperationsCashFlow(
-            dto.OperatingIncomeLoss,
-            dto.DepreciationDepletionAndAmortization,
-            dto,
-            dto,
-            dto,
-            dto,
-            dto,
-            dto,
-            dto,
-            ),
-        new InvestingCashFlow(),
-        new FinancingCashFlow(),
-        dto);
+        DateOnly.ParseExact(dto.Date, "yyyy-MM-dd")
+        //new OperationsCashFlow(
+        //    dto.OperatingIncomeLoss,
+        //    dto.DepreciationDepletionAndAmortization,
+        //    dto,
+        //    dto,
+        //    dto,
+        //    dto,
+        //    dto,
+        //    dto,
+        //    dto,
+        //    ),
+        //new InvestingCashFlow(),
+        //new FinancingCashFlow(),
+        //dto
+        );
 }
