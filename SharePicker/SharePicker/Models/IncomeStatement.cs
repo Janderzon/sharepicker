@@ -7,7 +7,10 @@ public record IncomeStatement(
     decimal GrossProfit,
     decimal ResearchAndDevelopmentCosts,
     decimal AdministrativeCosts,
-    decimal DistributionCosts
+    decimal DistributionCosts,
+    decimal OtherCosts,
+    decimal FinanceIncome,
+    decimal FinanceExpense
     //decimal OperatingProfit,
     //decimal ProfitBeforeInterestAndTax,
     //decimal ProfitBeforeTax,

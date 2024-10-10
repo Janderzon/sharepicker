@@ -14,6 +14,8 @@ public record IncomeStatementDto
     public required decimal OtherExpenses { get; init; }
     public required decimal OperatingExpenses { get; init; }
     public required decimal CostAndExpenses { get; init; }
+    public required decimal InterestIncome { get; init; }
+    public required decimal InterestExpense { get; init; }
     public required decimal DepreciationAndAmortization { get; init; }
     public required decimal EbitDa { get; init; }
     public required decimal OperatingIncome { get; init; }
