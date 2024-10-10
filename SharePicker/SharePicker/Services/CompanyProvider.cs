@@ -70,8 +70,23 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
         dto.EpsDiluted);
 
     private BalanceSheetStatement ToDomain(BalanceSheetStatementDto dto) => new(
-        DateOnly.ParseExact(dto.Date, "yyyy-MM-dd")
-        //new Assets(),
+        DateOnly.ParseExact(dto.Date, "yyyy-MM-dd"),
+        new Assets(
+            new CurrentAssets(
+                dto.CashAndCashEquivalents,
+                dto.ShortTermInvestments,
+                dto.NetReceivables,
+                dto.Inventory,
+                dto.OtherCurrentAssets,
+                dto.TotalCurrentAssets),
+            new NonCurrentAssets(
+                dto.PropertyPlantEquipmentNet,
+                dto.Goodwill,
+                dto.IntangibleAssets,
+                dto.LongTermInvestments,
+                dto.TaxAssets,
+                dto.OtherNonCurrentAssets,
+                dto.TotalNonCurrentAssets))
         //new Liabilities(),
         //new Equity(),
         //new BalanceSheetSummary()

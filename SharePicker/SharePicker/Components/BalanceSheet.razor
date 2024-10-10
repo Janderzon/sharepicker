@@ -27,62 +27,58 @@
     private record Row(string Name, Func<BalanceSheetStatement, decimal> ValueFactory, Group Group);
     private List<Row> _rows = new()
     {
-        // new (
-        //    "Cash And Cash Equivalents",
-        //    balanceSheetStatement => balanceSheetStatement.Assets.CurrentAssets.CashAndCashEquivalents,
-        //    Group.CurrentAssets),
-        // new (
-        //    "Short-Term Investments",
-        //    balanceSheetStatement => balanceSheetStatement.Assets.CurrentAssets.ShortTermInvestments,
-        //    Group.CurrentAssets),
-        // new (
-        //    "Cash And Short-Term Investments",
-        //    balanceSheetStatement => balanceSheetStatement.Assets.CurrentAssets.CashAndShortTermInvestments,
-        //    Group.CurrentAssets),
-        // new (
-        //    "Net Receivables",
-        //    balanceSheetStatement => balanceSheetStatement.Assets.CurrentAssets.NetReceivables,
-        //    Group.CurrentAssets),
-        // new (
-        //    "Inventory",
-        //    balanceSheetStatement => balanceSheetStatement.Assets.CurrentAssets.Inventory,
-        //    Group.CurrentAssets),
-        // new (
-        //    "Other Current Assets",
-        //    balanceSheetStatement => balanceSheetStatement.Assets.CurrentAssets.OtherCurrentAssets,
-        //    Group.CurrentAssets),
-        // new (
-        //    "Total Current Assets",
-        //    balanceSheetStatement => balanceSheetStatement.Assets.CurrentAssets.TotalCurrentAssets,
-        //    Group.CurrentAssets),
-        // new (
-        //    "Property And Plant Equipment Net",
-        //    balanceSheetStatement => balanceSheetStatement.Assets.NonCurrentAssets.PropertyPlantEquipmentNet,
-        //    Group.NonCurrentAssets),
-        // new (
-        //    "Goodwill",
-        //    balanceSheetStatement => balanceSheetStatement.Assets.NonCurrentAssets.Goodwill,
-        //    Group.NonCurrentAssets),
-        // new (
-        //    "Intangible Assets",
-        //    balanceSheetStatement => balanceSheetStatement.Assets.NonCurrentAssets.IntangibleAssets,
-        //    Group.NonCurrentAssets),
-        // new (
-        //    "Long-Term Investments",
-        //    balanceSheetStatement => balanceSheetStatement.Assets.NonCurrentAssets.LongTermInvestments,
-        //    Group.NonCurrentAssets),
-        // new (
-        //    "Tax Assets",
-        //    balanceSheetStatement => balanceSheetStatement.Assets.NonCurrentAssets.TaxAssets,
-        //    Group.NonCurrentAssets),
-        // new (
-        //    "Other Non-Current Assets",
-        //    balanceSheetStatement => balanceSheetStatement.Assets.NonCurrentAssets.OtherNonCurrentAssets,
-        //    Group.NonCurrentAssets),
-        // new (
-        //    "Total Non-Current Assets",
-        //    balanceSheetStatement => balanceSheetStatement.Assets.NonCurrentAssets.TotalNonCurrentAssets,
-        //    Group.NonCurrentAssets),
+        new (
+           "Cash And Cash Equivalents",
+           balanceSheetStatement => balanceSheetStatement.Assets.CurrentAssets.CashAndCashEquivalents,
+           Group.CurrentAssets),
+        new (
+           "Short-Term Investments",
+           balanceSheetStatement => balanceSheetStatement.Assets.CurrentAssets.ShortTermInvestments,
+           Group.CurrentAssets),
+        new (
+           "Net Receivables",
+           balanceSheetStatement => balanceSheetStatement.Assets.CurrentAssets.NetReceivables,
+           Group.CurrentAssets),
+        new (
+           "Inventory",
+           balanceSheetStatement => balanceSheetStatement.Assets.CurrentAssets.Inventory,
+           Group.CurrentAssets),
+        new (
+           "Other Current Assets",
+           balanceSheetStatement => balanceSheetStatement.Assets.CurrentAssets.OtherCurrentAssets,
+           Group.CurrentAssets),
+        new (
+           "Total Current Assets",
+           balanceSheetStatement => balanceSheetStatement.Assets.CurrentAssets.TotalCurrentAssets,
+           Group.CurrentAssets),
+        new (
+           "Property And Plant Equipment Net",
+           balanceSheetStatement => balanceSheetStatement.Assets.NonCurrentAssets.PropertyPlantEquipmentNet,
+           Group.NonCurrentAssets),
+        new (
+           "Goodwill",
+           balanceSheetStatement => balanceSheetStatement.Assets.NonCurrentAssets.Goodwill,
+           Group.NonCurrentAssets),
+        new (
+           "Intangible Assets",
+           balanceSheetStatement => balanceSheetStatement.Assets.NonCurrentAssets.IntangibleAssets,
+           Group.NonCurrentAssets),
+        new (
+           "Long-Term Investments",
+           balanceSheetStatement => balanceSheetStatement.Assets.NonCurrentAssets.LongTermInvestments,
+           Group.NonCurrentAssets),
+        new (
+           "Tax Assets",
+           balanceSheetStatement => balanceSheetStatement.Assets.NonCurrentAssets.TaxAssets,
+           Group.NonCurrentAssets),
+        new (
+           "Other Non-Current Assets",
+           balanceSheetStatement => balanceSheetStatement.Assets.NonCurrentAssets.OtherNonCurrentAssets,
+           Group.NonCurrentAssets),
+        new (
+           "Total Non-Current Assets",
+           balanceSheetStatement => balanceSheetStatement.Assets.NonCurrentAssets.TotalNonCurrentAssets,
+           Group.NonCurrentAssets),
         // new (
         //    "Other Assets",
         //    balanceSheetStatement => balanceSheetStatement.Assets.OtherAssets,

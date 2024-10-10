@@ -48,8 +48,8 @@ public record BalanceSheetStatementDto
     public required decimal TotalDebt { get; init; }
     public required decimal NetDebt { get; init; }
 
-    public BalanceSheetStatement ToDomain() => new(
-        DateOnly.ParseExact(Date, "yyyy-MM-dd")
+    //public BalanceSheetStatement ToDomain() => new(
+    //    DateOnly.ParseExact(Date, "yyyy-MM-dd")
         //new Assets(
         //    new CurrentAssets(
         //        CashAndCashEquivalents,
@@ -102,5 +102,5 @@ public record BalanceSheetStatementDto
         //    TotalInvestments,
         //    TotalDebt,
         //    NetDebt)
-        );
+        //);
 }
