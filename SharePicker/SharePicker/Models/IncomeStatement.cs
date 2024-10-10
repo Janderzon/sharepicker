@@ -4,7 +4,10 @@ public record IncomeStatement(
     DateOnly Date,
     decimal Revenue,
     decimal CostOfSales,
-    decimal GrossProfit
+    decimal GrossProfit,
+    decimal ResearchAndDevelopmentCosts,
+    decimal AdministrativeCosts,
+    decimal DistributionCosts
     //decimal OperatingProfit,
     //decimal ProfitBeforeInterestAndTax,
     //decimal ProfitBeforeTax,

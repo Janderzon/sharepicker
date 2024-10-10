@@ -15,13 +15,13 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
         {
             using var timer = new PeriodicTimer(TimeSpan.FromDays(1));
             var stocks = await fmpClient.GetStocksAsync(cancellationToken);
+            stocks = stocks.Where(stock => stock.Symbol == "DOM.L").ToList();
             var tradableSymbols = (await fmpClient.GetTradableSymbolsAsync(cancellationToken))
                 .Select(s => s.Symbol)
                 .ToHashSet();
             var symbolsWithFinancialStatements = (await fmpClient.GetSymbolsWithFinancialStatementsAsync(cancellationToken)).ToHashSet();
 
             var companies = new List<Company>();
-            var count = 0;
             foreach (var stock in stocks
                 .Where(stock => tradableSymbols.Contains(stock.Symbol))
                 .Where(stock => symbolsWithFinancialStatements.Contains(stock.Symbol)))
@@ -42,8 +42,6 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
                     cashFlowStatements.Select(ToDomain).ToList()
                     //ratios.Select(statement => statement.ToDomain()).ToList()
                     ));
-                if (++count > 5)
-                    break;
             }
 
             _companies = companies;
@@ -54,9 +52,12 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
 
     private IncomeStatement ToDomain(IncomeStatementDto dto) => new(
         DateOnly.ParseExact(dto.Date, "yyyy-MM-dd"),
-        dto.RevenueFromContractWithCustomerExcludingAssessedTax,
-        dto.CostOfGoodsAndServicesSold,
-        dto.GrossProfit
+        dto.Revenue,
+        dto.CostOfRevenue,
+        dto.GrossProfit,
+        dto.ResearchAndDevelopmentExpenses,
+        dto.GeneralAndAdministrativeExpenses,
+        dto.SellingAndMarketingExpenses
         //dto.OperatingIncomeLoss,
         //dto.income,
         //dto.beforetax,
