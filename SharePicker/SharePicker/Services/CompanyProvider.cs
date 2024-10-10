@@ -1,6 +1,5 @@
 ﻿using SharePicker.Models;
 using SharePicker.Models.Fmp;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SharePicker.Services;
 
