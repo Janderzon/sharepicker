@@ -56,18 +56,18 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
         dto.CostOfRevenue,
         dto.GrossProfit,
         dto.ResearchAndDevelopmentExpenses,
-        dto.GeneralAndAdministrativeExpenses,
         dto.SellingAndMarketingExpenses,
-        dto.OtherExpenses,
+        dto.GeneralAndAdministrativeExpenses,
+        dto.OperatingIncome,
+        dto.EbitDa - dto.DepreciationAndAmortization - dto.InterestIncome,
         dto.InterestIncome,
-        dto.InterestExpense
-        //dto.OperatingIncomeLoss,
-        //dto.income,
-        //dto.beforetax,
-        //dto.AfterTax,
-        //dto.EarningsPerShareBasic,
-        //dto.EarningsPerShareDiluted
-        );
+        dto.InterestExpense,
+        dto.IncomeBeforeTax,
+        dto.IncomeTaxExpense,
+        dto.IncomeBeforeTax - dto.IncomeTaxExpense,
+        dto.NetIncome,
+        dto.Eps,
+        dto.EpsDiluted);
 
     private BalanceSheetStatement ToDomain(BalanceSheetStatementDto dto) => new(
         DateOnly.ParseExact(dto.Date, "yyyy-MM-dd")

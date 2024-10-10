@@ -6,15 +6,18 @@ public record IncomeStatement(
     decimal CostOfSales,
     decimal GrossProfit,
     decimal ResearchAndDevelopmentCosts,
-    decimal AdministrativeCosts,
     decimal DistributionCosts,
-    decimal OtherCosts,
+    decimal AdministrativeCosts,
+    decimal OperatingProfit,
+    decimal ProfitBeforeIncomeAndTaxation,
     decimal FinanceIncome,
-    decimal FinanceExpense
-    //decimal OperatingProfit,
-    //decimal ProfitBeforeInterestAndTax,
-    //decimal ProfitBeforeTax,
-    //decimal ProfitAfterTax,
-    //decimal? EarningsPerShare,
-    //decimal? DilutedEarningsPerShare
-    );
+    decimal FinanceExpense,
+    decimal ProfitBeforeTax,
+    decimal Taxation,
+    decimal ProfitAfterTax,
+    decimal NetProfit,
+    decimal? EarningsPerShare,
+    decimal? DilutedEarningsPerShare)
+{
+    public decimal ProfitTotal => GrossProfit - ResearchAndDevelopmentCosts - AdministrativeCosts - DistributionCosts;
+}
