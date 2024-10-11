@@ -124,6 +124,14 @@
            balanceSheetStatement => balanceSheetStatement.Liabilities.NonCurrentLiabilities.DeferredTaxLiabilitiesNonCurrent,
            Group.NonCurrentLiabilities),
         new (
+           "Minority Interest",
+           balanceSheetStatement => balanceSheetStatement.Liabilities.NonCurrentLiabilities.MinorityInterest,
+           Group.NonCurrentLiabilities),
+        new (
+           "Capital Lease Obligations",
+           balanceSheetStatement => balanceSheetStatement.Liabilities.NonCurrentLiabilities.CapitalLeaseObligations,
+           Group.NonCurrentLiabilities),
+        new (
            "Other Non-Current Liabilities",
            balanceSheetStatement => balanceSheetStatement.Liabilities.NonCurrentLiabilities.OtherNonCurrentLiabilities,
            Group.NonCurrentLiabilities),
@@ -131,70 +139,54 @@
            "Total Non-Current Liabilities",
            balanceSheetStatement => balanceSheetStatement.Liabilities.NonCurrentLiabilities.TotalNonCurrentLiabilities,
            Group.NonCurrentLiabilities),
-        // new (
-        //    "Other Liabilities",
-        //    balanceSheetStatement => balanceSheetStatement.Liabilities.OtherLiabilities,
-        //    Group.LiabilitiesSummary),
-        // new (
-        //    "Capital Lease Obligations",
-        //    balanceSheetStatement => balanceSheetStatement.Liabilities.CapitalLeaseObligations,
-        //    Group.LiabilitiesSummary),
-        // new (
-        //    "Total Liabilities",
-        //    balanceSheetStatement => balanceSheetStatement.Liabilities.TotalLiabilities,
-        //    Group.LiabilitiesSummary),
-        // new (
-        //    "Preferred Stock",
-        //    balanceSheetStatement => balanceSheetStatement.Equity.PreferredStock,
-        //    Group.Equity),
-        // new (
-        //    "Common Stock",
-        //    balanceSheetStatement => balanceSheetStatement.Equity.CommonStock,
-        //    Group.Equity),
-        // new (
-        //    "Retained Earnings",
-        //    balanceSheetStatement => balanceSheetStatement.Equity.ReatainedEarnings,
-        //    Group.Equity),
-        // new (
-        //    "Accumulated Other Comprehensive Income Loss",
-        //    balanceSheetStatement => balanceSheetStatement.Equity.AccumulatedOtherComprehensiveIncomeLoss,
-        //    Group.Equity),
-        // new (
-        //    "Other Total Stockholders Equity",
-        //    balanceSheetStatement => balanceSheetStatement.Equity.OtherTotalStockholdersEquity,
-        //    Group.Equity),
-        // new (
-        //    "Total Stockholders Equity",
-        //    balanceSheetStatement => balanceSheetStatement.Equity.TotalStockholdersEquity,
-        //    Group.Equity),
-        // new (
-        //    "Total Equity",
-        //    balanceSheetStatement => balanceSheetStatement.Equity.TotalEquity,
-        //    Group.Equity),
-        // new (
-        //    "Total Liabilities And Stockholders Equity",
-        //    balanceSheetStatement => balanceSheetStatement.Summary.TotalLiabilitiesAndStockholdersEquity,
-        //    Group.Summary),
-        // new (
-        //    "Minority Interest",
-        //    balanceSheetStatement => balanceSheetStatement.Summary.MinorityInterest,
-        //    Group.Summary),
-        // new (
-        //    "Total Liabilities And Total Equity",
-        //    balanceSheetStatement => balanceSheetStatement.Summary.TotalLiabilitiesAndTotalEquity,
-        //    Group.Summary),
-        // new (
-        //    "Total Investments",
-        //    balanceSheetStatement => balanceSheetStatement.Summary.TotalInvestments,
-        //    Group.Summary),
-        // new (
-        //    "Total Debt",
-        //    balanceSheetStatement => balanceSheetStatement.Summary.TotalDebt,
-        //    Group.Summary),
-        // new (
-        //    "Net Debt",
-        //    balanceSheetStatement => balanceSheetStatement.Summary.NetDebt,
-        //    Group.Summary),
+        new (
+           "Other Liabilities",
+           balanceSheetStatement => balanceSheetStatement.Liabilities.OtherLiabilities,
+           Group.LiabilitiesSummary),
+        new (
+           "Total Liabilities",
+           balanceSheetStatement => balanceSheetStatement.Liabilities.TotalLiabilities,
+           Group.LiabilitiesSummary),
+        new (
+           "Preferred Stock",
+           balanceSheetStatement => balanceSheetStatement.Equity.PreferredStock,
+           Group.Equity),
+        new (
+           "Common Stock",
+           balanceSheetStatement => balanceSheetStatement.Equity.CommonStock,
+           Group.Equity),
+        new (
+           "Retained Earnings",
+           balanceSheetStatement => balanceSheetStatement.Equity.ReatainedEarnings,
+           Group.Equity),
+        new (
+           "Accumulated Other Comprehensive Income Loss",
+           balanceSheetStatement => balanceSheetStatement.Equity.AccumulatedOtherComprehensiveIncomeLoss,
+           Group.Equity),
+        new (
+           "Other Total Stockholders Equity",
+           balanceSheetStatement => balanceSheetStatement.Equity.OtherTotalStockholdersEquity,
+           Group.Equity),
+        new (
+           "Total Stockholders Equity",
+           balanceSheetStatement => balanceSheetStatement.Equity.TotalStockholdersEquity,
+           Group.Equity),
+        new (
+           "Total Equity",
+           balanceSheetStatement => balanceSheetStatement.Equity.TotalEquity,
+           Group.Equity),
+        new (
+           "Total Investments",
+           balanceSheetStatement => balanceSheetStatement.Summary.TotalInvestments,
+           Group.Summary),
+        new (
+           "Total Debt",
+           balanceSheetStatement => balanceSheetStatement.Summary.TotalDebt,
+           Group.Summary),
+        new (
+           "Net Debt",
+           balanceSheetStatement => balanceSheetStatement.Summary.NetDebt,
+           Group.Summary),
     };
 
     [Parameter]

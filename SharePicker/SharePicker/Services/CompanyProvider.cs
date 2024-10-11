@@ -94,18 +94,31 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
                 dto.AccountPayables,
                 dto.ShortTermDebt,
                 dto.TaxPayables,
-                dto.DeferredRevenue,
+                dto.DeferredRevenue - dto.TaxPayables,
                 dto.OtherCurrentLiabilities,
                 dto.TotalCurrentLiabilities),
             new NonCurrentLiabilities(
                 dto.LongTermDebt,
                 dto.DeferredRevenueNonCurrent,
                 dto.DeferredTaxLiabilitiesNonCurrent,
+                dto.MinorityInterest,
+                dto.CapitalLeaseObligations,
                 dto.OtherNonCurrentLiabilities,
-                dto.TotalNonCurrentLiabilities))
-        //new Equity(),
-        //new BalanceSheetSummary()
-        );
+                dto.TotalNonCurrentLiabilities),
+            dto.OtherLiabilities,
+            dto.TotalLiabilities),
+        new Equity(
+            dto.PreferredStock,
+            dto.CommonStock,
+            dto.RetainedEarnings,
+            dto.AccumulatedOtherComprehensiveIncomeLoss,
+            dto.OtherTotalStockholdersEquity,
+            dto.TotalStockholdersEquity,
+            dto.TotalEquity),
+        new BalanceSheetSummary(
+            dto.TotalInvestments,
+            dto.TotalDebt,
+            dto.NetDebt));
 
     private CashFlowStatement ToDomain(CashFlowStatementDto dto) => new(
         DateOnly.ParseExact(dto.Date, "yyyy-MM-dd")

@@ -3,10 +3,9 @@
 public record BalanceSheetStatement(
     DateOnly Date,
     Assets Assets,
-    Liabilities Liabilities
-    //Equity Equity,
-    //BalanceSheetSummary Summary
-    );
+    Liabilities Liabilities,
+    Equity Equity,
+    BalanceSheetSummary Summary);
 
 public record Assets(
     CurrentAssets CurrentAssets,
@@ -33,11 +32,9 @@ public record NonCurrentAssets(
 
 public record Liabilities(
     CurrentLiabilities CurrentLiabilities,
-    NonCurrentLiabilities NonCurrentLiabilities
-    //decimal OtherLiabilities,
-    //decimal CapitalLeaseObligations,
-    //decimal TotalLiabilities
-    );
+    NonCurrentLiabilities NonCurrentLiabilities,
+    decimal OtherLiabilities,
+    decimal TotalLiabilities);
 
 public record CurrentLiabilities(
     decimal AccountPayables,
@@ -51,22 +48,21 @@ public record NonCurrentLiabilities(
     decimal LongTermDebt,
     decimal DeferredRevenueNonCurrent,
     decimal DeferredTaxLiabilitiesNonCurrent,
+    decimal MinorityInterest,
+    decimal CapitalLeaseObligations,
     decimal OtherNonCurrentLiabilities,
     decimal TotalNonCurrentLiabilities);
 
-//public record Equity(
-//    decimal PreferredStock,
-//    decimal CommonStock,
-//    decimal ReatainedEarnings,
-//    decimal AccumulatedOtherComprehensiveIncomeLoss,
-//    decimal OtherTotalStockholdersEquity,
-//    decimal TotalStockholdersEquity,
-//    decimal TotalEquity);
+public record Equity(
+    decimal PreferredStock,
+    decimal CommonStock,
+    decimal ReatainedEarnings,
+    decimal AccumulatedOtherComprehensiveIncomeLoss,
+    decimal OtherTotalStockholdersEquity,
+    decimal TotalStockholdersEquity,
+    decimal TotalEquity);
 
-//public record BalanceSheetSummary(
-//    decimal TotalLiabilitiesAndStockholdersEquity,
-//    decimal MinorityInterest,
-//    decimal TotalLiabilitiesAndTotalEquity,
-//    decimal TotalInvestments,
-//    decimal TotalDebt,
-//    decimal NetDebt);
+public record BalanceSheetSummary(
+    decimal TotalInvestments,
+    decimal TotalDebt,
+    decimal NetDebt);
