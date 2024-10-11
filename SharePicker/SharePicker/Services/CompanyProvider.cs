@@ -96,7 +96,13 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
                 dto.TaxPayables,
                 dto.DeferredRevenue,
                 dto.OtherCurrentLiabilities,
-                dto.TotalCurrentLiabilities))
+                dto.TotalCurrentLiabilities),
+            new NonCurrentLiabilities(
+                dto.LongTermDebt,
+                dto.DeferredRevenueNonCurrent,
+                dto.DeferredTaxLiabilitiesNonCurrent,
+                dto.OtherNonCurrentLiabilities,
+                dto.TotalNonCurrentLiabilities))
         //new Equity(),
         //new BalanceSheetSummary()
         );

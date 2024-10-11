@@ -32,8 +32,8 @@ public record NonCurrentAssets(
     decimal TotalNonCurrentAssets);
 
 public record Liabilities(
-    CurrentLiabilities CurrentLiabilities
-    //NonCurrentLiabilities NonCurrentLiabilities,
+    CurrentLiabilities CurrentLiabilities,
+    NonCurrentLiabilities NonCurrentLiabilities
     //decimal OtherLiabilities,
     //decimal CapitalLeaseObligations,
     //decimal TotalLiabilities
@@ -47,12 +47,12 @@ public record CurrentLiabilities(
     decimal OtherCurrentLiabilities,
     decimal TotalCurrentLiabilities);
 
-//public record NonCurrentLiabilities(
-//    decimal LongTermDebt,
-//    decimal DeferredRevenueNonCurrent,
-//    decimal DeferredTaxLiabilitiesNonCurrent,
-//    decimal OtherNonCurrentLiabilities,
-//    decimal TotalNonCurrentLiabilities);
+public record NonCurrentLiabilities(
+    decimal LongTermDebt,
+    decimal DeferredRevenueNonCurrent,
+    decimal DeferredTaxLiabilitiesNonCurrent,
+    decimal OtherNonCurrentLiabilities,
+    decimal TotalNonCurrentLiabilities);
 
 //public record Equity(
 //    decimal PreferredStock,
