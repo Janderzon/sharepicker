@@ -30,8 +30,8 @@ public record CashFlowStatementDto
     public required decimal OperatingCashFlow { get; init; }
     public required decimal CapitalExpenditure { get; init; }
 
-    public CashFlowStatement ToDomain() => new(
-        DateOnly.ParseExact(Date, "yyyy-MM-dd")
+    //public CashFlowStatement ToDomain() => new(
+    //    DateOnly.ParseExact(Date, "yyyy-MM-dd")
         //new OperationsCashFlow(
         //    NetIncome,
         //    DepreciationAndAmortization,
@@ -66,5 +66,5 @@ public record CashFlowStatementDto
         //    OtherFinancingActivites,
         //    NetCashUsedProvidedByFinancingActivities),
         //NetChangeInCash
-        );
+        //);
 }

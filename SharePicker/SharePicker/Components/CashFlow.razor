@@ -29,17 +29,17 @@
     private List<Row> _rows = new()
     {
         // new ("Operating Profit", cashFlowStatement => cashFlowStatement.OperationsCashFlow.OperatingProfit, Group.OperatingCashFlow),
-        // new ("Depreciation & Amortisation", cashFlowStatement => cashFlowStatement.OperationsCashFlow.DepreciationAndAmortisation, Group.OperatingCashFlow),
+        new ("Depreciation & Amortisation", cashFlowStatement => cashFlowStatement.OperationsCashFlow.DepreciationAndAmortisation, Group.OperatingCashFlow),
         // new ("Profit On Disposals", cashFlowStatement => cashFlowStatement.OperationsCashFlow.ProfitOnDisposals, Group.OperatingCashFlow),
-        // new ("Change In Stock", cashFlowStatement => cashFlowStatement.OperationsCashFlow.ChangeInStock, Group.OperatingCashFlow),
-        // new ("Change In Debtors", cashFlowStatement => cashFlowStatement.OperationsCashFlow.ChangeInDebtors, Group.OperatingCashFlow),
+        new ("Change In Stock", cashFlowStatement => cashFlowStatement.OperationsCashFlow.ChangeInStock, Group.OperatingCashFlow),
+        new ("Change In Debtors", cashFlowStatement => cashFlowStatement.OperationsCashFlow.ChangeInDebtors, Group.OperatingCashFlow),
         // new ("Change In Creditors", cashFlowStatement => cashFlowStatement.OperationsCashFlow.ChangeInCreditors, Group.OperatingCashFlow),
         // new ("Change In Provisions", cashFlowStatement => cashFlowStatement.OperationsCashFlow.ChangeInProvisions, Group.OperatingCashFlow),
-        // new ("Change In Working Capital", cashFlowStatement => cashFlowStatement.OperationsCashFlow.ChangeInWorkingCapital, Group.OperatingCashFlow),
+        new ("Change In Working Capital", cashFlowStatement => cashFlowStatement.OperationsCashFlow.ChangeInWorkingCapital, Group.OperatingCashFlow),
         // new ("Other (Operating)", cashFlowStatement => cashFlowStatement.OperationsCashFlow.Other, Group.OperatingCashFlow),
         // new ("Operating Cash Flow", cashFlowStatement => cashFlowStatement.OperationsCashFlow.OperatingCashFlow, Group.OperatingCashFlow),
         // new ("Tax Paid", cashFlowStatement => cashFlowStatement.OperationsCashFlow.TaxPaid, Group.OperatingCashFlow),
-        // new ("Net Cash From Operations", cashFlowStatement => cashFlowStatement.OperationsCashFlow.NetCashFlow, Group.OperatingCashFlow),
+        new ("Net Cash From Operations", cashFlowStatement => cashFlowStatement.OperationsCashFlow.NetCashFromOperations, Group.OperatingCashFlow),
         // new ("Capital Expenditure", cashFlowStatement => cashFlowStatement.InvestingCashFlow.CapitalExpenditure, Group.InvestingCashFlow),
         // new ("Sale Of Fixed Assets", cashFlowStatement => cashFlowStatement.InvestingCashFlow.SaleOfFixedAssets, Group.InvestingCashFlow),
         // new ("Acquisitions", cashFlowStatement => cashFlowStatement.InvestingCashFlow.Aquisitions, Group.InvestingCashFlow),
@@ -48,7 +48,7 @@
         // new ("Other Investments Received", cashFlowStatement => cashFlowStatement.InvestingCashFlow.OtherInvestmentsReceived, Group.InvestingCashFlow),
         // new ("Dividends From Joint Ventures", cashFlowStatement => cashFlowStatement.InvestingCashFlow.DividendsFromJointVentures, Group.InvestingCashFlow),
         // new ("Other (Investing)", cashFlowStatement => cashFlowStatement.InvestingCashFlow.Other, Group.InvestingCashFlow),
-        // new ("Net Cash From Investing", cashFlowStatement => cashFlowStatement.InvestingCashFlow.NetCashFlow, Group.InvestingCashFlow),
+        new ("Net Cash From Investing", cashFlowStatement => cashFlowStatement.InvestingCashFlow.NetCashFromInvesting, Group.InvestingCashFlow),
         // new ("New Share Issues", cashFlowStatement => cashFlowStatement.FinancingCashFlow.NewShareIssues, Group.FinancingCashFlow),
         // new ("Share Buyback", cashFlowStatement => cashFlowStatement.FinancingCashFlow.ShareBuyBack, Group.FinancingCashFlow),
         // new ("New Borrowing", cashFlowStatement => cashFlowStatement.FinancingCashFlow.NewBorrowing, Group.FinancingCashFlow),
@@ -57,8 +57,8 @@
         // new ("Dividends Paid To Minorities", cashFlowStatement => cashFlowStatement.FinancingCashFlow.DividendsPaidToMinorities, Group.FinancingCashFlow),
         // new ("Interest Paid", cashFlowStatement => cashFlowStatement.FinancingCashFlow.InterestPaid, Group.FinancingCashFlow),
         // new ("Other (Financing)", cashFlowStatement => cashFlowStatement.FinancingCashFlow.Other, Group.FinancingCashFlow),
-        // new ("Net Cash From Financing", cashFlowStatement => cashFlowStatement.FinancingCashFlow.NetCashFlow, Group.FinancingCashFlow),
-        // new ("Net Change In Cash", cashFlowStatement => cashFlowStatement.NetCashFlow, Group.Summary)
+        new ("Net Cash From Financing", cashFlowStatement => cashFlowStatement.FinancingCashFlow.NetCashFromFinancing, Group.FinancingCashFlow),
+        new ("Net Change In Cash", cashFlowStatement => cashFlowStatement.NetChangeInCash, Group.Summary)
     };
 
     [Parameter]
