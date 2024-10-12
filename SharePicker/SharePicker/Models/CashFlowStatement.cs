@@ -23,12 +23,9 @@ public record OperationsCashFlow(
 
 public record InvestingCashFlow(
     decimal CapitalExpenditure,
-    //decimal SaleOfFixedAssets,
-    //decimal Aquisitions,
-    //decimal SaleOfBusinesses,
-    //decimal InterestReceived,
-    //decimal OtherInvestmentsReceived,
-    //decimal DividendsFromJointVentures,
+    decimal Aquisitions,
+    decimal PurchasesOfInvestments,
+    decimal SaleOrMaturityOfInvestments,
     decimal OtherInvestingActivities,
     decimal NetCashFromInvesting);
 
