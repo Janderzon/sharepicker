@@ -130,6 +130,7 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
             dto.NetCashProvidedByOperatingActivities),
         new InvestingCashFlow(
             dto.CapitalExpenditure,
+            dto.OtherInvestingActivites,
             dto.NetCashUsedForInvestingActivites),
         new FinancingCashFlow(
             dto.CommonStockIssued,

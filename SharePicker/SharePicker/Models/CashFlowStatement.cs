@@ -29,15 +29,13 @@ public record InvestingCashFlow(
     //decimal InterestReceived,
     //decimal OtherInvestmentsReceived,
     //decimal DividendsFromJointVentures,
-    //decimal Other,
+    decimal OtherInvestingActivities,
     decimal NetCashFromInvesting);
 
 public record FinancingCashFlow(
     decimal NewShareIssues,
     decimal ShareBuyBack,
-    //decimal NewBorrowing,
     decimal RepaymentOfBorrowing,
     decimal DividendsPaid,
-    //decimal InterestPaid,
     decimal OtherFinancingActivities,
     decimal NetCashFromFinancing);
