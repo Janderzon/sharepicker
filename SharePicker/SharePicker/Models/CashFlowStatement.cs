@@ -22,7 +22,7 @@ public record OperationsCashFlow(
     decimal NetCashFromOperations);
 
 public record InvestingCashFlow(
-    //decimal CapitalExpenditure,
+    decimal CapitalExpenditure,
     //decimal SaleOfFixedAssets,
     //decimal Aquisitions,
     //decimal SaleOfBusinesses,
@@ -33,12 +33,11 @@ public record InvestingCashFlow(
     decimal NetCashFromInvesting);
 
 public record FinancingCashFlow(
-    //decimal NewShareIssues,
-    //decimal ShareBuyBack,
+    decimal NewShareIssues,
+    decimal ShareBuyBack,
     //decimal NewBorrowing,
-    //decimal RepaymentOfBorrowing,
-    //decimal EquityDividendsPaid,
-    //decimal DividendsPaidToMinorities,
+    decimal RepaymentOfBorrowing,
+    decimal DividendsPaid,
     //decimal InterestPaid,
-    //decimal Other,
+    decimal OtherFinancingActivities,
     decimal NetCashFromFinancing);
