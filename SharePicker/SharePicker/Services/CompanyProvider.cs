@@ -59,7 +59,7 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
         dto.SellingAndMarketingExpenses,
         dto.GeneralAndAdministrativeExpenses,
         dto.OperatingIncome,
-        dto.EbitDa - dto.DepreciationAndAmortization - dto.InterestIncome,
+        dto.IncomeBeforeTax + dto.InterestIncome + dto.InterestExpense,
         dto.InterestIncome,
         dto.InterestExpense,
         dto.IncomeBeforeTax,
