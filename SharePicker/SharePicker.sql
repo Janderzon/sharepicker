@@ -1,6 +1,4 @@
 USE master
-GO
-
 DROP DATABASE Sharepicker
 GO
 
@@ -83,15 +81,11 @@ CREATE TABLE BalanceSheetStatements (
     NetDebt DECIMAL(19,4) NOT NULL
 
     CONSTRAINT FK_BalanceSheetStatements_Companies FOREIGN KEY (CompanyId)
-        REFERENCES dbo.Companies (CompanyId)
-        ON DELETE NO ACTION
-        ON UPDATE NO ACTION
-
+        REFERENCES dbo.Companies (CompanyId),
     CONSTRAINT FK_BalanceSheetStatements_Currencies FOREIGN KEY (CurrencyId)
         REFERENCES dbo.Currencies (CurrencyId)
-        ON DELETE NO ACTION
-        ON UPDATE NO ACTION
 )
+GO
 
 CREATE TABLE CashFlowStatements (
     CashFlowStatementId INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -124,14 +118,9 @@ CREATE TABLE CashFlowStatements (
     NetChangeInCash DECIMAL(19,4) NOT NULL
 
     CONSTRAINT FK_CashFlowStatements_Companies FOREIGN KEY (CompanyId)
-        REFERENCES dbo.Companies (CompanyId)
-        ON DELETE NO ACTION
-        ON UPDATE NO ACTION
-    
+        REFERENCES dbo.Companies (CompanyId),
     CONSTRAINT FK_CashFlowStatements_Currencies FOREIGN KEY (CurrencyId)
         REFERENCES dbo.Currencies (CurrencyId)
-        ON DELETE NO ACTION
-        ON UPDATE NO ACTION
 )
 
 CREATE TABLE IncomeStatemets (
@@ -157,14 +146,9 @@ CREATE TABLE IncomeStatemets (
     EarningsPerShareDiluted DECIMAL(19,4)
 
     CONSTRAINT FK_IncomeStatements_Companies FOREIGN KEY (CompanyId)
-        REFERENCES dbo.Companies (CompanyId)
-        ON DELETE NO ACTION
-        ON UPDATE NO ACTION
-    
+        REFERENCES dbo.Companies (CompanyId),
     CONSTRAINT FK_IncomeStatements_Currencies FOREIGN KEY (CurrencyId)
         REFERENCES dbo.Currencies (CurrencyId)
-        ON DELETE NO ACTION
-        ON UPDATE NO ACTION
 )
 
 GO
