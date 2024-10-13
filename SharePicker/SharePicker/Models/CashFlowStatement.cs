@@ -30,9 +30,9 @@ public record InvestingCashFlow(
     decimal NetCashFromInvesting);
 
 public record FinancingCashFlow(
-    decimal NewShareIssues,
-    decimal ShareBuyBack,
-    decimal RepaymentOfBorrowing,
+    decimal SharesIssued,
+    decimal SharesRepurchased,
+    decimal DebtRepayment,
     decimal DividendsPaid,
     decimal OtherFinancingActivities,
     decimal NetCashFromFinancing);
