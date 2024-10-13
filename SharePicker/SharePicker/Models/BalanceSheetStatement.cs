@@ -2,6 +2,7 @@
 
 public record BalanceSheetStatement(
     DateOnly Date,
+    string Currency,
     Assets Assets,
     Liabilities Liabilities,
     Equity Equity,

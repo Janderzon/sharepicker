@@ -3,6 +3,7 @@
 public record CashFlowStatementDto
 {
     public required string Date { get; init; }
+    public required string ReportedCurrency {  get; init; }
     public required decimal NetIncome { get; init; }
     public required decimal DepreciationAndAmortization { get; init; }
     public required decimal DeferredIncomeTax { get; init; }

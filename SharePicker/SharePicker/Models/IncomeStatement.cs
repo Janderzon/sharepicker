@@ -2,6 +2,7 @@
 
 public record IncomeStatement(
     DateOnly Date,
+    string Currency,
     decimal Revenue,
     decimal CostOfSales,
     decimal GrossProfit,

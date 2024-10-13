@@ -50,6 +50,7 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
 
     private IncomeStatement ToDomain(IncomeStatementDto dto) => new(
         DateOnly.ParseExact(dto.Date, "yyyy-MM-dd"),
+        dto.ReportedCurrency,
         dto.Revenue,
         dto.CostOfRevenue,
         dto.GrossProfit,
@@ -70,6 +71,7 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
 
     private BalanceSheetStatement ToDomain(BalanceSheetStatementDto dto) => new(
         DateOnly.ParseExact(dto.Date, "yyyy-MM-dd"),
+        dto.ReportedCurrency,
         new Assets(
             new CurrentAssets(
                 dto.CashAndCashEquivalents,
@@ -121,6 +123,7 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
 
     private CashFlowStatement ToDomain(CashFlowStatementDto dto) => new(
         DateOnly.ParseExact(dto.Date, "yyyy-MM-dd"),
+        dto.ReportedCurrency,
         new OperationsCashFlow(
             dto.NetIncome,
             dto.DepreciationAndAmortization,

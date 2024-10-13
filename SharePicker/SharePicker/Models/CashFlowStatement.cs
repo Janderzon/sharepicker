@@ -1,9 +1,8 @@
-﻿using System.ComponentModel;
-
-namespace SharePicker.Models;
+﻿namespace SharePicker.Models;
 
 public record CashFlowStatement(
     DateOnly Date,
+    string Currency,
     OperationsCashFlow OperationsCashFlow,
     InvestingCashFlow InvestingCashFlow,
     FinancingCashFlow FinancingCashFlow,
