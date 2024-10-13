@@ -31,9 +31,15 @@ CREATE TABLE Companies (
         ON UPDATE NO ACTION
 )
 
+CREATE TABLE Currencies (
+    CurrencyId INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    Symbol NVARCHAR(20) NOT NULL
+)
+
 CREATE TABLE BalanceSheetStatements (
     BalanceSheetStatementId INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
     CompanyId INT NOT NULL,
+    CurrencyId INT NOT NULL,
     Date DATE NOT NULL,
     CashAndCashEquivalents DECIMAL(19,4) NOT NULL,
     ShortTermInvestments DECIMAL(19,4) NOT NULL,
@@ -80,12 +86,18 @@ CREATE TABLE BalanceSheetStatements (
         REFERENCES dbo.Companies (CompanyId)
         ON DELETE NO ACTION
         ON UPDATE NO ACTION
+
+    CONSTRAINT FK_BalanceSheetStatements_Currencies FOREIGN KEY (CurrencyId)
+        REFERENCES dbo.Currencies (CurrencyId)
+        ON DELETE NO ACTION
+        ON UPDATE NO ACTION
 )
 
 CREATE TABLE CashFlowStatements (
     CashFlowStatementId INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
     CompanyId INT NOT NULL,
     Date DATE NOT NULL,
+    CurrencyId INT NOT NULL,
     NetIncome DECIMAL(19,4) NOT NULL,
     DepreciationAndAmortization DECIMAL(19,4) NOT NULL,
     DeferredIncomeTax DECIMAL(19,4) NOT NULL,
@@ -115,13 +127,18 @@ CREATE TABLE CashFlowStatements (
         REFERENCES dbo.Companies (CompanyId)
         ON DELETE NO ACTION
         ON UPDATE NO ACTION
+    
+    CONSTRAINT FK_CashFlowStatements_Currencies FOREIGN KEY (CurrencyId)
+        REFERENCES dbo.Currencies (CurrencyId)
+        ON DELETE NO ACTION
+        ON UPDATE NO ACTION
 )
 
 CREATE TABLE IncomeStatemets (
     IncomeStatementId INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
     CompanyId INT NOT NULL,
     Date DATE NOT NULL, 
-    ReportedCurrency DECIMAL(19,4) NOT NULL,
+    CurrencyId INT NOT NULL,
     Revenue DECIMAL(19,4) NOT NULL,
     CostOfSales DECIMAL(19,4) NOT NULL,
     GrossProfit DECIMAL(19,4) NOT NULL,
@@ -142,7 +159,12 @@ CREATE TABLE IncomeStatemets (
     CONSTRAINT FK_IncomeStatements_Companies FOREIGN KEY (CompanyId)
         REFERENCES dbo.Companies (CompanyId)
         ON DELETE NO ACTION
-        ON UPDATE NO ACTION 
+        ON UPDATE NO ACTION
+    
+    CONSTRAINT FK_IncomeStatements_Currencies FOREIGN KEY (CurrencyId)
+        REFERENCES dbo.Currencies (CurrencyId)
+        ON DELETE NO ACTION
+        ON UPDATE NO ACTION
 )
 
 GO
