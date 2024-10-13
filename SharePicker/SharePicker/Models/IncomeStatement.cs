@@ -8,6 +8,7 @@ public record IncomeStatement(
     decimal ResearchAndDevelopmentCosts,
     decimal DistributionCosts,
     decimal AdministrativeCosts,
+    decimal OtherCosts,
     decimal OperatingProfit,
     decimal ProfitBeforeIncomeAndTaxation,
     decimal FinanceIncome,
@@ -17,7 +18,4 @@ public record IncomeStatement(
     decimal ProfitAfterTax,
     decimal NetProfit,
     decimal? EarningsPerShare,
-    decimal? DilutedEarningsPerShare)
-{
-    public decimal ProfitTotal => GrossProfit - ResearchAndDevelopmentCosts - AdministrativeCosts - DistributionCosts;
-}
+    decimal? DilutedEarningsPerShare);

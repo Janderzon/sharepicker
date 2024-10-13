@@ -39,9 +39,7 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
                     stock.ExchangeShortName,
                     incomeStatements.Select(ToDomain).ToList(),
                     balanceSheetStatements.Select(ToDomain).ToList(),
-                    cashFlowStatements.Select(ToDomain).ToList()
-                    //ratios.Select(statement => statement.ToDomain()).ToList()
-                    ));
+                    cashFlowStatements.Select(ToDomain).ToList()));
             }
 
             _companies = companies;
@@ -58,8 +56,9 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
         dto.ResearchAndDevelopmentExpenses,
         dto.SellingAndMarketingExpenses,
         dto.GeneralAndAdministrativeExpenses,
+        dto.OtherExpenses,
         dto.OperatingIncome,
-        dto.IncomeBeforeTax + dto.InterestIncome + dto.InterestExpense,
+        dto.IncomeBeforeTax - dto.InterestIncome + dto.InterestExpense,
         dto.InterestIncome,
         dto.InterestExpense,
         dto.IncomeBeforeTax,
