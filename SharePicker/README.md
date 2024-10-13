@@ -1,3 +1,3 @@
 # Running Database Scaffolding
 
-Inside the `Sharepicker` project, run the command `dotnet ef dbcontext scaffold "Server=localhost;Database=Sharepicker;Integrated Security=true;TrustServerCertificate=True" Microsoft.EntityFrameworkCore.SqlServer`
+Inside the `Sharepicker` project, run the command `dotnet ef dbcontext scaffold "dotnet ef dbcontext scaffold "Server=localhost;Database=Sharepicker;Integrated Security=true;TrustServerCertificate=True" Microsoft.EntityFrameworkCore.SqlServer --context SharePickerDbContext --namespace SharePicker.Models.Database --context-namespace SharePicker.Services --output-dir Models/Database --context-dir Services`
