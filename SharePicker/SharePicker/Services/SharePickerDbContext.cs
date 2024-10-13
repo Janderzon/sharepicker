@@ -1,12 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SharePicker.Models.Database;
-using SharePicker.Models.Options;
 
 namespace SharePicker.Services;
 
-public class SharePickerDbContext(
-    DatabaseOptions databaseOptions,
-    DbContextOptions<SharePickerDbContext> options) : DbContext(options)
+public class SharePickerDbContext(DbContextOptions<SharePickerDbContext> options) : DbContext(options)
 {
     public DbSet<BalanceSheetStatement> BalanceSheetStatements { get; set; }
 
@@ -19,9 +16,6 @@ public class SharePickerDbContext(
     public DbSet<Exchange> Exchanges { get; set; }
 
     public DbSet<IncomeStatemet> IncomeStatemets { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => optionsBuilder
-        .UseSqlServer(databaseOptions.ConnectionString);
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

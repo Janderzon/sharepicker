@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using MudBlazor.Services;
 using Polly;
 using Polly.Extensions.Http;
@@ -33,9 +35,11 @@ builder.Services
 builder.Services
     .AddCascadingAuthenticationState()
     .AddMudServices()
-    .AddMemoryCache()
+    .Configure<DatabaseOptions>(builder.Configuration.GetRequiredSection(DatabaseOptions.Name))
     .Configure<FmpClientOptions>(builder.Configuration.GetRequiredSection(FmpClientOptions.Name))
     .Configure<UserAuthenticationOptions>(builder.Configuration.GetRequiredSection(UserAuthenticationOptions.Name))
+    .AddDbContextFactory<SharePickerDbContext>((sp, options) =>
+        options.UseSqlServer(sp.GetRequiredService<IOptions<DatabaseOptions>>().Value.ConnectionString))
     .AddSingleton<CompanyProvider>()
     .AddHostedService(sp => sp.GetRequiredService<CompanyProvider>())
     .AddScoped<CustomAuthenticationStateProvider>()
