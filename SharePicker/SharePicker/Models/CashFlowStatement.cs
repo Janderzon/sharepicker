@@ -1,4 +1,6 @@
-﻿namespace SharePicker.Models;
+﻿using System.ComponentModel;
+
+namespace SharePicker.Models;
 
 public record CashFlowStatement(
     DateOnly Date,
@@ -8,17 +10,16 @@ public record CashFlowStatement(
     decimal NetChangeInCash);
 
 public record OperationsCashFlow(
-    //decimal OperatingProfit,
+    decimal NetIncome,
     decimal DepreciationAndAmortisation,
-    //decimal ProfitOnDisposals,
-    decimal ChangeInStock,
-    decimal ChangeInDebtors,
-    //decimal ChangeInCreditors,
-    //decimal ChangeInProvisions,
+    decimal DeferredIncomeTax,
+    decimal StockBasedCompensation,
+    decimal AccountsReceivables,
+    decimal Inventory,
+    decimal AccountsPayables,
+    decimal OtherWorkingCapital,
     decimal ChangeInWorkingCapital,
-    //decimal Other,
-    //decimal OperatingCashFlow,
-    //decimal TaxPaid,
+    decimal OtherNonCashItems,
     decimal NetCashFromOperations);
 
 public record InvestingCashFlow(

@@ -123,10 +123,16 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
     private CashFlowStatement ToDomain(CashFlowStatementDto dto) => new(
         DateOnly.ParseExact(dto.Date, "yyyy-MM-dd"),
         new OperationsCashFlow(
+            dto.NetIncome,
             dto.DepreciationAndAmortization,
-            dto.Inventory,
+            dto.DeferredIncomeTax,
+            dto.StockBasedCompensation,
             dto.AccountsReceivables,
+            dto.Inventory,
+            dto.AccountsPayables,
+            dto.OtherWorkingCapital,
             dto.ChangeInWorkingCapital,
+            dto.OtherNonCashItems,
             dto.NetCashProvidedByOperatingActivities),
         new InvestingCashFlow(
             dto.CapitalExpenditure,
