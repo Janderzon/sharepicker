@@ -129,14 +129,21 @@ CREATE TABLE IncomeStatemets (
     Date DATE NOT NULL, 
     ReportedCurrency DECIMAL(19,4) NOT NULL,
     Revenue DECIMAL(19,4) NOT NULL,
+    CostOfSales DECIMAL(19,4) NOT NULL,
     GrossProfit DECIMAL(19,4) NOT NULL,
-    DepreciationAndAmortization DECIMAL(19,4) NOT NULL,
-    EbitDa DECIMAL(19,4) NOT NULL,
-    OperatingIncome DECIMAL(19,4) NOT NULL,
-    IncomeBeforeTax DECIMAL(19,4) NOT NULL,
-    IncomeTaxExpense DECIMAL(19,4) NOT NULL,
-    Eps DECIMAL(19,4),
-    EpsDiluted DECIMAL(19,4)
+    ResearchAndDevelopmentCosts DECIMAL(19,4) NOT NULL,
+    DistributionCosts DECIMAL(19,4) NOT NULL,
+    AdministrativeCosts DECIMAL(19,4) NOT NULL,
+    OtherCosts DECIMAL(19,4) NOT NULL,
+    OperatingProfit DECIMAL(19,4) NOT NULL,
+    ProfitBeforeIncomeAndTaxation DECIMAL(19,4) NOT NULL,
+    FinanceIncome DECIMAL(19,4) NOT NULL,
+    FinanceExpense DECIMAL(19,4) NOT NULL,
+    ProfitBeforeTax DECIMAL(19,4) NOT NULL,
+    Taxation DECIMAL(19,4) NOT NULL,
+    ProfitAfterTax DECIMAL(19,4) NOT NULL,
+    EarningsPerShare DECIMAL(19,4),
+    EarningsPerShareDiluted DECIMAL(19,4)
 
     CONSTRAINT FK_IncomeStatements_Companies FOREIGN KEY (CompanyId)
         REFERENCES dbo.Companies (CompanyId)
