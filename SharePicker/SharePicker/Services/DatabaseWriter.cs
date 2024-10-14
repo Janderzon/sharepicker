@@ -44,22 +44,26 @@ public class DatabaseWriter(
         if (stock.ExchangeShortName == null || stock.Exchange == null)
             return;
 
-        using var dbContext = dbContextFactory.CreateDbContext();
-
-        var exchange = await dbContext.Exchanges.SingleOrDefaultAsync(exchange => exchange.Symbol == stock.ExchangeShortName, cancellationToken)
-            ?? new Exchange { Name = stock.Exchange, Symbol = stock.ExchangeShortName };
-
-        var company = await dbContext.Companies.SingleOrDefaultAsync(company => company.Symbol == stock.Symbol, cancellationToken)
-            ?? new Company { Name = stock.Name, Symbol = stock.Symbol, Exchange = exchange };
-
         foreach (var dto in await fmpClient.GetIncomeStatementsAsync(stock.Symbol, cancellationToken))
         {
+            using var dbContext = dbContextFactory.CreateDbContext();
+
+            var exchange = await dbContext.Exchanges.SingleOrDefaultAsync(exchange => exchange.Symbol == stock.ExchangeShortName, cancellationToken)
+                ?? new Exchange { Name = stock.Exchange, Symbol = stock.ExchangeShortName };
+
+            var company = await dbContext.Companies.SingleOrDefaultAsync(company => company.Symbol == stock.Symbol, cancellationToken)
+                ?? new Company { Name = stock.Name, Symbol = stock.Symbol, Exchange = exchange };
+
+            var currency = await dbContext.Currencies.SingleOrDefaultAsync(
+                currency => currency.Symbol == dto.ReportedCurrency,
+                cancellationToken) ?? new Currency { Symbol = dto.ReportedCurrency };
+
             await dbContext.IncomeStatements.AddAsync(
                 new IncomeStatement
                 {
                     Company = company,
                     Date = DateOnly.ParseExact(dto.Date, "yyyy-MM-dd"),
-                    Currency = await GetCurrency(dbContext, dto.ReportedCurrency, cancellationToken),
+                    Currency = currency,
                     Revenue = dto.Revenue,
                     CostOfSales = dto.CostOfRevenue,
                     GrossProfit = dto.GrossProfit,
@@ -79,9 +83,9 @@ public class DatabaseWriter(
                     EarningsPerShareDiluted = dto.EpsDiluted
                 },
                 cancellationToken);
-        }
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
     }
         
 
@@ -90,22 +94,26 @@ public class DatabaseWriter(
         if (stock.ExchangeShortName == null || stock.Exchange == null)
             return;
 
-        using var dbContext = dbContextFactory.CreateDbContext();
-
-        var exchange = await dbContext.Exchanges.SingleOrDefaultAsync(exchange => exchange.Symbol == stock.ExchangeShortName, cancellationToken)
-            ?? new Exchange { Name = stock.Exchange, Symbol = stock.ExchangeShortName };
-
-        var company = await dbContext.Companies.SingleOrDefaultAsync(company => company.Symbol == stock.Symbol, cancellationToken)
-            ?? new Company { Name = stock.Name, Symbol = stock.Symbol, Exchange = exchange };
-
         foreach (var dto in await fmpClient.GetBalanceSheetStatementsAsync(stock.Symbol, cancellationToken))
         {
+            using var dbContext = dbContextFactory.CreateDbContext();
+
+            var exchange = await dbContext.Exchanges.SingleOrDefaultAsync(exchange => exchange.Symbol == stock.ExchangeShortName, cancellationToken)
+                ?? new Exchange { Name = stock.Exchange, Symbol = stock.ExchangeShortName };
+
+            var company = await dbContext.Companies.SingleOrDefaultAsync(company => company.Symbol == stock.Symbol, cancellationToken)
+                ?? new Company { Name = stock.Name, Symbol = stock.Symbol, Exchange = exchange };
+
+            var currency = await dbContext.Currencies.SingleOrDefaultAsync(
+                currency => currency.Symbol == dto.ReportedCurrency,
+                cancellationToken) ?? new Currency { Symbol = dto.ReportedCurrency };
+
             await dbContext.BalanceSheetStatements.AddAsync(
                 new BalanceSheetStatement
                 {
                     Company = company,
                     Date = DateOnly.ParseExact(dto.Date, "yyyy-MM-dd"),
-                    Currency = await GetCurrency(dbContext, dto.ReportedCurrency, cancellationToken),
+                    Currency = currency,
                     CashAndCashEquivalents = dto.CashAndCashEquivalents,
                     ShortTermInvestments = dto.ShortTermInvestments,
                     NetReceivables = dto.NetReceivables,
@@ -148,9 +156,9 @@ public class DatabaseWriter(
                     NetDebt = dto.NetDebt
                 },
                 cancellationToken);
-        }
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
     }        
 
     private async Task AddCashFlowStatements(StockDto stock, CancellationToken cancellationToken)
@@ -158,22 +166,26 @@ public class DatabaseWriter(
         if (stock.ExchangeShortName == null || stock.Exchange == null)
             return;
 
-        using var dbContext = dbContextFactory.CreateDbContext();
-
-        var exchange = await dbContext.Exchanges.SingleOrDefaultAsync(exchange => exchange.Symbol == stock.ExchangeShortName, cancellationToken)
-            ?? new Exchange { Name = stock.Exchange, Symbol = stock.ExchangeShortName };
-
-        var company = await dbContext.Companies.SingleOrDefaultAsync(company => company.Symbol == stock.Symbol, cancellationToken)
-            ?? new Company { Name = stock.Name, Symbol = stock.Symbol, Exchange = exchange };
-
         foreach (var dto in await fmpClient.GetCashFlowStatementsAsync(stock.Symbol, cancellationToken))
         {
+            using var dbContext = dbContextFactory.CreateDbContext();
+
+            var exchange = await dbContext.Exchanges.SingleOrDefaultAsync(exchange => exchange.Symbol == stock.ExchangeShortName, cancellationToken)
+                ?? new Exchange { Name = stock.Exchange, Symbol = stock.ExchangeShortName };
+
+            var company = await dbContext.Companies.SingleOrDefaultAsync(company => company.Symbol == stock.Symbol, cancellationToken)
+                ?? new Company { Name = stock.Name, Symbol = stock.Symbol, Exchange = exchange };
+
+            var currency = await dbContext.Currencies.SingleOrDefaultAsync(
+                currency => currency.Symbol == dto.ReportedCurrency, 
+                cancellationToken) ?? new Currency { Symbol = dto.ReportedCurrency };
+
             await dbContext.CashFlowStatements.AddAsync(
                 new CashFlowStatement
                 {
                     Company = company,
                     Date = DateOnly.ParseExact(dto.Date, "yyyy-MM-dd"),
-                    Currency = await GetCurrency(dbContext, dto.ReportedCurrency, cancellationToken),
+                    Currency = currency,
                     NetIncome = dto.NetIncome,
                     DepreciationAndAmortisation = dto.DepreciationAndAmortization,
                     DeferredIncomeTax = dto.DeferredIncomeTax,
@@ -200,16 +212,8 @@ public class DatabaseWriter(
                     NetChangeInCash = dto.NetChangeInCash
                 },
                 cancellationToken);
+
+            await dbContext.SaveChangesAsync(cancellationToken);
         }
-
-        await dbContext.SaveChangesAsync(cancellationToken);
-    }
-
-    private static async Task<Currency> GetCurrency(
-        SharePickerDbContext dbContext,
-        string symbol,
-        CancellationToken cancellationToken) => 
-        await dbContext.Currencies.SingleOrDefaultAsync(
-            currency => currency.Symbol == symbol,
-            cancellationToken) ?? new Currency { Symbol = symbol };
+    }        
 }
