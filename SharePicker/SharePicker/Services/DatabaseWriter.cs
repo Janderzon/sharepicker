@@ -88,7 +88,6 @@ public class DatabaseWriter(
         }
     }
         
-
     private async Task AddBalanceSheetStatements(StockDto stock, CancellationToken cancellationToken)
     {
         if (stock.ExchangeShortName == null || stock.Exchange == null)
@@ -215,5 +214,5 @@ public class DatabaseWriter(
 
             await dbContext.SaveChangesAsync(cancellationToken);
         }
-    }        
+    } 
 }
