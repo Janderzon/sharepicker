@@ -24,51 +24,43 @@ public class DatabaseWriter(
                 .Where(stock => tradableSymbols.Contains(stock.Symbol))
                 .Where(stock => symbolsWithFinancialStatements.Contains(stock.Symbol)))
             {
-                if (stock.ExchangeShortName == null || stock.ExchangeShortName != "LSE" || stock.Exchange == null)
+                if (stock.ExchangeShortName != "LSE")
                     continue;
+                
+                await AddIncomeStatements(stock, cancellationToken);
+                await AddBalanceSheetStatements(stock, cancellationToken);
+                await AddCashFlowStatements(stock, cancellationToken);
 
-                using var dbContext = dbContextFactory.CreateDbContext();
-
-                if (await dbContext.Companies.AnyAsync(company => company.Symbol == stock.Symbol, cancellationToken))
-                    continue;
-
-                var exchange = await dbContext.Exchanges.SingleOrDefaultAsync(exchange => exchange.Symbol == stock.ExchangeShortName, cancellationToken)
-                    ?? new Exchange { Name = stock.Exchange, Symbol = stock.ExchangeShortName };
-
-                var company = new Company { Name = stock.Name, Symbol = stock.Symbol, Exchange = exchange };
-
-                foreach (var incomeStatement in await fmpClient
-                    .GetIncomeStatementsAsync(stock.Symbol, cancellationToken))
-                {
-                    await dbContext.IncomeStatements.AddAsync(
-                        await ToDatabaseObject(dbContext, incomeStatement, company, cancellationToken),
-                        cancellationToken);
-                }
-
-                foreach (var balanceSheetStatement in await fmpClient
-                    .GetBalanceSheetStatementsAsync(stock.Symbol, cancellationToken))
-                {
-                    await dbContext.BalanceSheetStatements.AddAsync(
-                        await ToDatabaseObject(dbContext, balanceSheetStatement, company, cancellationToken),
-                        cancellationToken);
-                }
-
-                foreach (var cashFlowStatement in await fmpClient
-                    .GetCashFlowStatementsAsync(stock.Symbol, cancellationToken))
-                {
-                    await dbContext.CashFlowStatements.AddAsync(
-                        await ToDatabaseObject(dbContext, cashFlowStatement, company, cancellationToken),
-                        cancellationToken);
-                }
-
-                await dbContext.SaveChangesAsync(cancellationToken);
+                if (++count > 5)
+                    break;
             }
 
             await timer.WaitForNextTickAsync(cancellationToken);
-
-            if (++count > 5)
-                break;
         }
+    }
+
+    private async Task AddIncomeStatements(StockDto stock, CancellationToken cancellationToken)
+    {
+        if (stock.ExchangeShortName == null || stock.Exchange == null)
+            return;
+
+        using var dbContext = dbContextFactory.CreateDbContext();
+
+        var exchange = await dbContext.Exchanges.SingleOrDefaultAsync(exchange => exchange.Symbol == stock.ExchangeShortName, cancellationToken)
+            ?? new Exchange { Name = stock.Exchange, Symbol = stock.ExchangeShortName };
+
+        var company = await dbContext.Companies.SingleOrDefaultAsync(company => company.Symbol == stock.Symbol, cancellationToken)
+            ?? new Company { Name = stock.Name, Symbol = stock.Symbol, Exchange = exchange };
+
+        foreach (var incomeStatement in await fmpClient
+                    .GetIncomeStatementsAsync(stock.Symbol, cancellationToken))
+        {
+            await dbContext.IncomeStatements.AddAsync(
+                await ToDatabaseObject(dbContext, incomeStatement, company, cancellationToken),
+                cancellationToken);
+        }
+
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 
     private static async Task<IncomeStatement> ToDatabaseObject(
@@ -99,6 +91,30 @@ public class DatabaseWriter(
             EarningsPerShare = dto.Eps,
             EarningsPerShareDiluted = dto.EpsDiluted
         };
+
+    private async Task AddBalanceSheetStatements(StockDto stock, CancellationToken cancellationToken)
+    {
+        if (stock.ExchangeShortName == null || stock.Exchange == null)
+            return;
+
+        using var dbContext = dbContextFactory.CreateDbContext();
+
+        var exchange = await dbContext.Exchanges.SingleOrDefaultAsync(exchange => exchange.Symbol == stock.ExchangeShortName, cancellationToken)
+            ?? new Exchange { Name = stock.Exchange, Symbol = stock.ExchangeShortName };
+
+        var company = await dbContext.Companies.SingleOrDefaultAsync(company => company.Symbol == stock.Symbol, cancellationToken)
+            ?? new Company { Name = stock.Name, Symbol = stock.Symbol, Exchange = exchange };
+
+        foreach (var balanceSheetStatement in await fmpClient
+                    .GetBalanceSheetStatementsAsync(stock.Symbol, cancellationToken))
+        {
+            await dbContext.BalanceSheetStatements.AddAsync(
+                await ToDatabaseObject(dbContext, balanceSheetStatement, company, cancellationToken),
+                cancellationToken);
+        }
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+    }
 
     private static async Task<BalanceSheetStatement> ToDatabaseObject(
         SharePickerDbContext dbContext,
@@ -151,6 +167,30 @@ public class DatabaseWriter(
             TotalDebt = dto.TotalDebt,
             NetDebt = dto.NetDebt
         };
+
+    private async Task AddCashFlowStatements(StockDto stock, CancellationToken cancellationToken)
+    {
+        if (stock.ExchangeShortName == null || stock.Exchange == null)
+            return;
+
+        using var dbContext = dbContextFactory.CreateDbContext();
+
+        var exchange = await dbContext.Exchanges.SingleOrDefaultAsync(exchange => exchange.Symbol == stock.ExchangeShortName, cancellationToken)
+            ?? new Exchange { Name = stock.Exchange, Symbol = stock.ExchangeShortName };
+
+        var company = await dbContext.Companies.SingleOrDefaultAsync(company => company.Symbol == stock.Symbol, cancellationToken)
+            ?? new Company { Name = stock.Name, Symbol = stock.Symbol, Exchange = exchange };
+
+        foreach (var cashFlowStatement in await fmpClient
+                    .GetCashFlowStatementsAsync(stock.Symbol, cancellationToken))
+        {
+            await dbContext.CashFlowStatements.AddAsync(
+                await ToDatabaseObject(dbContext, cashFlowStatement, company, cancellationToken),
+                cancellationToken);
+        }
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+    }
 
     private static async Task<CashFlowStatement> ToDatabaseObject(
         SharePickerDbContext dbContext,
