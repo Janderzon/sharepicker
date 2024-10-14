@@ -2,63 +2,63 @@
 
 public class CashFlowStatement
 {
-    public int CashFlowStatementId { get; set; }
+    public required int CashFlowStatementId { get; set; }
 
-    public int CompanyId { get; set; }
+    public required int CompanyId { get; set; }
 
-    public DateOnly Date { get; set; }
+    public required DateOnly Date { get; set; }
 
-    public int CurrencyId { get; set; }
+    public required int CurrencyId { get; set; }
 
-    public decimal NetIncome { get; set; }
+    public required decimal NetIncome { get; set; }
 
-    public decimal DepreciationAndAmortization { get; set; }
+    public required decimal DepreciationAndAmortization { get; set; }
 
-    public decimal DeferredIncomeTax { get; set; }
+    public required decimal DeferredIncomeTax { get; set; }
 
-    public decimal StockBasedCompensation { get; set; }
+    public required decimal StockBasedCompensation { get; set; }
 
-    public decimal AccountsReceivables { get; set; }
+    public required decimal AccountsReceivables { get; set; }
 
-    public decimal Inventory { get; set; }
+    public required decimal Inventory { get; set; }
 
-    public decimal AccountsPayables { get; set; }
+    public required decimal AccountsPayables { get; set; }
 
-    public decimal OtherWorkingCapital { get; set; }
+    public required decimal OtherWorkingCapital { get; set; }
 
-    public decimal ChangeInWorkingCapital { get; set; }
+    public required decimal ChangeInWorkingCapital { get; set; }
 
-    public decimal OtherNonCashItems { get; set; }
+    public required decimal OtherNonCashItems { get; set; }
 
-    public decimal NetCashFlowFromOperations { get; set; }
+    public required decimal NetCashFlowFromOperations { get; set; }
 
-    public decimal CapitalExpenditure { get; set; }
+    public required decimal CapitalExpenditure { get; set; }
 
-    public decimal Acquisitions { get; set; }
+    public required decimal Acquisitions { get; set; }
 
-    public decimal PurchasesOfInvestments { get; set; }
+    public required decimal PurchasesOfInvestments { get; set; }
 
-    public decimal SaleOrMaturityOfInvestments { get; set; }
+    public required decimal SaleOrMaturityOfInvestments { get; set; }
 
-    public decimal OtherInvestingActivites { get; set; }
+    public required decimal OtherInvestingActivites { get; set; }
 
-    public decimal NetCashFromInvesting { get; set; }
+    public required decimal NetCashFromInvesting { get; set; }
 
-    public decimal SharesIssued { get; set; }
+    public required decimal SharesIssued { get; set; }
 
-    public decimal SharesRepurchased { get; set; }
+    public required decimal SharesRepurchased { get; set; }
 
-    public decimal DebtRepayment { get; set; }
+    public required decimal DebtRepayment { get; set; }
 
-    public decimal DividendsPaid { get; set; }
+    public required decimal DividendsPaid { get; set; }
 
-    public decimal OtherFinancingActivites { get; set; }
+    public required decimal OtherFinancingActivites { get; set; }
 
-    public decimal NetCashFromFinancing { get; set; }
+    public required decimal NetCashFromFinancing { get; set; }
 
-    public decimal NetChangeInCash { get; set; }
+    public required decimal NetChangeInCash { get; set; }
 
-    public Company Company { get; set; } = null!;
+    public required Company Company { get; set; }
 
-    public Currency Currency { get; set; } = null!;
+    public required Currency Currency { get; set; }
 }

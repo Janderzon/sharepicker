@@ -4,9 +4,9 @@ public class Exchange
 {
     public int ExchangeId { get; set; }
 
-    public string Name { get; set; } = null!;
+    public required string Name { get; set; }
 
-    public string Symbol { get; set; } = null!;
+    public required string Symbol { get; set; }
 
     public ICollection<Company> Companies { get; set; } = [];
 }

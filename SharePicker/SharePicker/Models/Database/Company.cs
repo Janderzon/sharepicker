@@ -4,9 +4,9 @@ public class Company
 {
     public int CompanyId { get; set; }
 
-    public string Name { get; set; } = null!;
+    public required string Name { get; set; }
 
-    public string Symbol { get; set; } = null!;
+    public required string Symbol { get; set; }
 
     public int ExchangeId { get; set; }
 
@@ -14,7 +14,7 @@ public class Company
 
     public ICollection<CashFlowStatement> CashFlowStatements { get; set; } = [];
 
-    public Exchange Exchange { get; set; } = null!;
+    public required Exchange Exchange { get; set; }
 
-    public ICollection<IncomeStatemet> IncomeStatemets { get; set; } = [];
+    public ICollection<IncomeStatement> IncomeStatemets { get; set; } = [];
 }

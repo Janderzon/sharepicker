@@ -123,7 +123,7 @@ CREATE TABLE CashFlowStatements (
         REFERENCES dbo.Currencies (CurrencyId)
 )
 
-CREATE TABLE IncomeStatemets (
+CREATE TABLE IncomeStatements (
     IncomeStatementId INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
     CompanyId INT NOT NULL,
     Date DATE NOT NULL, 
@@ -142,6 +142,7 @@ CREATE TABLE IncomeStatemets (
     ProfitBeforeTax DECIMAL(19,4) NOT NULL,
     Taxation DECIMAL(19,4) NOT NULL,
     ProfitAfterTax DECIMAL(19,4) NOT NULL,
+    NetProfit DECIMAL(19,4) NOT NULL,
     EarningsPerShare DECIMAL(19,4),
     EarningsPerShareDiluted DECIMAL(19,4)
 
@@ -151,8 +152,4 @@ CREATE TABLE IncomeStatemets (
         REFERENCES dbo.Currencies (CurrencyId)
 )
 
-GO
-
-INSERT INTO dbo.Exchanges (Name, Symbol)
-VALUES ('London Stock Exchange', 'LSE')
 GO

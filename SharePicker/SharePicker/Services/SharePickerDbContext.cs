@@ -15,7 +15,7 @@ public class SharePickerDbContext(DbContextOptions<SharePickerDbContext> options
 
     public DbSet<Exchange> Exchanges { get; set; }
 
-    public DbSet<IncomeStatemet> IncomeStatemets { get; set; }
+    public DbSet<IncomeStatement> IncomeStatemets { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -153,7 +153,7 @@ public class SharePickerDbContext(DbContextOptions<SharePickerDbContext> options
             entity.Property(e => e.Symbol).HasMaxLength(20);
         });
 
-        modelBuilder.Entity<IncomeStatemet>(entity =>
+        modelBuilder.Entity<IncomeStatement>(entity =>
         {
             entity.HasKey(e => e.IncomeStatementId).HasName("PK__IncomeSt__811D9AF8F6B3484D");
 
