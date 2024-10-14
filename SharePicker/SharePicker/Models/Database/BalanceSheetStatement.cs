@@ -2,11 +2,11 @@
 
 public class BalanceSheetStatement
 {
-    public required int BalanceSheetStatementId { get; set; }
+    public int BalanceSheetStatementId { get; set; }
 
-    public required int CompanyId { get; set; }
+    public int CompanyId { get; set; }
 
-    public required int CurrencyId { get; set; }
+    public int CurrencyId { get; set; }
 
     public required DateOnly Date { get; set; }
 

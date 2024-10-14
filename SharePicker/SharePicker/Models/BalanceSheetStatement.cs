@@ -57,7 +57,7 @@ public record NonCurrentLiabilities(
 public record Equity(
     decimal PreferredStock,
     decimal CommonStock,
-    decimal ReatainedEarnings,
+    decimal RetainedEarnings,
     decimal AccumulatedOtherComprehensiveIncomeLoss,
     decimal OtherTotalStockholdersEquity,
     decimal TotalStockholdersEquity,

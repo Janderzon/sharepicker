@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SharePicker.Models.Database;
 using SharePicker.Models.Fmp;
+using System;
 
 namespace SharePicker.Services;
 
@@ -86,6 +87,64 @@ public class DatabaseWriter(
             NetProfit = dto.NetIncome,
             EarningsPerShare = dto.Eps,
             EarningsPerShareDiluted = dto.EpsDiluted
+        };
+    }
+
+    private static async Task<BalanceSheetStatement> ToDatabaseObject(
+        SharePickerDbContext dbContext,
+        BalanceSheetStatementDto dto,
+        Company company,
+        CancellationToken cancellationToken)
+    {
+        var currency = await dbContext.Currencies.SingleOrDefaultAsync(
+            currency => currency.Symbol == dto.ReportedCurrency,
+            cancellationToken) ?? new Currency { Symbol = dto.ReportedCurrency };
+
+        return new BalanceSheetStatement
+        {
+            Company = company,
+            Date = DateOnly.ParseExact(dto.Date, "yyyy-MM-dd"),
+            Currency = currency,
+            CashAndCashEquivalents = dto.CashAndCashEquivalents,
+            ShortTermInvestments = dto.ShortTermInvestments,
+            NetReceivables = dto.NetReceivables,
+            Inventory = dto.Inventory,
+            OtherCurrentAssets = dto.OtherCurrentAssets,
+            TotalCurrentAssets = dto.TotalCurrentAssets,
+            PropertyPlantEquipmentNet = dto.PropertyPlantEquipmentNet,
+            Goodwill = dto.Goodwill,
+            IntangibleAssets = dto.IntangibleAssets,
+            LongTermInvestments = dto.LongTermInvestments,
+            TaxAssets = dto.TaxAssets,
+            OtherNonCurrentAssets = dto.OtherNonCurrentAssets,
+            TotalNonCurrentAssets = dto.TotalNonCurrentAssets,
+            OtherAssets = dto.OtherAssets,
+            TotalAssets = dto.TotalAssets,
+            AccountPayables = dto.AccountPayables,
+            ShortTermDebt = dto.ShortTermDebt,
+            TaxPayables = dto.TaxPayables,
+            DeferredRevenue = dto.DeferredRevenue,
+            OtherCurrentLiabilities = dto.OtherCurrentLiabilities,
+            TotalCurrentLiabilities = dto.TotalCurrentLiabilities,
+            LongTermDebt = dto.LongTermDebt,
+            DeferredRevenueNonCurrent = dto.DeferredRevenueNonCurrent,
+            DeferredTaxLiabilitiesNonCurrent = dto.DeferredTaxLiabilitiesNonCurrent,
+            MinorityInterest = dto.MinorityInterest,
+            CapitalLeaseObligations = dto.CapitalLeaseObligations,
+            OtherNonCurrentLiabilities = dto.OtherNonCurrentLiabilities,
+            TotalNonCurrentLiabilities = dto.TotalNonCurrentLiabilities,
+            OtherLiabilities = dto.OtherLiabilities,
+            TotalLiabilities = dto.TotalLiabilities,
+            PreferredStock = dto.PreferredStock,
+            CommonStock = dto.CommonStock,
+            RetainedEarnings = dto.RetainedEarnings,
+            AccumulatedOtherComprehensiveIncomeLoss = dto.AccumulatedOtherComprehensiveIncomeLoss,
+            OtherTotalStockholdersEquity = dto.OtherTotalStockholdersEquity,
+            TotalStockholdersEquity = dto.TotalStockholdersEquity,
+            TotalEquity = dto.TotalEquity,
+            TotalInvestments = dto.TotalInvestments,
+            TotalDebt = dto.TotalDebt,
+            NetDebt = dto.NetDebt
         };
     }
 }
