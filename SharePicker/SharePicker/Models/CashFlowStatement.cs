@@ -23,7 +23,7 @@ public record OperationsCashFlow(
 
 public record InvestingCashFlow(
     decimal CapitalExpenditure,
-    decimal Aquisitions,
+    decimal Acquisitions,
     decimal PurchasesOfInvestments,
     decimal SaleOrMaturityOfInvestments,
     decimal OtherInvestingActivities,

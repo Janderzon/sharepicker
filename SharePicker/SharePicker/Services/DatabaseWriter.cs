@@ -1,12 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Polly;
 using SharePicker.Models.Database;
 using SharePicker.Models.Fmp;
 using System;
+using System.Threading;
 
 namespace SharePicker.Services;
 
 public class DatabaseWriter(
-    FmpClient fmpClient, 
+    FmpClient fmpClient,
     IDbContextFactory<SharePickerDbContext> dbContextFactory) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
@@ -37,16 +39,29 @@ public class DatabaseWriter(
 
                 var company = new Company { Name = stock.Name, Symbol = stock.Symbol, Exchange = exchange };
 
-                var incomeStatements = await fmpClient.GetIncomeStatementsAsync(stock.Symbol, cancellationToken);
-                foreach (var incomeStatement in incomeStatements)
+                foreach (var incomeStatement in await fmpClient
+                    .GetIncomeStatementsAsync(stock.Symbol, cancellationToken))
                 {
                     await dbContext.IncomeStatemets.AddAsync(
-                        await ToDatabaseObject(dbContext, incomeStatement, company, cancellationToken), 
+                        await ToDatabaseObject(dbContext, incomeStatement, company, cancellationToken),
                         cancellationToken);
                 }
 
-                var balanceSheetStatements = await fmpClient.GetBalanceSheetStatementsAsync(stock.Symbol, cancellationToken);
-                var cashFlowStatements = await fmpClient.GetCashFlowStatementsAsync(stock.Symbol, cancellationToken);
+                foreach (var balanceSheetStatement in await fmpClient
+                    .GetBalanceSheetStatementsAsync(stock.Symbol, cancellationToken))
+                {
+                    await dbContext.BalanceSheetStatements.AddAsync(
+                        await ToDatabaseObject(dbContext, balanceSheetStatement, company, cancellationToken),
+                        cancellationToken);
+                }
+
+                foreach (var cashFlowStatement in await fmpClient
+                    .GetCashFlowStatementsAsync(stock.Symbol, cancellationToken))
+                {
+                    await dbContext.CashFlowStatements.AddAsync(
+                        await ToDatabaseObject(dbContext, cashFlowStatement, company, cancellationToken),
+                        cancellationToken);
+                }
 
                 await dbContext.SaveChangesAsync(cancellationToken);
             }
@@ -57,19 +72,14 @@ public class DatabaseWriter(
 
     private static async Task<IncomeStatement> ToDatabaseObject(
         SharePickerDbContext dbContext,
-        IncomeStatementDto dto, 
+        IncomeStatementDto dto,
         Company company,
-        CancellationToken cancellationToken)
-    {
-        var currency = await dbContext.Currencies.SingleOrDefaultAsync(
-            currency => currency.Symbol == dto.ReportedCurrency, 
-            cancellationToken) ?? new Currency { Symbol = dto.ReportedCurrency };
-
-        return new IncomeStatement
+        CancellationToken cancellationToken) =>
+        new IncomeStatement
         {
             Company = company,
             Date = DateOnly.ParseExact(dto.Date, "yyyy-MM-dd"),
-            Currency = currency,
+            Currency = await GetCurrency(dbContext, dto.ReportedCurrency, cancellationToken),
             Revenue = dto.Revenue,
             CostOfSales = dto.CostOfRevenue,
             GrossProfit = dto.GrossProfit,
@@ -88,23 +98,17 @@ public class DatabaseWriter(
             EarningsPerShare = dto.Eps,
             EarningsPerShareDiluted = dto.EpsDiluted
         };
-    }
 
     private static async Task<BalanceSheetStatement> ToDatabaseObject(
         SharePickerDbContext dbContext,
         BalanceSheetStatementDto dto,
         Company company,
-        CancellationToken cancellationToken)
-    {
-        var currency = await dbContext.Currencies.SingleOrDefaultAsync(
-            currency => currency.Symbol == dto.ReportedCurrency,
-            cancellationToken) ?? new Currency { Symbol = dto.ReportedCurrency };
-
-        return new BalanceSheetStatement
+        CancellationToken cancellationToken) =>
+        new BalanceSheetStatement
         {
             Company = company,
             Date = DateOnly.ParseExact(dto.Date, "yyyy-MM-dd"),
-            Currency = currency,
+            Currency = await GetCurrency(dbContext, dto.ReportedCurrency, cancellationToken),
             CashAndCashEquivalents = dto.CashAndCashEquivalents,
             ShortTermInvestments = dto.ShortTermInvestments,
             NetReceivables = dto.NetReceivables,
@@ -146,5 +150,48 @@ public class DatabaseWriter(
             TotalDebt = dto.TotalDebt,
             NetDebt = dto.NetDebt
         };
-    }
+
+    private static async Task<CashFlowStatement> ToDatabaseObject(
+        SharePickerDbContext dbContext,
+        CashFlowStatementDto dto,
+        Company company,
+        CancellationToken cancellationToken) => 
+        new CashFlowStatement
+        {
+            Company = company,
+            Date = DateOnly.ParseExact(dto.Date, "yyyy-MM-dd"),
+            Currency = await GetCurrency(dbContext, dto.ReportedCurrency, cancellationToken),
+            NetIncome = dto.NetIncome,
+            DepreciationAndAmortisation = dto.DepreciationAndAmortization,
+            DeferredIncomeTax = dto.DeferredIncomeTax,
+            StockBasedCompensation = dto.StockBasedCompensation,
+            AccountsReceivables = dto.AccountsReceivables,
+            Inventory = dto.Inventory,
+            AccountsPayables = dto.AccountsPayables,
+            OtherWorkingCapital = dto.OtherWorkingCapital,
+            ChangeInWorkingCapital = dto.ChangeInWorkingCapital,
+            OtherNonCashItems = dto.OtherNonCashItems,
+            NetCashFromOperations = dto.NetCashProvidedByOperatingActivities,
+            CapitalExpenditure = dto.CapitalExpenditure,
+            Acquisitions = dto.AcquisitionsNet,
+            PurchasesOfInvestments = dto.PurchasesOfInvestments,
+            SaleOrMaturityOfInvestments = dto.SalesMaturitiesOfInvestments,
+            OtherInvestingActivities = dto.OtherInvestingActivites,
+            NetCashFromInvesting = dto.NetCashUsedForInvestingActivites,
+            SharesIssued = dto.CommonStockIssued,
+            SharesRepurchased = dto.CommonStockRepurchased,
+            DebtRepayment = dto.DebtRepayment,
+            DividendsPaid = dto.DividendsPaid,
+            OtherFinancingActivities = dto.OtherFinancingActivites,
+            NetCashFromFinancing = dto.NetCashUsedProvidedByFinancingActivities,
+            NetChangeInCash = dto.NetChangeInCash
+        };
+
+    private static async Task<Currency> GetCurrency(
+        SharePickerDbContext dbContext,
+        string symbol,
+        CancellationToken cancellationToken) => 
+        await dbContext.Currencies.SingleOrDefaultAsync(
+            currency => currency.Symbol == symbol,
+            cancellationToken) ?? new Currency { Symbol = symbol };
 }
