@@ -15,7 +15,7 @@ public class SharePickerDbContext(DbContextOptions<SharePickerDbContext> options
 
     public DbSet<Exchange> Exchanges { get; set; }
 
-    public DbSet<IncomeStatement> IncomeStatemets { get; set; }
+    public DbSet<IncomeStatement> IncomeStatements { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -127,7 +127,7 @@ public class SharePickerDbContext(DbContextOptions<SharePickerDbContext> options
         {
             entity.HasKey(e => e.CompanyId).HasName("PK__Companie__2D971CACA675BBC1");
 
-            entity.Property(e => e.Name).HasMaxLength(50);
+            entity.Property(e => e.Name).HasMaxLength(100);
             entity.Property(e => e.Symbol).HasMaxLength(20);
 
             entity
@@ -149,7 +149,7 @@ public class SharePickerDbContext(DbContextOptions<SharePickerDbContext> options
         {
             entity.HasKey(e => e.ExchangeId).HasName("PK__Exchange__72E6008BABE01433");
 
-            entity.Property(e => e.Name).HasMaxLength(50);
+            entity.Property(e => e.Name).HasMaxLength(100);
             entity.Property(e => e.Symbol).HasMaxLength(20);
         });
 
@@ -176,14 +176,14 @@ public class SharePickerDbContext(DbContextOptions<SharePickerDbContext> options
 
             entity
                 .HasOne(d => d.Company)
-                .WithMany(p => p.IncomeStatemets)
+                .WithMany(p => p.IncomeStatements)
                 .HasForeignKey(d => d.CompanyId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_IncomeStatements_Companies");
 
             entity
                 .HasOne(d => d.Currency)
-                .WithMany(p => p.IncomeStatemets)
+                .WithMany(p => p.IncomeStatements)
                 .HasForeignKey(d => d.CurrencyId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_IncomeStatements_Currencies");

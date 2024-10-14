@@ -1,9 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Polly;
 using SharePicker.Models.Database;
 using SharePicker.Models.Fmp;
-using System;
-using System.Threading;
 
 namespace SharePicker.Services;
 
@@ -13,6 +10,7 @@ public class DatabaseWriter(
 {
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
+        var count = 0;
         while (!cancellationToken.IsCancellationRequested)
         {
             using var timer = new PeriodicTimer(TimeSpan.FromDays(1));
@@ -42,7 +40,7 @@ public class DatabaseWriter(
                 foreach (var incomeStatement in await fmpClient
                     .GetIncomeStatementsAsync(stock.Symbol, cancellationToken))
                 {
-                    await dbContext.IncomeStatemets.AddAsync(
+                    await dbContext.IncomeStatements.AddAsync(
                         await ToDatabaseObject(dbContext, incomeStatement, company, cancellationToken),
                         cancellationToken);
                 }
@@ -67,6 +65,9 @@ public class DatabaseWriter(
             }
 
             await timer.WaitForNextTickAsync(cancellationToken);
+
+            if (++count > 5)
+                break;
         }
     }
 

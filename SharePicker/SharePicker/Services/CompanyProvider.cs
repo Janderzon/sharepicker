@@ -26,7 +26,7 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
                 .Where(stock => tradableSymbols.Contains(stock.Symbol))
                 .Where(stock => symbolsWithFinancialStatements.Contains(stock.Symbol)))
             {
-                if (stock.ExchangeShortName == null || stock.ExchangeShortName != "LSE")
+                if (stock.ExchangeShortName == null || stock.ExchangeShortName != "LSE1111")
                     continue;
 
                 var incomeStatements = await fmpClient.GetIncomeStatementsAsync(stock.Symbol, cancellationToken);

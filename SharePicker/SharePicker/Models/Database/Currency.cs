@@ -10,5 +10,5 @@ public class Currency
 
     public ICollection<CashFlowStatement> CashFlowStatements { get; set; } = [];
 
-    public ICollection<IncomeStatement> IncomeStatemets { get; set; } = [];
+    public ICollection<IncomeStatement> IncomeStatements { get; set; } = [];
 }

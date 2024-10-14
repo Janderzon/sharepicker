@@ -42,6 +42,7 @@ builder.Services
         options.UseSqlServer(sp.GetRequiredService<IOptions<DatabaseOptions>>().Value.ConnectionString))
     .AddSingleton<CompanyProvider>()
     .AddHostedService(sp => sp.GetRequiredService<CompanyProvider>())
+    .AddHostedService<DatabaseWriter>()
     .AddScoped<CustomAuthenticationStateProvider>()
     .AddScoped<AuthenticationStateProvider>(services =>
         services.GetRequiredService<CustomAuthenticationStateProvider>());
