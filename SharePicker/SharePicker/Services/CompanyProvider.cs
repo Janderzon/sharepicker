@@ -1,9 +1,9 @@
-﻿using SharePicker.Models;
-using SharePicker.Models.Fmp;
+﻿using Microsoft.EntityFrameworkCore;
+using SharePicker.Models;
 
 namespace SharePicker.Services;
 
-public class CompanyProvider(FmpClient fmpClient) : BackgroundService
+public class CompanyProvider(IDbContextFactory<SharePickerDbContext> dbContextFactory) : BackgroundService
 {
     private List<Company> _companies = [];
 
@@ -14,64 +14,50 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
         while (!cancellationToken.IsCancellationRequested)
         {
             using var timer = new PeriodicTimer(TimeSpan.FromDays(1));
-            var stocks = await fmpClient.GetStocksAsync(cancellationToken);
-            stocks = stocks.Where(stock => stock.Symbol == "DOM.L").ToList();
-            var tradableSymbols = (await fmpClient.GetTradableSymbolsAsync(cancellationToken))
-                .Select(s => s.Symbol)
-                .ToHashSet();
-            var symbolsWithFinancialStatements = (await fmpClient.GetSymbolsWithFinancialStatementsAsync(cancellationToken)).ToHashSet();
 
-            var companies = new List<Company>();
-            foreach (var stock in stocks
-                .Where(stock => tradableSymbols.Contains(stock.Symbol))
-                .Where(stock => symbolsWithFinancialStatements.Contains(stock.Symbol)))
+            using (var dbContext = dbContextFactory.CreateDbContext())
             {
-                if (stock.ExchangeShortName == null || stock.ExchangeShortName != "LSE1111")
-                    continue;
+                var companies = await dbContext.Companies.ToListAsync(cancellationToken);
 
-                var incomeStatements = await fmpClient.GetIncomeStatementsAsync(stock.Symbol, cancellationToken);
-                var balanceSheetStatements = await fmpClient.GetBalanceSheetStatementsAsync(stock.Symbol, cancellationToken);
-                var cashFlowStatements = await fmpClient.GetCashFlowStatementsAsync(stock.Symbol, cancellationToken);
-
-                companies.Add(new Company(
-                    stock.Symbol,
-                    stock.Name,
-                    stock.ExchangeShortName,
-                    incomeStatements.Select(ToDomain).ToList(),
-                    balanceSheetStatements.Select(ToDomain).ToList(),
-                    cashFlowStatements.Select(ToDomain).ToList()));
+                _companies = companies
+                    .Select(dbo => new Company(
+                        dbo.Symbol,
+                        dbo.Name,
+                        dbo.Exchange.Symbol,
+                        dbo.IncomeStatements.Select(ToDomain).ToList(),
+                        dbo.BalanceSheetStatements.Select(ToDomain).ToList(),
+                        dbo.CashFlowStatements.Select(ToDomain).ToList()))
+                    .ToList();
             }
-
-            _companies = companies;
 
             await timer.WaitForNextTickAsync(cancellationToken);
         }
     }
 
-    private IncomeStatement ToDomain(IncomeStatementDto dto) => new(
-        DateOnly.ParseExact(dto.Date, "yyyy-MM-dd"),
-        dto.ReportedCurrency,
-        dto.Revenue,
-        dto.CostOfRevenue,
-        dto.GrossProfit,
-        dto.ResearchAndDevelopmentExpenses,
-        dto.SellingAndMarketingExpenses,
-        dto.GeneralAndAdministrativeExpenses,
-        dto.OtherExpenses,
-        dto.OperatingIncome,
-        dto.IncomeBeforeTax - dto.InterestIncome + dto.InterestExpense,
-        dto.InterestIncome,
-        dto.InterestExpense,
-        dto.IncomeBeforeTax,
-        dto.IncomeTaxExpense,
-        dto.IncomeBeforeTax - dto.IncomeTaxExpense,
-        dto.NetIncome,
-        dto.Eps,
-        dto.EpsDiluted);
+    private IncomeStatement ToDomain(Models.Database.IncomeStatement dbo) => new(
+        dbo.Date,
+        dbo.Currency.Symbol,
+        dbo.Revenue,
+        dbo.CostOfSales,
+        dbo.GrossProfit,
+        dbo.ResearchAndDevelopmentCosts,
+        dbo.DistributionCosts,
+        dbo.AdministrativeCosts,
+        dbo.OtherCosts,
+        dbo.OperatingProfit,
+        dbo.ProfitBeforeIncomeAndTaxation,
+        dbo.FinanceIncome,
+        dbo.FinanceExpense,
+        dbo.ProfitBeforeTax,
+        dbo.Taxation,
+        dbo.ProfitAfterTax,
+        dbo.NetProfit,
+        dbo.EarningsPerShare,
+        dbo.EarningsPerShareDiluted);
 
-    private BalanceSheetStatement ToDomain(BalanceSheetStatementDto dto) => new(
-        DateOnly.ParseExact(dto.Date, "yyyy-MM-dd"),
-        dto.ReportedCurrency,
+    private BalanceSheetStatement ToDomain(Models.Database.BalanceSheetStatement dto) => new(
+        dto.Date,
+        dto.Currency.Symbol,
         new Assets(
             new CurrentAssets(
                 dto.CashAndCashEquivalents,
@@ -95,7 +81,7 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
                 dto.AccountPayables,
                 dto.ShortTermDebt,
                 dto.TaxPayables,
-                dto.DeferredRevenue - dto.TaxPayables,
+                dto.DeferredRevenue,
                 dto.OtherCurrentLiabilities,
                 dto.TotalCurrentLiabilities),
             new NonCurrentLiabilities(
@@ -121,12 +107,12 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
             dto.TotalDebt,
             dto.NetDebt));
 
-    private CashFlowStatement ToDomain(CashFlowStatementDto dto) => new(
-        DateOnly.ParseExact(dto.Date, "yyyy-MM-dd"),
-        dto.ReportedCurrency,
+    private CashFlowStatement ToDomain(Models.Database.CashFlowStatement dto) => new(
+        dto.Date,
+        dto.Currency.Symbol,
         new OperationsCashFlow(
             dto.NetIncome,
-            dto.DepreciationAndAmortization,
+            dto.DepreciationAndAmortisation,
             dto.DeferredIncomeTax,
             dto.StockBasedCompensation,
             dto.AccountsReceivables,
@@ -135,20 +121,20 @@ public class CompanyProvider(FmpClient fmpClient) : BackgroundService
             dto.OtherWorkingCapital,
             dto.ChangeInWorkingCapital,
             dto.OtherNonCashItems,
-            dto.NetCashProvidedByOperatingActivities),
+            dto.NetCashFromOperations),
         new InvestingCashFlow(
             dto.CapitalExpenditure,
-            dto.AcquisitionsNet,
+            dto.Acquisitions,
             dto.PurchasesOfInvestments,
-            dto.SalesMaturitiesOfInvestments,
-            dto.OtherInvestingActivites,
-            dto.NetCashUsedForInvestingActivites),
+            dto.SaleOrMaturityOfInvestments,
+            dto.OtherInvestingActivities,
+            dto.NetCashFromInvesting),
         new FinancingCashFlow(
-            dto.CommonStockIssued,
-            dto.CommonStockRepurchased,
+            dto.SharesIssued,
+            dto.SharesRepurchased,
             dto.DebtRepayment,
             dto.DividendsPaid,
-            dto.OtherFinancingActivites,
-            dto.NetCashUsedProvidedByFinancingActivities),
+            dto.OtherFinancingActivities,
+            dto.NetCashFromFinancing),
         dto.NetChangeInCash);
 }

@@ -131,7 +131,7 @@ public class DatabaseWriter(
                     AccountPayables = dto.AccountPayables,
                     ShortTermDebt = dto.ShortTermDebt,
                     TaxPayables = dto.TaxPayables,
-                    DeferredRevenue = dto.DeferredRevenue,
+                    DeferredRevenue = dto.DeferredRevenue - dto.TaxPayables,
                     OtherCurrentLiabilities = dto.OtherCurrentLiabilities,
                     TotalCurrentLiabilities = dto.TotalCurrentLiabilities,
                     LongTermDebt = dto.LongTermDebt,
