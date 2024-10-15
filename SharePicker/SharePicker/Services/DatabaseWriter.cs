@@ -10,7 +10,6 @@ public class DatabaseWriter(
 {
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
-        var count = 0;
         while (!cancellationToken.IsCancellationRequested)
         {
             using var timer = new PeriodicTimer(TimeSpan.FromDays(1));
@@ -30,9 +29,6 @@ public class DatabaseWriter(
                 await AddIncomeStatements(stock, cancellationToken);
                 await AddBalanceSheetStatements(stock, cancellationToken);
                 await AddCashFlowStatements(stock, cancellationToken);
-
-                if (++count > 5)
-                    break;
             }
 
             await timer.WaitForNextTickAsync(cancellationToken);
@@ -46,7 +42,7 @@ public class DatabaseWriter(
 
         foreach (var dto in await fmpClient.GetIncomeStatementsAsync(stock.Symbol, cancellationToken))
         {
-            using var dbContext = dbContextFactory.CreateDbContext();
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 
             var exchange = await dbContext.Exchanges.SingleOrDefaultAsync(exchange => exchange.Symbol == stock.ExchangeShortName, cancellationToken)
                 ?? new Exchange { Name = stock.Exchange, Symbol = stock.ExchangeShortName };
@@ -95,7 +91,7 @@ public class DatabaseWriter(
 
         foreach (var dto in await fmpClient.GetBalanceSheetStatementsAsync(stock.Symbol, cancellationToken))
         {
-            using var dbContext = dbContextFactory.CreateDbContext();
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 
             var exchange = await dbContext.Exchanges.SingleOrDefaultAsync(exchange => exchange.Symbol == stock.ExchangeShortName, cancellationToken)
                 ?? new Exchange { Name = stock.Exchange, Symbol = stock.ExchangeShortName };
@@ -167,7 +163,7 @@ public class DatabaseWriter(
 
         foreach (var dto in await fmpClient.GetCashFlowStatementsAsync(stock.Symbol, cancellationToken))
         {
-            using var dbContext = dbContextFactory.CreateDbContext();
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 
             var exchange = await dbContext.Exchanges.SingleOrDefaultAsync(exchange => exchange.Symbol == stock.ExchangeShortName, cancellationToken)
                 ?? new Exchange { Name = stock.Exchange, Symbol = stock.ExchangeShortName };

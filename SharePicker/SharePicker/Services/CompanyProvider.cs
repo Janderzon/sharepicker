@@ -15,7 +15,7 @@ public class CompanyProvider(IDbContextFactory<SharePickerDbContext> dbContextFa
         {
             using var timer = new PeriodicTimer(TimeSpan.FromDays(1));
 
-            using (var dbContext = dbContextFactory.CreateDbContext())
+            await using (var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken))
             {
                 var companies = await dbContext.Companies
                     .Include(company => company.Exchange)
