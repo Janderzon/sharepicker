@@ -17,7 +17,14 @@ public class CompanyProvider(IDbContextFactory<SharePickerDbContext> dbContextFa
 
             using (var dbContext = dbContextFactory.CreateDbContext())
             {
-                var companies = await dbContext.Companies.ToListAsync(cancellationToken);
+                var companies = await dbContext.Companies
+                    .Include(company => company.Exchange)
+                    .Include(company => company.IncomeStatements)
+                    .Include(company => company.BalanceSheetStatements)
+                    .Include(company => company.CashFlowStatements)
+                    .ThenInclude(statement => statement.Currency)
+                    .AsSplitQuery()
+                    .ToListAsync(cancellationToken);
 
                 _companies = companies
                     .Select(dbo => new Company(
