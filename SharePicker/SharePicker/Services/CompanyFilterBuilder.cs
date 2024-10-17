@@ -1,10 +1,10 @@
-﻿using SharePicker.Models;
+﻿using SharePicker.Models.Database;
 
 namespace SharePicker.Services;
 
 public interface ICompanyFilter
 {
-    public List<Company> FilterCompanies(IEnumerable<Company> companies);
+    public IQueryable<Company> FilterCompanies(IQueryable<Company> companies);
 }
 
 public class CompanyFilterBuilder
@@ -44,8 +44,7 @@ public class CompanyFilterBuilder
 
     private class CompanyFilter(List<Func<Company, bool>> filters) : ICompanyFilter
     {
-        public List<Company> FilterCompanies(IEnumerable<Company> companies) => companies
-            .Where(company => filters.All(filter => filter.Invoke(company)))
-            .ToList();
+        public IQueryable<Company> FilterCompanies(IQueryable<Company> companies) => companies
+            .Where(company => filters.All(filter => filter.Invoke(company)));
     }
 }
