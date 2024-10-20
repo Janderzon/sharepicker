@@ -82,7 +82,7 @@
                     The profit margin should be consistently at least 10%.
                     Companies with higher profit margins are better placed withstand tempory periods of difficulty that may depress profits.
                 </MudText>
-                @* <ProfitMargin ProfitMarginSeries="@_selectedCompany.GetEbitPerRevenueSeries()" /> *@
+                <ProfitMargin ProfitMarginSeriesFactory="token => SeriesRepository.GetProfitBeforeIncomeAndTaxationPerRevenueSeriesAsync(_selectedCompany, token)" />
             </MudCardContent>
         </MudCard>
         <MudCard>
@@ -121,10 +121,10 @@
                     A company who's profits are not tied to the general economy will make a safer investment.
                     We also want to see that the company is selling more, not just increasing prices.
                 </MudText>
-@*                 <DuPont 
-                    RoceSeries="@_selectedCompany.GetRoceSeries()" 
-                    CapitalTurnoverSeries="@_selectedCompany.GetCapitalTurnoverSeries()" 
-                    ProfitMarginSeries="@_selectedCompany.GetEbitPerRevenueSeries()"/> *@
+                 <DuPont 
+                     RoceSeriesFactory="token => SeriesRepository.GetReturnOnCapitalEmployedSeriesAsync(_selectedCompany, token)"
+                     CapitalTurnoverSeriesFactory="token => SeriesRepository.GetCapitalTurnoverSeriesAsync(_selectedCompany, token)"
+                     ProfitMarginSeriesFactory="token => SeriesRepository.GetProfitBeforeIncomeAndTaxationPerRevenueSeriesAsync(_selectedCompany, token)" />
             </MudCardContent>
         </MudCard>
     }

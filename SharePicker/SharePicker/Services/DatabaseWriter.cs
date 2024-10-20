@@ -29,6 +29,7 @@ public class DatabaseWriter(
                 await AddIncomeStatements(stock, cancellationToken);
                 await AddBalanceSheetStatements(stock, cancellationToken);
                 await AddCashFlowStatements(stock, cancellationToken);
+                await AddRatios(stock, cancellationToken);
             }
 
             await timer.WaitForNextTickAsync(cancellationToken);

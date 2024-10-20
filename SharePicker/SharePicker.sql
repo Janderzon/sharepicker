@@ -156,7 +156,7 @@ CREATE TABLE IncomeStatements (
 CREATE TABLE Ratios (
     RatiosId INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
     CompanyId INT NOT NULL,
-    Date DATE NOT NULL
+    Date DATE NOT NULL,
     CurrentRatio DECIMAL(19,4),
     QuickRatio DECIMAL(19,4),
     CashRatio DECIMAL(19,4),
@@ -164,7 +164,7 @@ CREATE TABLE Ratios (
     DaysOfInventoryOutstanding DECIMAL(19,4),
     OperatingCycle DECIMAL(19,4),
     DaysOfPayablesOutstanding DECIMAL(19,4),
-    CashConversionCycle DECIMAL(19,4)
+    CashConversionCycle DECIMAL(19,4),
     GrossProfitMargin DECIMAL(19,4),
     OperatingProfitMargin DECIMAL(19,4),
     PretaxProfitMargin DECIMAL(19,4),
