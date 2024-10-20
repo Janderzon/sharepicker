@@ -1,22 +1,30 @@
 ﻿@using ApexCharts
 @using SharePicker.Models
+@implements IAsyncDisposable
 
-<ApexChart @ref=_chart Options="_chartOptions">
-    <ApexPointSeries Items="SalesSeries.Reverse()"
-                     Name="Sales"
-                     XValue="@(x => x.Label)"
-                     YValue="@(x => x.Value)"
-                     SeriesType="SeriesType.Bar" />
+@if (_profitSeries != null && _salesSeries != null)
+{
+    <ApexChart Options="_chartOptions">
+        <ApexPointSeries 
+            Items="_salesSeries"
+            Name="Sales"
+            XValue="@(x => x.Label)"
+            YValue="@(x => x.Value)"
+            SeriesType="SeriesType.Bar" />
 
-    <ApexPointSeries Items="ProfitSeries.Reverse()"
-                     Name="Profit"
-                     XValue="@(x => x.Label)"
-                     YValue="@(x => x.Value)"
-                     SeriesType="SeriesType.Bar" />
-</ApexChart>
+        <ApexPointSeries 
+            Items="_profitSeries"
+            Name="Profit"
+            XValue="@(x => x.Label)"
+            YValue="@(x => x.Value)"
+            SeriesType="SeriesType.Bar" />
+    </ApexChart>
+}
 
 @code {
-    private ApexChart<LabeledValue>? _chart;
+    private CancellationTokenSource _cancellationTokenSource = new();
+    private List<LabeledValue>? _salesSeries;
+    private List<LabeledValue>? _profitSeries;
     private ApexChartOptions<LabeledValue> _chartOptions = new()
     {
         Chart = new()
@@ -33,13 +41,30 @@
         }
     };
 
-    protected override Task OnParametersSetAsync() => _chart?.RenderAsync() ?? Task.CompletedTask;
+    [Parameter]
+    [EditorRequired]
+    public Func<CancellationToken, Task<List<LabeledValue>>> SalesSeriesFactory { get; set; } =
+        _ => Task.FromResult(new List<LabeledValue>());
 
     [Parameter]
     [EditorRequired]
-    public IEnumerable<LabeledValue> SalesSeries { get; set; } = new List<LabeledValue>();
+    public Func<CancellationToken, Task<List<LabeledValue>>> ProfitSeriesFactory { get; set; } =
+        _ => Task.FromResult(new List<LabeledValue>());
 
-    [Parameter]
-    [EditorRequired]
-    public IEnumerable<LabeledValue> ProfitSeries { get; set; } = new List<LabeledValue>();
+    protected override async Task OnParametersSetAsync()
+    {
+        _salesSeries = null;
+        _profitSeries = null;
+
+        _salesSeries = await SalesSeriesFactory.Invoke(_cancellationTokenSource.Token);
+        _profitSeries = await ProfitSeriesFactory.Invoke(_cancellationTokenSource.Token);
+
+        await base.OnParametersSetAsync();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _cancellationTokenSource.CancelAsync();
+        _cancellationTokenSource.Dispose();
+    }
 }

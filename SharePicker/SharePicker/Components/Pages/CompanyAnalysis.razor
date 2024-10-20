@@ -4,6 +4,7 @@
 @using SharePicker.Models
 @using SharePicker.Services
 @inject CompanyRepository CompanyRepository
+@inject SeriesRepository SeriesRepository
 
 @attribute [Authorize]
 
@@ -28,7 +29,7 @@
                 </CardHeaderContent>
             </MudCardHeader>
             <MudCardContent>
-                <Income IncomeStatementsFactory="async token => await CompanyRepository.GetIncomeStatementsAsync(_selectedCompany, token)" />
+                <Income IncomeStatementsFactory="token => CompanyRepository.GetIncomeStatementsAsync(_selectedCompany, token)" />
             </MudCardContent>
         </MudCard>
          <MudCard>
@@ -38,7 +39,7 @@
                 </CardHeaderContent>
             </MudCardHeader>
             <MudCardContent>
-                <BalanceSheet BalanceSheetStatementsFactory="async token => await CompanyRepository.GetBalanceSheetStatementsAsync(_selectedCompany, token)" />
+                <BalanceSheet BalanceSheetStatementsFactory="token => CompanyRepository.GetBalanceSheetStatementsAsync(_selectedCompany, token)" />
             </MudCardContent>
         </MudCard>
         <MudCard>
@@ -48,7 +49,7 @@
                 </CardHeaderContent>
             </MudCardHeader>
             <MudCardContent>
-                <CashFlow CashFlowStatementsFactory="async token => await CompanyRepository.GetCashFlowStatementsAsync(_selectedCompany, token)" />
+                <CashFlow CashFlowStatementsFactory="token => CompanyRepository.GetCashFlowStatementsAsync(_selectedCompany, token)" />
             </MudCardContent>
         </MudCard>
         <MudCard>
@@ -64,7 +65,9 @@
                     Revenue should also be increasing year on year as it indicates that the EBIT growth is due to an increase in sales rather than cutting costs.
                     One-off gains/costs are not excluded and may account for any spikes/dips in the below chart.
                 </MudText>
-                @* <ProfitsAndSales ProfitSeries="@_selectedCompany.GetEbitSeries()" SalesSeries="@_selectedCompany.GetRevenueSeries()" /> *@
+                <ProfitsAndSales 
+                    ProfitSeriesFactory="token => SeriesRepository.GetProfitBeforeIncomeAndTaxationSeriesAsync(_selectedCompany, token)"
+                    SalesSeriesFactory="token => SeriesRepository.GetRevenueSeriesAsync(_selectedCompany, token)" />
             </MudCardContent>
         </MudCard>
         <MudCard>

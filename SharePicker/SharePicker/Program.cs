@@ -42,6 +42,7 @@ builder.Services
         options.UseSqlServer(sp.GetRequiredService<IOptions<DatabaseOptions>>().Value.ConnectionString))
     //.AddHostedService<DatabaseWriter>()
     .AddTransient<CompanyRepository>()
+    .AddTransient<SeriesRepository>()
     .AddScoped<CustomAuthenticationStateProvider>()
     .AddScoped<AuthenticationStateProvider>(services =>
         services.GetRequiredService<CustomAuthenticationStateProvider>());
