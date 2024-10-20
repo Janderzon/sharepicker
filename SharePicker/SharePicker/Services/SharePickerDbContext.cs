@@ -165,6 +165,7 @@ public class SharePickerDbContext(DbContextOptions<SharePickerDbContext> options
             entity.Property(e => e.FinanceExpense).HasColumnType("decimal(19, 4)");
             entity.Property(e => e.FinanceIncome).HasColumnType("decimal(19, 4)");
             entity.Property(e => e.GrossProfit).HasColumnType("decimal(19, 4)");
+            entity.Property(e => e.NetProfit).HasColumnType("decimal(19, 4)");
             entity.Property(e => e.OperatingProfit).HasColumnType("decimal(19, 4)");
             entity.Property(e => e.OtherCosts).HasColumnType("decimal(19, 4)");
             entity.Property(e => e.ProfitAfterTax).HasColumnType("decimal(19, 4)");
