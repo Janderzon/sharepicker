@@ -60,7 +60,7 @@
                     <Columns>
                         <PropertyColumn Property="company => company.Symbol" Title="Symbol" />
                         <PropertyColumn Property="company => company.Name" Title="Name"/>
-                        <PropertyColumn Property="company => company.Exchange" Title="Exchange" />
+                        @* <PropertyColumn Property="company => company.Exchange" Title="Exchange" /> *@
                     </Columns>
                 </MudDataGrid>
             </MudCardContent>
@@ -71,7 +71,7 @@
 @code {
     private IEnumerable<string> _exchanges = new List<string>();
     private IEnumerable<string> _selectedExchanges = new List<string>();
-    private List<Company>? _results;
+    private List<Company>? _results = null;
     private bool _processing;
     private decimal? _minProfitMargin;
     private decimal? _minRoce;
@@ -79,11 +79,11 @@
 
     protected override void OnInitialized()
     {
-        _exchanges = CompanyProvider
-            .GetCompanies()
-            .Select(company => company.Exchange)
-            .Order()
-            .ToHashSet();
+        // _exchanges = CompanyProvider
+        //     .GetCompanies()
+        //     .Select(company => company.Exchange)
+        //     .Order()
+        //     .ToHashSet();
     }
 
     private string GetExchangeSelectionText(List<string> selectedValues) => selectedValues.Count == 0 
@@ -105,7 +105,7 @@
 
         var companyFilter = companyFilterBuilder.Build();
 
-        _results = companyFilter.FilterCompanies(CompanyProvider.GetCompanies());
+        // _results = companyFilter.FilterCompanies(CompanyProvider.GetCompanies());
 
         _processing = false;
     }

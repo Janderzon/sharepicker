@@ -10,6 +10,7 @@ public class CompanyRepository(IDbContextFactory<SharePickerDbContext> dbContext
         await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 
         return await dbContext.Companies
+            .OrderBy(x => x.Symbol)
             .Select(dbo => ToDomain(dbo))
             .ToListAsync(cancellationToken);
     }
@@ -19,8 +20,9 @@ public class CompanyRepository(IDbContextFactory<SharePickerDbContext> dbContext
         await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 
         return await dbContext.Companies
-            .Include(x => x.Exchange)
             .Where(dbo => dbo.Symbol == company.Symbol)
+            .OrderBy(dbo => dbo.Exchange.Symbol)
+            .Include(x => x.Exchange)
             .Select(dbo => ToDomain(dbo.Exchange))
             .SingleAsync(cancellationToken);
     }
@@ -33,6 +35,8 @@ public class CompanyRepository(IDbContextFactory<SharePickerDbContext> dbContext
 
         return await dbContext.IncomeStatements
             .Where(dbo => dbo.Company.Symbol == company.Symbol)
+            .OrderBy(dbo => dbo.Date)
+            .Include(dbo => dbo.Currency)
             .Select(dbo => ToDomain(dbo))
             .ToListAsync(cancellationToken);
     }
@@ -45,6 +49,8 @@ public class CompanyRepository(IDbContextFactory<SharePickerDbContext> dbContext
 
         return await dbContext.BalanceSheetStatements
             .Where(dbo => dbo.Company.Symbol == company.Symbol)
+            .OrderBy(dbo => dbo.Date)
+            .Include(dbo => dbo.Currency)
             .Select(dbo => ToDomain(dbo))
             .ToListAsync(cancellationToken);
     }
@@ -57,6 +63,8 @@ public class CompanyRepository(IDbContextFactory<SharePickerDbContext> dbContext
 
         return await dbContext.CashFlowStatements
             .Where(dbo => dbo.Company.Symbol == company.Symbol)
+            .OrderBy(dbo => dbo.Date)
+            .Include(dbo => dbo.Currency)
             .Select(dbo => ToDomain(dbo))
             .ToListAsync(cancellationToken);
     }

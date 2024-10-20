@@ -3,6 +3,7 @@
 @using Microsoft.AspNetCore.Authorization
 @using SharePicker.Models
 @using SharePicker.Services
+@inject CompanyRepository CompanyRepository
 
 @attribute [Authorize]
 
@@ -14,7 +15,7 @@
             </CardHeaderContent>
         </MudCardHeader>
         <MudCardContent>
-            <CompanySelector OnCompanySelect="OnSelectedCompanyChange" />
+            <CompanySelector SelectableCompaniesFactory="CompanyRepository.GetAvailableCompaniesAsync" OnCompanySelect="OnSelectedCompanyChange" />
         </MudCardContent>
     </MudCard>
 
@@ -27,10 +28,10 @@
                 </CardHeaderContent>
             </MudCardHeader>
             <MudCardContent>
-                <Income IncomeStatements="@_selectedCompany.IncomeStatements" />
+                <Income IncomeStatementsFactory="async token => await CompanyRepository.GetIncomeStatementsAsync(_selectedCompany, token)" />
             </MudCardContent>
         </MudCard>
-        <MudCard>
+@*         <MudCard>
             <MudCardHeader>
                 <CardHeaderContent>
                     <MudText Typo="Typo.h2">Balance Sheet</MudText>
@@ -49,7 +50,7 @@
             <MudCardContent>
                 <CashFlow CashFlowStatements="@_selectedCompany.CashFlowStatements" />
             </MudCardContent>
-        </MudCard>
+        </MudCard> *@
         <MudCard>
             <MudCardHeader>
                 <CardHeaderContent>
