@@ -1,5 +1,4 @@
-﻿using MudBlazor.Charts;
-using SharePicker.Models.Database;
+﻿using SharePicker.Models.Database;
 
 namespace SharePicker.Services;
 
