@@ -3,45 +3,69 @@ using SharePicker.Models;
 
 namespace SharePicker.Services;
 
-public class CompanyProvider(IDbContextFactory<SharePickerDbContext> dbContextFactory) : BackgroundService
+public class CompanyRepository(IDbContextFactory<SharePickerDbContext> dbContextFactory)
 {
-    private List<Company> _companies = [];
-
-    public List<Company> GetCompanies() => _companies;
-
-    protected override async Task ExecuteAsync(CancellationToken cancellationToken)
+    public async Task<List<Company>> GetAvailableCompaniesAsync(CancellationToken cancellationToken)
     {
-        while (!cancellationToken.IsCancellationRequested)
-        {
-            using var timer = new PeriodicTimer(TimeSpan.FromDays(1));
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 
-            await using (var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken))
-            {
-                var companies = await dbContext.Companies
-                    .Include(company => company.Exchange)
-                    .Include(company => company.IncomeStatements)
-                    .Include(company => company.BalanceSheetStatements)
-                    .Include(company => company.CashFlowStatements)
-                    .ThenInclude(statement => statement.Currency)
-                    .AsSplitQuery()
-                    .ToListAsync(cancellationToken);
-
-                _companies = companies
-                    .Select(dbo => new Company(
-                        dbo.Symbol,
-                        dbo.Name,
-                        dbo.Exchange.Symbol,
-                        dbo.IncomeStatements.Select(ToDomain).ToList(),
-                        dbo.BalanceSheetStatements.Select(ToDomain).ToList(),
-                        dbo.CashFlowStatements.Select(ToDomain).ToList()))
-                    .ToList();
-            }
-
-            await timer.WaitForNextTickAsync(cancellationToken);
-        }
+        return await dbContext.Companies
+            .Select(dbo => ToDomain(dbo))
+            .ToListAsync(cancellationToken);
     }
 
-    private IncomeStatement ToDomain(Models.Database.IncomeStatement dbo) => new(
+    public async Task<Exchange> GetExchangeAsync(Company company, CancellationToken cancellationToken)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+
+        return await dbContext.Companies
+            .Include(x => x.Exchange)
+            .Where(dbo => dbo.Symbol == company.Symbol)
+            .Select(dbo => ToDomain(dbo.Exchange))
+            .SingleAsync(cancellationToken);
+    }
+
+    public async Task<List<IncomeStatement>> GetIncomeStatementsAsync(
+        Company company,
+        CancellationToken cancellationToken)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+
+        return await dbContext.IncomeStatements
+            .Where(dbo => dbo.Company.Symbol == company.Symbol)
+            .Select(dbo => ToDomain(dbo))
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<List<BalanceSheetStatement>> GetBalanceSheetStatementsAsync(
+        Company company,
+        CancellationToken cancellationToken)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+
+        return await dbContext.BalanceSheetStatements
+            .Where(dbo => dbo.Company.Symbol == company.Symbol)
+            .Select(dbo => ToDomain(dbo))
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<List<CashFlowStatement>> GetCashFlowStatementsAsync(
+        Company company,
+        CancellationToken cancellationToken)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+
+        return await dbContext.CashFlowStatements
+            .Where(dbo => dbo.Company.Symbol == company.Symbol)
+            .Select(dbo => ToDomain(dbo))
+            .ToListAsync(cancellationToken);
+    }
+
+    private static Company ToDomain(Models.Database.Company dbo) => new(dbo.Symbol, dbo.Name);
+
+    private static Exchange ToDomain(Models.Database.Exchange dbo) => new(dbo.Symbol, dbo.Name);
+
+    private static IncomeStatement ToDomain(Models.Database.IncomeStatement dbo) => new(
         dbo.Date,
         dbo.Currency.Symbol,
         dbo.Revenue,
