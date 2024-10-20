@@ -34,7 +34,7 @@ public class CompanyFilterBuilder
                 outerStatement => outerStatement.Date.Year,
                 innerStatement => innerStatement.Date.Year + 1,
                 (outerStatement, innerStatement) => innerStatement.ProfitBeforeIncomeAndTaxation < outerStatement.ProfitBeforeIncomeAndTaxation)
-            .Count(result => result == false) == 0));
+            .Count(result => result == false) <= 2));
         return this;
     }
 
