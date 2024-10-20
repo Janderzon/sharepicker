@@ -1,4 +1,5 @@
-﻿using SharePicker.Models.Database;
+﻿using MudBlazor.Charts;
+using SharePicker.Models.Database;
 
 namespace SharePicker.Services;
 
@@ -25,22 +26,17 @@ public class CompanyFilterBuilder
         return this;
     }
 
-    //public CompanyFilterBuilder WithIncreasingProfits()
-    //{
-    //    _filters.Add(company =>
-    //    {
-    //        //var lastProfit = 0m;
-    //        var decresingProfitCount = 0;
-    //        //foreach (var incomeStatement in company.IncomeStatements)
-    //        //{
-    //        //    if (incomeStatement.Ebit < lastProfit)
-    //        //        decresingProfitCount++;
-    //        //    lastProfit = incomeStatement.Ebit;
-    //        //}
-    //        return decresingProfitCount == 0;
-    //    });
-    //    return this;
-    //}
+    public CompanyFilterBuilder WithIncreasingProfits()
+    {
+        _filters.Add(filter => filter.Where(company => company.IncomeStatements
+            .Join(
+                company.IncomeStatements,
+                outerStatement => outerStatement.Date.Year,
+                innerStatement => innerStatement.Date.Year + 1,
+                (outerStatement, innerStatement) => innerStatement.ProfitBeforeIncomeAndTaxation < outerStatement.ProfitBeforeIncomeAndTaxation)
+            .Count(result => result == false) == 0));
+        return this;
+    }
 
     public ICompanyFilter Build() => new CompanyFilter([.._filters]);
 

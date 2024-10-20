@@ -103,8 +103,8 @@
             companyFilterBuilder.WithMinProfitMargin(_minProfitMargin.Value);
         if (_minRoce.HasValue)
             companyFilterBuilder.WithMinReturnOnCapitalEmployed(_minRoce.Value);
-        // if (_increasingProfits)
-        //     companyFilterBuilder.WithIncreasingProfits();
+        if (_increasingProfits)
+            companyFilterBuilder.WithIncreasingProfits();
 
         _results = await CompanyRepository.GetFilteredCompaniesAsync(
             companyFilterBuilder.Build(),
