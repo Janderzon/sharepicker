@@ -17,11 +17,13 @@ public class SharePickerDbContext(DbContextOptions<SharePickerDbContext> options
 
     public DbSet<IncomeStatement> IncomeStatements { get; set; }
 
+    public DbSet<Ratios> Ratios { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<BalanceSheetStatement>(entity =>
         {
-            entity.HasKey(e => e.BalanceSheetStatementId).HasName("PK__BalanceS__6C9B057D66D1BBAC");
+            entity.HasKey(e => e.BalanceSheetStatementId);
 
             entity.Property(e => e.AccountPayables).HasColumnType("decimal(19, 4)");
             entity.Property(e => e.AccumulatedOtherComprehensiveIncomeLoss).HasColumnType("decimal(19, 4)");
@@ -81,7 +83,7 @@ public class SharePickerDbContext(DbContextOptions<SharePickerDbContext> options
 
         modelBuilder.Entity<CashFlowStatement>(entity =>
         {
-            entity.HasKey(e => e.CashFlowStatementId).HasName("PK__CashFlow__DE52E984BB10B14D");
+            entity.HasKey(e => e.CashFlowStatementId);
 
             entity.Property(e => e.AccountsPayables).HasColumnType("decimal(19, 4)");
             entity.Property(e => e.AccountsReceivables).HasColumnType("decimal(19, 4)");
@@ -125,7 +127,7 @@ public class SharePickerDbContext(DbContextOptions<SharePickerDbContext> options
 
         modelBuilder.Entity<Company>(entity =>
         {
-            entity.HasKey(e => e.CompanyId).HasName("PK__Companie__2D971CACA675BBC1");
+            entity.HasKey(e => e.CompanyId);
 
             entity.Property(e => e.Name).HasMaxLength(100);
             entity.Property(e => e.Symbol).HasMaxLength(20);
@@ -140,14 +142,14 @@ public class SharePickerDbContext(DbContextOptions<SharePickerDbContext> options
 
         modelBuilder.Entity<Currency>(entity =>
         {
-            entity.HasKey(e => e.CurrencyId).HasName("PK__Currenci__14470AF086E05275");
+            entity.HasKey(e => e.CurrencyId);
 
             entity.Property(e => e.Symbol).HasMaxLength(20);
         });
 
         modelBuilder.Entity<Exchange>(entity =>
         {
-            entity.HasKey(e => e.ExchangeId).HasName("PK__Exchange__72E6008BABE01433");
+            entity.HasKey(e => e.ExchangeId);
 
             entity.Property(e => e.Name).HasMaxLength(100);
             entity.Property(e => e.Symbol).HasMaxLength(20);
@@ -155,7 +157,7 @@ public class SharePickerDbContext(DbContextOptions<SharePickerDbContext> options
 
         modelBuilder.Entity<IncomeStatement>(entity =>
         {
-            entity.HasKey(e => e.IncomeStatementId).HasName("PK__IncomeSt__811D9AF8F6B3484D");
+            entity.HasKey(e => e.IncomeStatementId);
 
             entity.Property(e => e.AdministrativeCosts).HasColumnType("decimal(19, 4)");
             entity.Property(e => e.CostOfSales).HasColumnType("decimal(19, 4)");
@@ -188,6 +190,49 @@ public class SharePickerDbContext(DbContextOptions<SharePickerDbContext> options
                 .HasForeignKey(d => d.CurrencyId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_IncomeStatements_Currencies");
+        });
+
+        modelBuilder.Entity<Ratios>(entity =>
+        {
+            entity.HasKey(e => e.RatiosId);
+
+            entity.Property(e => e.NetIncome).HasColumnType("decimal(19, 4)");
+            entity.Property(e => e.DepreciationAndAmortization).HasColumnType("decimal(19, 4)");
+            entity.Property(e => e.DeferredIncomeTax).HasColumnType("decimal(19, 4)");
+            entity.Property(e => e.StockBasedCompensation).HasColumnType("decimal(19, 4)");
+            entity.Property(e => e.ChangeInWorkingCapital).HasColumnType("decimal(19, 4)");
+            entity.Property(e => e.AccountsReceivables).HasColumnType("decimal(19, 4)");
+            entity.Property(e => e.Inventory).HasColumnType("decimal(19, 4)");
+            entity.Property(e => e.AccountsPayables).HasColumnType("decimal(19, 4)");
+            entity.Property(e => e.OtherWorkingCapital).HasColumnType("decimal(19, 4)");
+            entity.Property(e => e.OtherNonCashItems).HasColumnType("decimal(19, 4)");
+            entity.Property(e => e.NetCashProvidedByOperatingActivities).HasColumnType("decimal(19, 4)");
+            entity.Property(e => e.InvestmentsInPropertyPlantAndEquipment).HasColumnType("decimal(19, 4)");
+            entity.Property(e => e.AcquisitionsNet).HasColumnType("decimal(19, 4)");
+            entity.Property(e => e.PurchasesOfInvestments).HasColumnType("decimal(19, 4)");
+            entity.Property(e => e.SalesMaturitiesOfInvestments).HasColumnType("decimal(19, 4)");
+            entity.Property(e => e.OtherInvestingActivites).HasColumnType("decimal(19, 4)");
+            entity.Property(e => e.NetCashUsedForInvestingActivites).HasColumnType("decimal(19, 4)");
+            entity.Property(e => e.DebtRepayment).HasColumnType("decimal(19, 4)");
+            entity.Property(e => e.CommonStockIssued).HasColumnType("decimal(19, 4)");
+            entity.Property(e => e.CommonStockRepurchased).HasColumnType("decimal(19, 4)");
+            entity.Property(e => e.DividendsPaid).HasColumnType("decimal(19, 4)");
+            entity.Property(e => e.OtherFinancingActivites).HasColumnType("decimal(19, 4)");
+            entity.Property(e => e.NetCashUsedProvidedByFinancingActivities).HasColumnType("decimal(19, 4)");
+            entity.Property(e => e.EffectOfForexChangesOnCash).HasColumnType("decimal(19, 4)");
+            entity.Property(e => e.NetChangeInCash).HasColumnType("decimal(19, 4)");
+            entity.Property(e => e.CashAtEndOfPeriod).HasColumnType("decimal(19, 4)");
+            entity.Property(e => e.CashAtBeginningOfPeriod).HasColumnType("decimal(19, 4)");
+            entity.Property(e => e.OperatingCashFlow).HasColumnType("decimal(19, 4)");
+            entity.Property(e => e.CapitalExpenditure).HasColumnType("decimal(19, 4)");
+            entity.Property(e => e.FreeCashFlow).HasColumnType("decimal(19, 4)");
+
+            entity
+                .HasOne(d => d.Company)
+                .WithMany(p => p.Ratios)
+                .HasForeignKey(d => d.CompanyId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Ratios_Companies");
         });
     }
 }

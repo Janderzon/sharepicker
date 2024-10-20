@@ -17,4 +17,6 @@ public class Company
     public required Exchange Exchange { get; set; }
 
     public ICollection<IncomeStatement> IncomeStatements { get; set; } = [];
+
+    public ICollection<Ratios> Ratios { get; set; } = [];
 }

@@ -212,7 +212,7 @@ CREATE TABLE Ratios (
     EnterpriseValueMultiple DECIMAL(19,4),
     PriceFairValue DECIMAL(19,4)
 
-    CONSTRAINT FK_IncomeStatements_Companies FOREIGN KEY (CompanyId)
+    CONSTRAINT FK_Ratios_Companies FOREIGN KEY (CompanyId)
         REFERENCES dbo.Companies (CompanyId),
 )
 
