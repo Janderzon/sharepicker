@@ -2,7 +2,6 @@
 
 public record RatiosDto
 {
-    public required string Symbol { get; init; }
     public required string Date { get; init; }
     public required decimal? CurrentRatio { get; init; }
     public required decimal? QuickRatio { get; init; }

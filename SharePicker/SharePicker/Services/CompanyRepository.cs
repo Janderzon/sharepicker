@@ -27,9 +27,7 @@ public class CompanyRepository(IDbContextFactory<SharePickerDbContext> dbContext
             .SingleAsync(cancellationToken);
     }
 
-    public async Task<List<IncomeStatement>> GetIncomeStatementsAsync(
-        Company company,
-        CancellationToken cancellationToken)
+    public async Task<List<IncomeStatement>> GetIncomeStatementsAsync(Company company, CancellationToken cancellationToken)
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 
@@ -41,9 +39,7 @@ public class CompanyRepository(IDbContextFactory<SharePickerDbContext> dbContext
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<List<BalanceSheetStatement>> GetBalanceSheetStatementsAsync(
-        Company company,
-        CancellationToken cancellationToken)
+    public async Task<List<BalanceSheetStatement>> GetBalanceSheetStatementsAsync(Company company, CancellationToken cancellationToken)
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 
@@ -55,9 +51,7 @@ public class CompanyRepository(IDbContextFactory<SharePickerDbContext> dbContext
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<List<CashFlowStatement>> GetCashFlowStatementsAsync(
-        Company company,
-        CancellationToken cancellationToken)
+    public async Task<List<CashFlowStatement>> GetCashFlowStatementsAsync(Company company, CancellationToken cancellationToken)
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 
@@ -65,6 +59,17 @@ public class CompanyRepository(IDbContextFactory<SharePickerDbContext> dbContext
             .Where(dbo => dbo.Company.Symbol == company.Symbol)
             .OrderBy(dbo => dbo.Date)
             .Include(dbo => dbo.Currency)
+            .Select(dbo => ToDomain(dbo))
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<List<Ratios>> GetRatiosAsync(Company company, CancellationToken cancellationToken)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+
+        return await dbContext.Ratios
+            .Where(dbo => dbo.Company.Symbol == company.Symbol)
+            .OrderBy(dbo => dbo.Date)
             .Select(dbo => ToDomain(dbo))
             .ToListAsync(cancellationToken);
     }
@@ -94,86 +99,143 @@ public class CompanyRepository(IDbContextFactory<SharePickerDbContext> dbContext
         dbo.EarningsPerShare,
         dbo.EarningsPerShareDiluted);
 
-    private static BalanceSheetStatement ToDomain(Models.Database.BalanceSheetStatement dto) => new(
-        dto.Date,
-        dto.Currency.Symbol,
+    private static BalanceSheetStatement ToDomain(Models.Database.BalanceSheetStatement dbo) => new(
+        dbo.Date,
+        dbo.Currency.Symbol,
         new Assets(
             new CurrentAssets(
-                dto.CashAndCashEquivalents,
-                dto.ShortTermInvestments,
-                dto.NetReceivables,
-                dto.Inventory,
-                dto.OtherCurrentAssets,
-                dto.TotalCurrentAssets),
+                dbo.CashAndCashEquivalents,
+                dbo.ShortTermInvestments,
+                dbo.NetReceivables,
+                dbo.Inventory,
+                dbo.OtherCurrentAssets,
+                dbo.TotalCurrentAssets),
             new NonCurrentAssets(
-                dto.PropertyPlantEquipmentNet,
-                dto.Goodwill,
-                dto.IntangibleAssets,
-                dto.LongTermInvestments,
-                dto.TaxAssets,
-                dto.OtherNonCurrentAssets,
-                dto.TotalNonCurrentAssets),
-            dto.OtherAssets,
-            dto.TotalAssets),
+                dbo.PropertyPlantEquipmentNet,
+                dbo.Goodwill,
+                dbo.IntangibleAssets,
+                dbo.LongTermInvestments,
+                dbo.TaxAssets,
+                dbo.OtherNonCurrentAssets,
+                dbo.TotalNonCurrentAssets),
+            dbo.OtherAssets,
+            dbo.TotalAssets),
         new Liabilities(
             new CurrentLiabilities(
-                dto.AccountPayables,
-                dto.ShortTermDebt,
-                dto.TaxPayables,
-                dto.DeferredRevenue,
-                dto.OtherCurrentLiabilities,
-                dto.TotalCurrentLiabilities),
+                dbo.AccountPayables,
+                dbo.ShortTermDebt,
+                dbo.TaxPayables,
+                dbo.DeferredRevenue,
+                dbo.OtherCurrentLiabilities,
+                dbo.TotalCurrentLiabilities),
             new NonCurrentLiabilities(
-                dto.LongTermDebt,
-                dto.DeferredRevenueNonCurrent,
-                dto.DeferredTaxLiabilitiesNonCurrent,
-                dto.MinorityInterest,
-                dto.CapitalLeaseObligations,
-                dto.OtherNonCurrentLiabilities,
-                dto.TotalNonCurrentLiabilities),
-            dto.OtherLiabilities,
-            dto.TotalLiabilities),
+                dbo.LongTermDebt,
+                dbo.DeferredRevenueNonCurrent,
+                dbo.DeferredTaxLiabilitiesNonCurrent,
+                dbo.MinorityInterest,
+                dbo.CapitalLeaseObligations,
+                dbo.OtherNonCurrentLiabilities,
+                dbo.TotalNonCurrentLiabilities),
+            dbo.OtherLiabilities,
+            dbo.TotalLiabilities),
         new Equity(
-            dto.PreferredStock,
-            dto.CommonStock,
-            dto.RetainedEarnings,
-            dto.AccumulatedOtherComprehensiveIncomeLoss,
-            dto.OtherTotalStockholdersEquity,
-            dto.TotalStockholdersEquity,
-            dto.TotalEquity),
+            dbo.PreferredStock,
+            dbo.CommonStock,
+            dbo.RetainedEarnings,
+            dbo.AccumulatedOtherComprehensiveIncomeLoss,
+            dbo.OtherTotalStockholdersEquity,
+            dbo.TotalStockholdersEquity,
+            dbo.TotalEquity),
         new BalanceSheetSummary(
-            dto.TotalInvestments,
-            dto.TotalDebt,
-            dto.NetDebt));
+            dbo.TotalInvestments,
+            dbo.TotalDebt,
+            dbo.NetDebt));
 
-    private static CashFlowStatement ToDomain(Models.Database.CashFlowStatement dto) => new(
-        dto.Date,
-        dto.Currency.Symbol,
+    private static CashFlowStatement ToDomain(Models.Database.CashFlowStatement dbo) => new(
+        dbo.Date,
+        dbo.Currency.Symbol,
         new OperationsCashFlow(
-            dto.NetIncome,
-            dto.DepreciationAndAmortisation,
-            dto.DeferredIncomeTax,
-            dto.StockBasedCompensation,
-            dto.AccountsReceivables,
-            dto.Inventory,
-            dto.AccountsPayables,
-            dto.OtherWorkingCapital,
-            dto.ChangeInWorkingCapital,
-            dto.OtherNonCashItems,
-            dto.NetCashFromOperations),
+            dbo.NetIncome,
+            dbo.DepreciationAndAmortisation,
+            dbo.DeferredIncomeTax,
+            dbo.StockBasedCompensation,
+            dbo.AccountsReceivables,
+            dbo.Inventory,
+            dbo.AccountsPayables,
+            dbo.OtherWorkingCapital,
+            dbo.ChangeInWorkingCapital,
+            dbo.OtherNonCashItems,
+            dbo.NetCashFromOperations),
         new InvestingCashFlow(
-            dto.CapitalExpenditure,
-            dto.Acquisitions,
-            dto.PurchasesOfInvestments,
-            dto.SaleOrMaturityOfInvestments,
-            dto.OtherInvestingActivities,
-            dto.NetCashFromInvesting),
+            dbo.CapitalExpenditure,
+            dbo.Acquisitions,
+            dbo.PurchasesOfInvestments,
+            dbo.SaleOrMaturityOfInvestments,
+            dbo.OtherInvestingActivities,
+            dbo.NetCashFromInvesting),
         new FinancingCashFlow(
-            dto.SharesIssued,
-            dto.SharesRepurchased,
-            dto.DebtRepayment,
-            dto.DividendsPaid,
-            dto.OtherFinancingActivities,
-            dto.NetCashFromFinancing),
-        dto.NetChangeInCash);
+            dbo.SharesIssued,
+            dbo.SharesRepurchased,
+            dbo.DebtRepayment,
+            dbo.DividendsPaid,
+            dbo.OtherFinancingActivities,
+            dbo.NetCashFromFinancing),
+        dbo.NetChangeInCash);
+
+    private static Ratios ToDomain(Models.Database.Ratios dbo) => new(
+        dbo.Date,
+        dbo.CurrentRatio,
+        dbo.QuickRatio,
+        dbo.CashRatio,
+        dbo.DaysOfSalesOutstanding,
+        dbo.DaysOfInventoryOutstanding,
+        dbo.OperatingCycle,
+        dbo.DaysOfPayablesOutstanding,
+        dbo.CashConversionCycle,
+        dbo.GrossProfitMargin,
+        dbo.OperatingProfitMargin,
+        dbo.PretaxProfitMargin,
+        dbo.NetProfitMargin,
+        dbo.EffectiveTaxRate,
+        dbo.ReturnOnAssets,
+        dbo.ReturnOnEquity,
+        dbo.ReturnOnCapitalEmployed,
+        dbo.NetIncomePerEBT,
+        dbo.EbtPerEbit,
+        dbo.EbitPerRevenue,
+        dbo.DebtRatio,
+        dbo.DebtEquityRatio,
+        dbo.LongTermDebtToCapitalization,
+        dbo.TotalDebtToCapitalization,
+        dbo.InterestCoverage,
+        dbo.CashFlowToDebtRatio,
+        dbo.CompanyEquityMultiplier,
+        dbo.ReceivablesTurnover,
+        dbo.PayablesTurnover,
+        dbo.InventoryTurnover,
+        dbo.FixedAssetTurnover,
+        dbo.AssetTurnover,
+        dbo.OperatingCashFlowPerShare,
+        dbo.FreeCashFlowPerShare,
+        dbo.CashPerShare,
+        dbo.PayoutRatio,
+        dbo.OperatingCashFlowSalesRatio,
+        dbo.FreeCashFlowOperatingCashFlowRatio,
+        dbo.CashFlowCoverageRatios,
+        dbo.ShortTermCoverageRatios,
+        dbo.CapitalExpenditureCoverageRatio,
+        dbo.DividendPaidAndCapexCoverageRatio,
+        dbo.DividendPayoutRatio,
+        dbo.PriceBookValueRatio,
+        dbo.PriceToBookRatio,
+        dbo.PriceToSalesRatio,
+        dbo.PriceEarningsRatio,
+        dbo.PriceToFreeCashFlowsRatio,
+        dbo.PriceToOperatingCashFlowsRatio,
+        dbo.PriceCashFlowRatio,
+        dbo.PriceEarningsToGrowthRatio,
+        dbo.PriceSalesRatio,
+        dbo.DividendYield,
+        dbo.EnterpriseValueMultiple,
+        dbo.PriceFairValue);
 }
