@@ -21,7 +21,7 @@ public record RatiosDto
     public required decimal? ReturnOnCapitalEmployed { get; init; }
     //public required decimal NetIncomePerEBT { get; init; }
     //public required decimal EbtPerEbit { get; init; }
-    public required decimal EbitPerRevenue { get; init; }
+    public required decimal? EbitPerRevenue { get; init; }
     //public required decimal DebtRatio { get; init; }
     //public required decimal DebtEquityRatio { get; init; }
     //public required decimal LongTermDebtToCapitalization { get; init; }

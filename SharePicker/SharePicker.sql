@@ -153,4 +153,67 @@ CREATE TABLE IncomeStatements (
         REFERENCES dbo.Currencies (CurrencyId)
 )
 
+CREATE TABLE Ratios (
+    RatiosId INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    CompanyId INT NOT NULL,
+    Date DATE NOT NULL
+    CurrentRatio DECIMAL(19,4),
+    QuickRatio DECIMAL(19,4),
+    CashRatio DECIMAL(19,4),
+    DaysOfSalesOutstanding DECIMAL(19,4),
+    DaysOfInventoryOutstanding DECIMAL(19,4),
+    OperatingCycle DECIMAL(19,4),
+    DaysOfPayablesOutstanding DECIMAL(19,4),
+    CashConversionCycle DECIMAL(19,4)
+    GrossProfitMargin DECIMAL(19,4),
+    OperatingProfitMargin DECIMAL(19,4),
+    PretaxProfitMargin DECIMAL(19,4),
+    NetProfitMargin DECIMAL(19,4),
+    EffectiveTaxRate DECIMAL(19,4),
+    ReturnOnAssets DECIMAL(19,4),
+    ReturnOnEquity DECIMAL(19,4),
+    ReturnOnCapitalEmployed DECIMAL(19,4),
+    NetIncomePerEBT DECIMAL(19,4),
+    EbtPerEbit DECIMAL(19,4),
+    EbitPerRevenue DECIMAL(19,4),
+    DebtRatio DECIMAL(19,4),
+    DebtEquityRatio DECIMAL(19,4),
+    LongTermDebtToCapitalization DECIMAL(19,4),
+    TotalDebtToCapitalization DECIMAL(19,4),
+    InterestCoverage DECIMAL(19,4),
+    CashFlowToDebtRatio DECIMAL(19,4),
+    CompanyEquityMultiplier DECIMAL(19,4),
+    ReceivablesTurnover DECIMAL(19,4),
+    PayablesTurnover DECIMAL(19,4),
+    InventoryTurnover DECIMAL(19,4),
+    FixedAssetTurnover DECIMAL(19,4),
+    AssetTurnover DECIMAL(19,4),
+    OperatingCashFlowPerShare DECIMAL(19,4),
+    FreeCashFlowPerShare DECIMAL(19,4),
+    CashPerShare DECIMAL(19,4),
+    PayoutRatio DECIMAL(19,4),
+    OperatingCashFlowSalesRatio DECIMAL(19,4),
+    FreeCashFlowOperatingCashFlowRatio DECIMAL(19,4),
+    CashFlowCoverageRatios DECIMAL(19,4),
+    ShortTermCoverageRatios DECIMAL(19,4),
+    CapitalExpenditureCoverageRatio DECIMAL(19,4),
+    DividendPaidAndCapexCoverageRatio DECIMAL(19,4),
+    DividendPayoutRatio DECIMAL(19,4),
+    PriceBookValueRatio DECIMAL(19,4),
+    PriceToBookRatio DECIMAL(19,4),
+    PriceToSalesRatio DECIMAL(19,4),
+    PriceEarningsRatio DECIMAL(19,4),
+    PriceToFreeCashFlowsRatio DECIMAL(19,4),
+    PriceToOperatingCashFlowsRatio DECIMAL(19,4),
+    PriceCashFlowRatio DECIMAL(19,4),
+    PriceEarningsToGrowthRatio DECIMAL(19,4),
+    PriceSalesRatio DECIMAL(19,4),
+    DividendYield DECIMAL(19,4),
+    EnterpriseValueMultiple DECIMAL(19,4),
+    PriceFairValue DECIMAL(19,4)
+
+    CONSTRAINT FK_IncomeStatements_Companies FOREIGN KEY (CompanyId)
+        REFERENCES dbo.Companies (CompanyId),
+)
+
 GO
