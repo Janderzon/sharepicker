@@ -210,5 +210,86 @@ public class DatabaseWriter(
 
             await dbContext.SaveChangesAsync(cancellationToken);
         }
-    } 
+    }
+
+    private async Task AddRatios(StockDto stock, CancellationToken cancellationToken)
+    {
+        if (stock.ExchangeShortName == null || stock.Exchange == null)
+            return;
+
+        foreach (var dto in await fmpClient.GetRatiosAsync(stock.Symbol, cancellationToken))
+        {
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+
+            var exchange = await dbContext.Exchanges.SingleOrDefaultAsync(exchange => exchange.Symbol == stock.ExchangeShortName, cancellationToken)
+                ?? new Exchange { Name = stock.Exchange, Symbol = stock.ExchangeShortName };
+
+            var company = await dbContext.Companies.SingleOrDefaultAsync(company => company.Symbol == stock.Symbol, cancellationToken)
+                ?? new Company { Name = stock.Name, Symbol = stock.Symbol, Exchange = exchange };
+
+            await dbContext.Ratios.AddAsync(
+                new Ratios
+                {
+                    Company = company,
+                    Date = DateOnly.ParseExact(dto.Date, "yyyy-MM-dd"),
+                    CurrentRatio = dto.CurrentRatio,
+                    QuickRatio = dto.QuickRatio,
+                    CashRatio = dto.CashRatio,
+                    DaysOfSalesOutstanding = dto.DaysOfSalesOutstanding,
+                    DaysOfInventoryOutstanding = dto.DaysOfInventoryOutstanding,
+                    OperatingCycle = dto.OperatingCycle,
+                    DaysOfPayablesOutstanding = dto.DaysOfPayablesOutstanding,
+                    CashConversionCycle = dto.CashConversionCycle,
+                    GrossProfitMargin = dto.GrossProfitMargin,
+                    OperatingProfitMargin = dto.OperatingProfitMargin,
+                    PretaxProfitMargin = dto.PretaxProfitMargin,
+                    NetProfitMargin = dto.NetProfitMargin,
+                    EffectiveTaxRate = dto.EffectiveTaxRate,
+                    ReturnOnAssets = dto.ReturnOnAssets,
+                    ReturnOnEquity = dto.ReturnOnEquity,
+                    ReturnOnCapitalEmployed = dto.ReturnOnCapitalEmployed,
+                    NetIncomePerEBT = dto.NetIncomePerEBT,
+                    EbtPerEbit = dto.EbtPerEbit,
+                    EbitPerRevenue = dto.EbitPerRevenue,
+                    DebtRatio = dto.DebtRatio,
+                    DebtEquityRatio = dto.DebtEquityRatio,
+                    LongTermDebtToCapitalization = dto.LongTermDebtToCapitalization,
+                    TotalDebtToCapitalization = dto.TotalDebtToCapitalization,
+                    InterestCoverage = dto.InterestCoverage,
+                    CashFlowToDebtRatio = dto.CashFlowToDebtRatio,
+                    CompanyEquityMultiplier = dto.CompanyEquityMultiplier,
+                    ReceivablesTurnover = dto.ReceivablesTurnover,
+                    PayablesTurnover = dto.PayablesTurnover,
+                    InventoryTurnover = dto.InventoryTurnover,
+                    FixedAssetTurnover = dto.FixedAssetTurnover,
+                    AssetTurnover = dto.AssetTurnover,
+                    OperatingCashFlowPerShare = dto.OperatingCashFlowPerShare,
+                    FreeCashFlowPerShare = dto.FreeCashFlowPerShare,
+                    CashPerShare = dto.CashPerShare,
+                    PayoutRatio = dto.PayoutRatio,
+                    OperatingCashFlowSalesRatio = dto.OperatingCashFlowSalesRatio,
+                    FreeCashFlowOperatingCashFlowRatio = dto.FreeCashFlowOperatingCashFlowRatio,
+                    CashFlowCoverageRatios = dto.CashFlowCoverageRatios,
+                    ShortTermCoverageRatios = dto.ShortTermCoverageRatios,
+                    CapitalExpenditureCoverageRatio = dto.CapitalExpenditureCoverageRatio,
+                    DividendPaidAndCapexCoverageRatio = dto.DividendPaidAndCapexCoverageRatio,
+                    DividendPayoutRatio = dto.DividendPayoutRatio,
+                    PriceBookValueRatio = dto.PriceBookValueRatio,
+                    PriceToBookRatio = dto.PriceToBookRatio,
+                    PriceToSalesRatio = dto.PriceToSalesRatio,
+                    PriceEarningsRatio = dto.PriceEarningsRatio,
+                    PriceToFreeCashFlowsRatio = dto.PriceToFreeCashFlowsRatio,
+                    PriceToOperatingCashFlowsRatio = dto.PriceToOperatingCashFlowsRatio,
+                    PriceCashFlowRatio = dto.PriceCashFlowRatio,
+                    PriceEarningsToGrowthRatio = dto.PriceEarningsToGrowthRatio,
+                    PriceSalesRatio = dto.PriceSalesRatio,
+                    DividendYield = dto.DividendYield,
+                    EnterpriseValueMultiple = dto.EnterpriseValueMultiple,
+                    PriceFairValue = dto.PriceFairValue
+                },
+                cancellationToken);
+
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
+    }
 }
