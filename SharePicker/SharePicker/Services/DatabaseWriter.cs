@@ -5,6 +5,7 @@ using SharePicker.Models.Fmp;
 namespace SharePicker.Services;
 
 public class DatabaseWriter(
+    ILogger<DatabaseWriter> logger,
     FmpClient fmpClient,
     IDbContextFactory<SharePickerDbContext> dbContextFactory) : BackgroundService
 {
@@ -25,11 +26,18 @@ public class DatabaseWriter(
             {
                 if (stock.ExchangeShortName != "LSE")
                     continue;
-                
-                await AddIncomeStatements(stock, cancellationToken);
-                await AddBalanceSheetStatements(stock, cancellationToken);
-                await AddCashFlowStatements(stock, cancellationToken);
-                await AddRatios(stock, cancellationToken);
+
+                try
+                {
+                    await AddIncomeStatements(stock, cancellationToken);
+                    await AddBalanceSheetStatements(stock, cancellationToken);
+                    await AddCashFlowStatements(stock, cancellationToken);
+                    await AddRatios(stock, cancellationToken);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogWarning(ex, "Failed to get write data to database for company {Company}, skipping", stock.Name);
+                }
             }
 
             await timer.WaitForNextTickAsync(cancellationToken);
