@@ -15,6 +15,17 @@ public class CompanyRepository(IDbContextFactory<SharePickerDbContext> dbContext
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<List<Company>> GetFilteredCompaniesAsync(ICompanyFilter filter, CancellationToken cancellationToken)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+
+        return await filter
+            .FilterCompanies(dbContext.Companies)
+            .OrderBy(x => x.Symbol)
+            .Select(dbo => ToDomain(dbo))
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<Exchange> GetExchangesAsync(Company company, CancellationToken cancellationToken)
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
