@@ -1,16 +1,22 @@
 ﻿@using ApexCharts
 @using SharePicker.Models
+@implements IAsyncDisposable
 
-<ApexChart @ref=_chart Options="_chartOptions">
-    <ApexPointSeries Items="ProfitMarginSeries.Reverse()"
-                     Name="Profit Margin"
-                     XValue="@(x => x.Label)"
-                     YValue="@(x => x.Value)"
-                     SeriesType="SeriesType.Bar" />
-</ApexChart>
+@if (_profitMarginSeries != null)
+{
+    <ApexChart Options="_chartOptions">
+        <ApexPointSeries 
+            Items="_profitMarginSeries"
+            Name="Profit Margin"
+            XValue="@(x => x.Label)"
+            YValue="@(x => x.Value)"
+            SeriesType="SeriesType.Bar" />
+    </ApexChart>
+}
 
 @code {
-    private ApexChart<LabeledValue>? _chart;
+    private CancellationTokenSource _cancellationTokenSource = new();
+    private List<LabeledValue>? _profitMarginSeries;
     private ApexChartOptions<LabeledValue> _chartOptions = new()
     {
         Chart = new()
@@ -27,9 +33,23 @@
         }
     };
 
-    protected override Task OnParametersSetAsync() => _chart?.RenderAsync() ?? Task.CompletedTask;
-
     [Parameter]
     [EditorRequired]
-    public IEnumerable<LabeledValue> ProfitMarginSeries { get; set; } = new List<LabeledValue>();
+    public Func<CancellationToken, Task<List<LabeledValue>>> ProfitMarginSeriesFactory { get; set; } =
+        _ => Task.FromResult(new List<LabeledValue>());
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _profitMarginSeries = null;
+
+        _profitMarginSeries = await ProfitMarginSeriesFactory.Invoke(_cancellationTokenSource.Token);
+
+        await base.OnParametersSetAsync();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _cancellationTokenSource.CancelAsync();
+        _cancellationTokenSource.Dispose();
+    }
 }

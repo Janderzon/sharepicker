@@ -1,31 +1,38 @@
 ﻿@using ApexCharts
 @using SharePicker.Models
+@implements IAsyncDisposable
 
-<ApexChart @ref=_chart Options="_chartOptions">
-    <ApexPointSeries
-        Items="RoceSeries.Reverse()"
-        Name="ROCE" 
-        XValue="@(x => x.Label)"
-        YValue="@(x => x.Value)"
-        SeriesType="SeriesType.Line" />
+@if (_roceSeries != null & _profitMarginSeries != null && _capitalTurnoverSeries != null)
+{
+    <ApexChart Options="_chartOptions">
+        <ApexPointSeries
+            Items="_roceSeries"
+            Name="ROCE" 
+            XValue="@(x => x.Label)"
+            YValue="@(x => x.Value)"
+            SeriesType="SeriesType.Line" />
 
-    <ApexPointSeries 
-        Items="ProfitMarginSeries.Reverse()"
-        Name="Profit Margin"
-        XValue="@(x => x.Label)"
-        YValue="@(x => x.Value)"
-        SeriesType="SeriesType.Bar"/>
+        <ApexPointSeries 
+            Items="_profitMarginSeries"
+            Name="Profit Margin"
+            XValue="@(x => x.Label)"
+            YValue="@(x => x.Value)"
+            SeriesType="SeriesType.Bar"/>
 
-    <ApexPointSeries 
-        Items="CapitalTurnoverSeries.Reverse()"
-        Name="Capital Turnover"
-        XValue="@(x => x.Label)"
-        YValue="@(x => x.Value)"
-        SeriesType="SeriesType.Bar" />
-</ApexChart>
+        <ApexPointSeries 
+            Items="_capitalTurnoverSeries"
+            Name="Capital Turnover"
+            XValue="@(x => x.Label)"
+            YValue="@(x => x.Value)"
+            SeriesType="SeriesType.Bar" />
+    </ApexChart>
+}
 
 @code {
-    private ApexChart<LabeledValue>? _chart;
+    private CancellationTokenSource _cancellationTokenSource = new();
+    private List<LabeledValue>? _roceSeries;
+    private List<LabeledValue>? _profitMarginSeries;
+    private List<LabeledValue>? _capitalTurnoverSeries;
     private ApexChartOptions<LabeledValue> _chartOptions = new()
     {
         Chart = new()
@@ -49,17 +56,37 @@
         }
     };
 
-    protected override Task OnParametersSetAsync() => _chart?.RenderAsync() ?? Task.CompletedTask;
+    [Parameter]
+    [EditorRequired]
+    public Func<CancellationToken, Task<List<LabeledValue>>> RoceSeriesFactory { get; set; } =
+        _ => Task.FromResult(new List<LabeledValue>());
 
     [Parameter]
     [EditorRequired]
-    public IEnumerable<LabeledValue> RoceSeries { get; set; } = new List<LabeledValue>();
+    public Func<CancellationToken, Task<List<LabeledValue>>> ProfitMarginSeriesFactory { get; set; } =
+        _ => Task.FromResult(new List<LabeledValue>());
 
     [Parameter]
     [EditorRequired]
-    public IEnumerable<LabeledValue> ProfitMarginSeries { get; set; } = new List<LabeledValue>();
+    public Func<CancellationToken, Task<List<LabeledValue>>> CapitalTurnoverSeriesFactory { get; set; } =
+        _ => Task.FromResult(new List<LabeledValue>());
 
-    [Parameter]
-    [EditorRequired]
-    public IEnumerable<LabeledValue> CapitalTurnoverSeries { get; set; } = new List<LabeledValue>();
+    protected override async Task OnParametersSetAsync()
+    {
+        _roceSeries = null;
+        _profitMarginSeries = null;
+        _capitalTurnoverSeries = null;
+
+        _roceSeries = await RoceSeriesFactory.Invoke(_cancellationTokenSource.Token);
+        _profitMarginSeries = await ProfitMarginSeriesFactory.Invoke(_cancellationTokenSource.Token);
+        _capitalTurnoverSeries = await CapitalTurnoverSeriesFactory.Invoke(_cancellationTokenSource.Token);
+
+        await base.OnParametersSetAsync();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _cancellationTokenSource.CancelAsync();
+        _cancellationTokenSource.Dispose();
+    }
 }
