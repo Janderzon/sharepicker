@@ -1,4 +1,5 @@
 ﻿@using SharePicker.Models
+@implements IAsyncDisposable
 
 <MudDataGrid 
     Items="@_rows"
@@ -9,7 +10,7 @@
     GroupExpanded="true">
     <Columns>
         <PropertyColumn Property="x => x.Name" StickyLeft="true" Sortable="false" Title="" />
-        @foreach (var balanceSheetStatement in BalanceSheetStatements.Reverse())
+        @foreach (var balanceSheetStatement in _balanceSheetStatements ?? [])
         {
             <PropertyColumn Property="x => x.ValueFactory(balanceSheetStatement)"
                             Sortable="false"
@@ -24,6 +25,8 @@
 </MudDataGrid>
 
 @code {
+    private CancellationTokenSource _cancellationTokenSource = new();
+    private List<BalanceSheetStatement>? _balanceSheetStatements;
     private record Row(string Name, Func<BalanceSheetStatement, decimal> ValueFactory, Group Group);
     private List<Row> _rows = new()
     {
@@ -189,10 +192,6 @@
            Group.Summary),
     };
 
-    [Parameter]
-    [EditorRequired]
-    public IEnumerable<BalanceSheetStatement> BalanceSheetStatements { get; set; } = new List<BalanceSheetStatement>();
-
     private enum Group
     {
         CurrentAssets,
@@ -217,4 +216,24 @@
         Group.Summary => "Summary",
         _ => throw new Exception($"Unsupported type: {group.GetType()}")
     };
+
+    [Parameter]
+    [EditorRequired]
+    public Func<CancellationToken, Task<List<BalanceSheetStatement>>> BalanceSheetStatementsFactory { get; set; } =
+        _ => Task.FromResult(new List<BalanceSheetStatement>());
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _balanceSheetStatements = null;
+
+        _balanceSheetStatements = await BalanceSheetStatementsFactory.Invoke(_cancellationTokenSource.Token);
+
+        await base.OnParametersSetAsync();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _cancellationTokenSource.CancelAsync();
+        _cancellationTokenSource.Dispose();
+    }
 }

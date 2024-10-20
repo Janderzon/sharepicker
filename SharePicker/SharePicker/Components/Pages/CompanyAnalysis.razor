@@ -31,14 +31,14 @@
                 <Income IncomeStatementsFactory="async token => await CompanyRepository.GetIncomeStatementsAsync(_selectedCompany, token)" />
             </MudCardContent>
         </MudCard>
-@*         <MudCard>
+         <MudCard>
             <MudCardHeader>
                 <CardHeaderContent>
                     <MudText Typo="Typo.h2">Balance Sheet</MudText>
                 </CardHeaderContent>
             </MudCardHeader>
             <MudCardContent>
-                <BalanceSheet BalanceSheetStatements="@_selectedCompany.BalanceSheetStatements" />
+                <BalanceSheet BalanceSheetStatementsFactory="async token => await CompanyRepository.GetBalanceSheetStatementsAsync(_selectedCompany, token)" />
             </MudCardContent>
         </MudCard>
         <MudCard>
@@ -48,9 +48,9 @@
                 </CardHeaderContent>
             </MudCardHeader>
             <MudCardContent>
-                <CashFlow CashFlowStatements="@_selectedCompany.CashFlowStatements" />
+                <CashFlow CashFlowStatementsFactory="async token => await CompanyRepository.GetCashFlowStatementsAsync(_selectedCompany, token)" />
             </MudCardContent>
-        </MudCard> *@
+        </MudCard>
         <MudCard>
             <MudCardHeader>
                 <CardHeaderContent>

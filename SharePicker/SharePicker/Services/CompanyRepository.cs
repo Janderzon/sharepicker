@@ -15,7 +15,7 @@ public class CompanyRepository(IDbContextFactory<SharePickerDbContext> dbContext
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<Exchange> GetExchangeAsync(Company company, CancellationToken cancellationToken)
+    public async Task<Exchange> GetExchangesAsync(Company company, CancellationToken cancellationToken)
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 
@@ -94,7 +94,7 @@ public class CompanyRepository(IDbContextFactory<SharePickerDbContext> dbContext
         dbo.EarningsPerShare,
         dbo.EarningsPerShareDiluted);
 
-    private BalanceSheetStatement ToDomain(Models.Database.BalanceSheetStatement dto) => new(
+    private static BalanceSheetStatement ToDomain(Models.Database.BalanceSheetStatement dto) => new(
         dto.Date,
         dto.Currency.Symbol,
         new Assets(
@@ -146,7 +146,7 @@ public class CompanyRepository(IDbContextFactory<SharePickerDbContext> dbContext
             dto.TotalDebt,
             dto.NetDebt));
 
-    private CashFlowStatement ToDomain(Models.Database.CashFlowStatement dto) => new(
+    private static CashFlowStatement ToDomain(Models.Database.CashFlowStatement dto) => new(
         dto.Date,
         dto.Currency.Symbol,
         new OperationsCashFlow(
