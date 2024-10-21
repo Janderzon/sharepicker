@@ -1,12 +1,22 @@
 ﻿namespace SharePicker.Models;
 
 public record IncomeStatement(
-    DateTimeOffset DateTimeOffset, 
-    decimal Ebit,
+    DateOnly Date,
+    string Currency,
     decimal Revenue,
+    decimal CostOfSales,
     decimal GrossProfit,
-    decimal OperatingProfits,
+    decimal ResearchAndDevelopmentCosts,
+    decimal DistributionCosts,
+    decimal AdministrativeCosts,
+    decimal OtherCosts,
+    decimal OperatingProfit,
+    decimal ProfitBeforeIncomeAndTaxation,
+    decimal FinanceIncome,
+    decimal FinanceExpense,
     decimal ProfitBeforeTax,
+    decimal Taxation,
     decimal ProfitAfterTax,
+    decimal NetProfit,
     decimal? EarningsPerShare,
     decimal? DilutedEarningsPerShare);

@@ -3,6 +3,7 @@
 public record CashFlowStatementDto
 {
     public required string Date { get; init; }
+    public required string ReportedCurrency {  get; init; }
     public required decimal NetIncome { get; init; }
     public required decimal DepreciationAndAmortization { get; init; }
     public required decimal DeferredIncomeTax { get; init; }
@@ -26,44 +27,11 @@ public record CashFlowStatementDto
     public required decimal DividendsPaid { get; init; }
     public required decimal OtherFinancingActivites { get; init; }
     public required decimal NetCashUsedProvidedByFinancingActivities { get; init; }
+    public required decimal EffectOfForexChangesOnCash { get; init; }
     public required decimal NetChangeInCash { get; init; }
+    public required decimal CashAtEndOfPeriod { get; init; }
+    public required decimal CashAtBeginningOfPeriod { get; init; }
     public required decimal OperatingCashFlow { get; init; }
     public required decimal CapitalExpenditure { get; init; }
-
-    public CashFlowStatement ToDomain() => new(
-        DateTimeOffset.ParseExact(Date, "yyyy-MM-dd", null),
-        new OperationsCashFlow(
-            NetIncome,
-            DepreciationAndAmortization,
-            StockBasedCompensation,
-            Inventory,
-            AccountsReceivables,
-            AccountsPayables,
-            OtherWorkingCapital,
-            ChangeInWorkingCapital,
-            OtherNonCashItems,
-            OperatingCashFlow,
-            DeferredIncomeTax,
-            NetCashProvidedByOperatingActivities),
-        new InvestingCashFlow(
-            CapitalExpenditure,
-            InvestmentsInPropertyPlantAndEquipment,
-            AcquisitionsNet,
-            PurchasesOfInvestments,
-            0,
-            SalesMaturitiesOfInvestments,
-            0,
-            OtherInvestingActivites,
-            NetCashUsedForInvestingActivites),
-        new FinancingCashFlow(
-            CommonStockIssued,
-            CommonStockRepurchased,
-            0,
-            DebtRepayment,
-            DividendsPaid,
-            0,
-            0,
-            OtherFinancingActivites,
-            NetCashUsedProvidedByFinancingActivities),
-        NetChangeInCash);
+    public required decimal FreeCashFlow { get; init; }
 }

@@ -3,9 +3,10 @@
 @using Microsoft.AspNetCore.Authorization
 @using SharePicker.Models
 @using SharePicker.Services
+@inject CompanyRepository CompanyRepository
+@implements IAsyncDisposable
 
 @attribute [Authorize]
-@inject CompanyProvider CompanyProvider
 
 <MudStack>
     <MudCard>
@@ -60,7 +61,7 @@
                     <Columns>
                         <PropertyColumn Property="company => company.Symbol" Title="Symbol" />
                         <PropertyColumn Property="company => company.Name" Title="Name"/>
-                        <PropertyColumn Property="company => company.Exchange" Title="Exchange" />
+                        @* <PropertyColumn Property="company => company.Exchange" Title="Exchange" /> *@
                     </Columns>
                 </MudDataGrid>
             </MudCardContent>
@@ -69,9 +70,10 @@
 </MudStack>
 
 @code {
+    private CancellationTokenSource _cancellationTokenSource = new();
     private IEnumerable<string> _exchanges = new List<string>();
     private IEnumerable<string> _selectedExchanges = new List<string>();
-    private List<Company>? _results;
+    private List<Company>? _results = null;
     private bool _processing;
     private decimal? _minProfitMargin;
     private decimal? _minRoce;
@@ -79,20 +81,21 @@
 
     protected override void OnInitialized()
     {
-        _exchanges = CompanyProvider
-            .GetCompanies()
-            .Select(company => company.Exchange)
-            .Order()
-            .ToHashSet();
+        // _exchanges = CompanyProvider
+        //     .GetCompanies()
+        //     .Select(company => company.Exchange)
+        //     .Order()
+        //     .ToHashSet();
     }
 
     private string GetExchangeSelectionText(List<string> selectedValues) => selectedValues.Count == 0 
         ? "No exchanges selected"
         : $"{selectedValues.Count} exchange{(selectedValues.Count > 1 ? "s" : "")} selected";
 
-    private void GetResults()
+    private async Task GetResults()
     {
         _processing = true;
+        _results = null;
 
         var companyFilterBuilder = new CompanyFilterBuilder();
 
@@ -103,10 +106,16 @@
         if (_increasingProfits)
             companyFilterBuilder.WithIncreasingProfits();
 
-        var companyFilter = companyFilterBuilder.Build();
-
-        _results = companyFilter.FilterCompanies(CompanyProvider.GetCompanies());
+        _results = await CompanyRepository.GetFilteredCompaniesAsync(
+            companyFilterBuilder.Build(),
+            _cancellationTokenSource.Token);
 
         _processing = false;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _cancellationTokenSource.CancelAsync();
+        _cancellationTokenSource.Dispose();
     }
 }

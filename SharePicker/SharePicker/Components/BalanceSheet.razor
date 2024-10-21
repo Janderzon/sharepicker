@@ -1,4 +1,5 @@
 ﻿@using SharePicker.Models
+@implements IAsyncDisposable
 
 <MudDataGrid 
     Items="@_rows"
@@ -9,11 +10,11 @@
     GroupExpanded="true">
     <Columns>
         <PropertyColumn Property="x => x.Name" StickyLeft="true" Sortable="false" Title="" />
-        @foreach (var balanceSheetStatement in BalanceSheetStatements.Reverse())
+        @foreach (var balanceSheetStatement in _balanceSheetStatements ?? [])
         {
             <PropertyColumn Property="x => x.ValueFactory(balanceSheetStatement)"
                             Sortable="false"
-                            Title="@balanceSheetStatement.DateTimeOffset.ToString("yyyy")" />
+                            Title="@balanceSheetStatement.Date.ToString("yyyy")" />
         }
         <PropertyColumn Property="x => x.Group" Grouping Hidden="true">
             <GroupTemplate>
@@ -24,6 +25,8 @@
 </MudDataGrid>
 
 @code {
+    private CancellationTokenSource _cancellationTokenSource = new();
+    private List<BalanceSheetStatement>? _balanceSheetStatements;
     private record Row(string Name, Func<BalanceSheetStatement, decimal> ValueFactory, Group Group);
     private List<Row> _rows = new()
     {
@@ -34,10 +37,6 @@
         new (
            "Short-Term Investments",
            balanceSheetStatement => balanceSheetStatement.Assets.CurrentAssets.ShortTermInvestments,
-           Group.CurrentAssets),
-        new (
-           "Cash And Short-Term Investments",
-           balanceSheetStatement => balanceSheetStatement.Assets.CurrentAssets.CashAndShortTermInvestments,
            Group.CurrentAssets),
         new (
            "Net Receivables",
@@ -128,6 +127,14 @@
            balanceSheetStatement => balanceSheetStatement.Liabilities.NonCurrentLiabilities.DeferredTaxLiabilitiesNonCurrent,
            Group.NonCurrentLiabilities),
         new (
+           "Minority Interest",
+           balanceSheetStatement => balanceSheetStatement.Liabilities.NonCurrentLiabilities.MinorityInterest,
+           Group.NonCurrentLiabilities),
+        new (
+           "Capital Lease Obligations",
+           balanceSheetStatement => balanceSheetStatement.Liabilities.NonCurrentLiabilities.CapitalLeaseObligations,
+           Group.NonCurrentLiabilities),
+        new (
            "Other Non-Current Liabilities",
            balanceSheetStatement => balanceSheetStatement.Liabilities.NonCurrentLiabilities.OtherNonCurrentLiabilities,
            Group.NonCurrentLiabilities),
@@ -138,10 +145,6 @@
         new (
            "Other Liabilities",
            balanceSheetStatement => balanceSheetStatement.Liabilities.OtherLiabilities,
-           Group.LiabilitiesSummary),
-        new (
-           "Capital Lease Obligations",
-           balanceSheetStatement => balanceSheetStatement.Liabilities.CapitalLeaseObligations,
            Group.LiabilitiesSummary),
         new (
            "Total Liabilities",
@@ -157,7 +160,7 @@
            Group.Equity),
         new (
            "Retained Earnings",
-           balanceSheetStatement => balanceSheetStatement.Equity.ReatainedEarnings,
+           balanceSheetStatement => balanceSheetStatement.Equity.RetainedEarnings,
            Group.Equity),
         new (
            "Accumulated Other Comprehensive Income Loss",
@@ -176,18 +179,6 @@
            balanceSheetStatement => balanceSheetStatement.Equity.TotalEquity,
            Group.Equity),
         new (
-           "Total Liabilities And Stockholders Equity",
-           balanceSheetStatement => balanceSheetStatement.Summary.TotalLiabilitiesAndStockholdersEquity,
-           Group.Summary),
-        new (
-           "Minority Interest",
-           balanceSheetStatement => balanceSheetStatement.Summary.MinorityInterest,
-           Group.Summary),
-        new (
-           "Total Liabilities And Total Equity",
-           balanceSheetStatement => balanceSheetStatement.Summary.TotalLiabilitiesAndTotalEquity,
-           Group.Summary),
-        new (
            "Total Investments",
            balanceSheetStatement => balanceSheetStatement.Summary.TotalInvestments,
            Group.Summary),
@@ -200,10 +191,6 @@
            balanceSheetStatement => balanceSheetStatement.Summary.NetDebt,
            Group.Summary),
     };
-
-    [Parameter]
-    [EditorRequired]
-    public IEnumerable<BalanceSheetStatement> BalanceSheetStatements { get; set; } = new List<BalanceSheetStatement>();
 
     private enum Group
     {
@@ -229,4 +216,24 @@
         Group.Summary => "Summary",
         _ => throw new Exception($"Unsupported type: {group.GetType()}")
     };
+
+    [Parameter]
+    [EditorRequired]
+    public Func<CancellationToken, Task<List<BalanceSheetStatement>>> BalanceSheetStatementsFactory { get; set; } =
+        _ => Task.FromResult(new List<BalanceSheetStatement>());
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _balanceSheetStatements = null;
+
+        _balanceSheetStatements = await BalanceSheetStatementsFactory.Invoke(_cancellationTokenSource.Token);
+
+        await base.OnParametersSetAsync();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _cancellationTokenSource.CancelAsync();
+        _cancellationTokenSource.Dispose();
+    }
 }

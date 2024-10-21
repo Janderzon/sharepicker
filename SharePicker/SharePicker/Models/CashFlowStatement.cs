@@ -1,44 +1,38 @@
 ﻿namespace SharePicker.Models;
 
 public record CashFlowStatement(
-    DateTimeOffset DateTimeOffset,
+    DateOnly Date,
+    string Currency,
     OperationsCashFlow OperationsCashFlow,
     InvestingCashFlow InvestingCashFlow,
     FinancingCashFlow FinancingCashFlow,
-    decimal NetCashFlow);
+    decimal NetChangeInCash);
 
 public record OperationsCashFlow(
-    decimal OperatingProfit,
+    decimal NetIncome,
     decimal DepreciationAndAmortisation,
-    decimal ProfitOnDisposals,
-    decimal ChangeInStock,
-    decimal ChangeInDebtors,
-    decimal ChangeInCreditors,
-    decimal ChangeInProvisions,
+    decimal DeferredIncomeTax,
+    decimal StockBasedCompensation,
+    decimal AccountsReceivables,
+    decimal Inventory,
+    decimal AccountsPayables,
+    decimal OtherWorkingCapital,
     decimal ChangeInWorkingCapital,
-    decimal Other,
-    decimal OperatingCashFlow,
-    decimal TaxPaid,
-    decimal NetCashFlow);
+    decimal OtherNonCashItems,
+    decimal NetCashFromOperations);
 
 public record InvestingCashFlow(
     decimal CapitalExpenditure,
-    decimal SaleOfFixedAssets,
-    decimal Aquisitions,
-    decimal SaleOfBusinesses,
-    decimal InterestReceived,
-    decimal OtherInvestmentsReceived,
-    decimal DividendsFromJointVentures,
-    decimal Other,
-    decimal NetCashFlow);
+    decimal Acquisitions,
+    decimal PurchasesOfInvestments,
+    decimal SaleOrMaturityOfInvestments,
+    decimal OtherInvestingActivities,
+    decimal NetCashFromInvesting);
 
 public record FinancingCashFlow(
-    decimal NewShareIssues,
-    decimal ShareBuyBack,
-    decimal NewBorrowing,
-    decimal RepaymentOfBorrowing,
-    decimal EquityDividendsPaid,
-    decimal DividendsPaidToMinorities,
-    decimal InterestPaid,
-    decimal Other,
-    decimal NetCashFlow);
+    decimal SharesIssued,
+    decimal SharesRepurchased,
+    decimal DebtRepayment,
+    decimal DividendsPaid,
+    decimal OtherFinancingActivities,
+    decimal NetCashFromFinancing);

@@ -1,4 +1,5 @@
 ﻿@using SharePicker.Models
+@implements IAsyncDisposable
 
 <MudDataGrid 
     Items="@_rows" 
@@ -7,31 +8,58 @@
     Bordered="true">
     <Columns>
         <PropertyColumn Property="x => x.Name" StickyLeft="true" Sortable="false" Title="" />
-        @foreach(var incomeStatement in IncomeStatements.Reverse())
+        @foreach(var incomeStatement in _incomeStatements ?? [])
         {
             <PropertyColumn
                 Property="x => x.ValueFactory(incomeStatement)" 
                 Sortable="false"
-                Title="@incomeStatement.DateTimeOffset.ToString("yyyy")" />
+                Title="@incomeStatement.Date.ToString("yyyy")" />
         }
     </Columns>
 </MudDataGrid>
 
 @code {
+    private CancellationTokenSource _cancellationTokenSource = new();
+    private List<IncomeStatement>? _incomeStatements;
     private record Row(string Name, Func<IncomeStatement, decimal?> ValueFactory);
     private List<Row> _rows = new()
     {
         new ("Revenue", incomeStatement => incomeStatement.Revenue),
+        new ("Cost Of Sales", incomeStatement => incomeStatement.CostOfSales),
         new ("Gross Profit", incomeStatement => incomeStatement.GrossProfit),
-        new ("Operating Profit", incomeStatement => incomeStatement.OperatingProfits),
-        new ("Earnings Before Interest And Tax (EBIT)", incomeStatement => incomeStatement.Ebit),
-        new ("Profit Before Tax (PBT)", incomeStatement => incomeStatement.ProfitBeforeTax),
-        new ("Profit After Tax (PAT)", incomeStatement => incomeStatement.ProfitBeforeTax),
-        new ("Earnings Per Share (EPS)", incomeStatement => incomeStatement?.EarningsPerShare),
+        new ("R&D Costs", incomeStatement => incomeStatement.ResearchAndDevelopmentCosts),
+        new ("Distribution Costs", incomeStatement => incomeStatement.DistributionCosts),
+        new ("Administrative Costs", incomeStatement => incomeStatement.AdministrativeCosts),
+        new ("Other Costs", incomeStatement => incomeStatement.OtherCosts),
+        new ("Operating Profit", incomeStatement => incomeStatement.OperatingProfit),
+        new ("Profit Before Interest And Taxation", incomeStatement => incomeStatement.ProfitBeforeIncomeAndTaxation),
+        new ("Finance Income", incomeStatement => incomeStatement.FinanceIncome),
+        new ("Finance Expense", incomeStatement => incomeStatement.FinanceExpense),
+        new ("Profit Before Tax", incomeStatement => incomeStatement.ProfitBeforeTax),
+        new ("Taxation", incomeStatement => incomeStatement.Taxation),
+        new ("Profit After Tax", incomeStatement => incomeStatement.ProfitAfterTax),
+        new ("Net Profit", incomeStatement => incomeStatement.NetProfit),
+        new ("Earnings Per Share", incomeStatement => incomeStatement?.EarningsPerShare),
         new ("Diluted Earnings Per Share", incomeStatement => incomeStatement?.DilutedEarningsPerShare)
     };
 
     [Parameter]
     [EditorRequired]
-    public IEnumerable<IncomeStatement> IncomeStatements { get; set; } = new List<IncomeStatement>();
+    public Func<CancellationToken, Task<List<IncomeStatement>>> IncomeStatementsFactory { get; set; } =
+        _ => Task.FromResult(new List<IncomeStatement>());
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _incomeStatements = null;
+
+        _incomeStatements = await IncomeStatementsFactory.Invoke(_cancellationTokenSource.Token);
+
+        await base.OnParametersSetAsync();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _cancellationTokenSource.CancelAsync();
+        _cancellationTokenSource.Dispose();
+    }
 }

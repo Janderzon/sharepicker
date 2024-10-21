@@ -1,7 +1,8 @@
 ﻿namespace SharePicker.Models;
 
 public record BalanceSheetStatement(
-    DateTimeOffset DateTimeOffset,
+    DateOnly Date,
+    string Currency,
     Assets Assets,
     Liabilities Liabilities,
     Equity Equity,
@@ -16,7 +17,6 @@ public record Assets(
 public record CurrentAssets(
     decimal CashAndCashEquivalents,
     decimal ShortTermInvestments,
-    decimal CashAndShortTermInvestments,
     decimal NetReceivables,
     decimal Inventory,
     decimal OtherCurrentAssets,
@@ -26,7 +26,6 @@ public record NonCurrentAssets(
     decimal PropertyPlantEquipmentNet,
     decimal Goodwill,
     decimal IntangibleAssets,
-    decimal GoodwillAndIntangibleAssets,
     decimal LongTermInvestments,
     decimal TaxAssets,
     decimal OtherNonCurrentAssets,
@@ -36,7 +35,6 @@ public record Liabilities(
     CurrentLiabilities CurrentLiabilities,
     NonCurrentLiabilities NonCurrentLiabilities,
     decimal OtherLiabilities,
-    decimal CapitalLeaseObligations,
     decimal TotalLiabilities);
 
 public record CurrentLiabilities(
@@ -51,22 +49,21 @@ public record NonCurrentLiabilities(
     decimal LongTermDebt,
     decimal DeferredRevenueNonCurrent,
     decimal DeferredTaxLiabilitiesNonCurrent,
+    decimal MinorityInterest,
+    decimal CapitalLeaseObligations,
     decimal OtherNonCurrentLiabilities,
     decimal TotalNonCurrentLiabilities);
 
 public record Equity(
     decimal PreferredStock,
     decimal CommonStock,
-    decimal ReatainedEarnings,
+    decimal RetainedEarnings,
     decimal AccumulatedOtherComprehensiveIncomeLoss,
     decimal OtherTotalStockholdersEquity,
     decimal TotalStockholdersEquity,
     decimal TotalEquity);
 
 public record BalanceSheetSummary(
-    decimal TotalLiabilitiesAndStockholdersEquity,
-    decimal MinorityInterest,
-    decimal TotalLiabilitiesAndTotalEquity,
     decimal TotalInvestments,
     decimal TotalDebt,
     decimal NetDebt);

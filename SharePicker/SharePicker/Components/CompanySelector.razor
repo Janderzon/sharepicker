@@ -1,6 +1,6 @@
 ﻿@using SharePicker.Models
 @using SharePicker.Services
-@inject CompanyProvider CompanyRepository
+@implements IAsyncDisposable
 
 <style>
     .selected {
@@ -19,7 +19,7 @@
 <MudDataGrid 
     @ref=_dataGrid
     T="Company"
-    Items="@CompanyRepository.GetCompanies()"
+    Items="_companies"
     QuickFilter="@GlobalSearch"
     Virtualize="true"
     FixedHeader="true"
@@ -43,13 +43,15 @@
     <Columns>
         <PropertyColumn Property="company => company.Symbol" Title="Symbol" />
         <PropertyColumn Property="company => company.Name" Title="Name" />
-        <PropertyColumn Property="company => company.Exchange" Title="Exchange Short Name" />
+        @* <PropertyColumn Property="company => company.Exchange" Title="Exchange Short Name" /> *@
     </Columns>
 </MudDataGrid>
 
 @code {
+    private CancellationTokenSource _cancellationTokenSource = new();
     private MudDataGrid<Company> _dataGrid = null!;
     private string _searchString = string.Empty;
+    private List<Company>? _companies;
 
     private bool GlobalSearch(Company company)
     {
@@ -62,8 +64,8 @@
         if (company.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
             return true;
 
-        if (company.Exchange.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
-            return true;
+        // if (company.Exchange.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+        //     return true;
 
         return false;
     }
@@ -71,7 +73,27 @@
     private string SelectedRowClassFunc(Company company, int _) =>
         _dataGrid.SelectedItem == company ? "selected" : string.Empty;
 
+    protected override async Task OnParametersSetAsync() 
+    {
+        _companies = null;
+
+        _companies = await SelectableCompaniesFactory.Invoke(_cancellationTokenSource.Token);
+
+        await base.OnParametersSetAsync();
+    }
+
+    [Parameter]
+    [EditorRequired]
+    public Func<CancellationToken, Task<List<Company>>> SelectableCompaniesFactory { get; set; } =
+        _ => Task.FromResult(new List<Company>());
+
     [Parameter]
     [EditorRequired]
     public EventCallback<Company> OnCompanySelect { get; set; }
+
+    public async ValueTask DisposeAsync() 
+    {
+        await _cancellationTokenSource.CancelAsync();
+        _cancellationTokenSource.Dispose(); 
+    }
 }

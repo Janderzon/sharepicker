@@ -3,6 +3,7 @@
 public record BalanceSheetStatementDto
 {
     public required string Date { get; init; }
+    public required string ReportedCurrency {  get; init; }
     public required decimal CashAndCashEquivalents { get; init; }
     public required decimal ShortTermInvestments { get; init; }
     public required decimal CashAndShortTermInvestments { get; init; }
@@ -47,59 +48,4 @@ public record BalanceSheetStatementDto
     public required decimal TotalInvestments { get; init; }
     public required decimal TotalDebt { get; init; }
     public required decimal NetDebt { get; init; }
-
-    public BalanceSheetStatement ToDomain() => new(
-        DateTimeOffset.ParseExact(Date, "yyyy-MM-dd", null),
-        new Assets(
-            new CurrentAssets(
-                CashAndCashEquivalents,
-                ShortTermInvestments,
-                CashAndShortTermInvestments,
-                NetReceivables,
-                Inventory,
-                OtherCurrentAssets,
-                TotalCurrentAssets),
-            new NonCurrentAssets(
-                PropertyPlantEquipmentNet,
-                Goodwill,
-                IntangibleAssets,
-                GoodwillAndIntangibleAssets,
-                LongTermInvestments,
-                TaxAssets,
-                OtherNonCurrentAssets,
-                TotalNonCurrentAssets),
-            OtherAssets,
-            TotalAssets),
-        new Liabilities(
-            new CurrentLiabilities(
-                AccountPayables,
-                ShortTermDebt,
-                TaxPayables,
-                DeferredRevenue,
-                OtherCurrentLiabilities,
-                TotalCurrentLiabilities),
-            new NonCurrentLiabilities(
-                LongTermDebt,
-                DeferredRevenueNonCurrent,
-                DeferredTaxLiabilitiesNonCurrent,
-                OtherNonCurrentLiabilities,
-                TotalNonCurrentLiabilities),
-            OtherLiabilities,
-            CapitalLeaseObligations,
-            TotalLiabilities),
-        new Equity(
-            PreferredStock,
-            CommonStock,
-            RetainedEarnings,
-            AccumulatedOtherComprehensiveIncomeLoss,
-            OtherTotalStockholdersEquity,
-            TotalStockholdersEquity,
-            TotalEquity),
-        new BalanceSheetSummary(
-            TotalLiabilitiesAndStockholdersEquity,
-            MinorityInterest,
-            TotalLiabilitiesAndTotalEquity,
-            TotalInvestments,
-            TotalDebt,
-            NetDebt));
 }
