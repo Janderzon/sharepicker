@@ -40,7 +40,7 @@ builder.Services
     .Configure<UserAuthenticationOptions>(builder.Configuration.GetRequiredSection(UserAuthenticationOptions.Name))
     .AddDbContextFactory<SharePickerDbContext>((sp, options) =>
         options.UseSqlServer(sp.GetRequiredService<IOptions<DatabaseOptions>>().Value.ConnectionString))
-    //.AddHostedService<DatabaseWriter>()
+    .AddHostedService<DatabaseWriter>()
     .AddTransient<CompanyRepository>()
     .AddTransient<SeriesRepository>()
     .AddScoped<CustomAuthenticationStateProvider>()
