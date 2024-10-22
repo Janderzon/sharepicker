@@ -35,6 +35,7 @@ builder.Services
 builder.Services
     .AddCascadingAuthenticationState()
     .AddMudServices()
+    .AddMemoryCache()
     .Configure<DatabaseOptions>(builder.Configuration.GetRequiredSection(DatabaseOptions.Name))
     .Configure<FmpClientOptions>(builder.Configuration.GetRequiredSection(FmpClientOptions.Name))
     .Configure<UserAuthenticationOptions>(builder.Configuration.GetRequiredSection(UserAuthenticationOptions.Name))
