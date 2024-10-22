@@ -1,19 +1,28 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using SharePicker.Models;
 
 namespace SharePicker.Services;
 
-public class CompanyRepository(IDbContextFactory<SharePickerDbContext> dbContextFactory)
+public class CompanyRepository(
+    IDbContextFactory<SharePickerDbContext> dbContextFactory,
+    IMemoryCache memoryCache)
 {
-    public async Task<List<Company>> GetAvailableCompaniesAsync(CancellationToken cancellationToken)
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+    private record AvailableCompaniesCacheKey();
+    public async Task<List<Company>> GetAvailableCompaniesAsync(CancellationToken cancellationToken) => 
+        await memoryCache.GetOrCreateAsync(
+            new AvailableCompaniesCacheKey(),
+            async entry =>
+            {
+                entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(10));
 
-        return await dbContext.Companies
-            .OrderBy(x => x.Symbol)
-            .Select(dbo => ToDomain(dbo))
-            .ToListAsync(cancellationToken);
-    }
+                await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+
+                return await dbContext.Companies
+                    .OrderBy(x => x.Symbol)
+                    .Select(dbo => ToDomain(dbo))
+                    .ToListAsync(cancellationToken);
+            }) ?? throw new Exception("Cache entry for available companies was null");
 
     public async Task<List<Company>> GetFilteredCompaniesAsync(ICompanyFilter filter, CancellationToken cancellationToken)
     {
@@ -26,64 +35,94 @@ public class CompanyRepository(IDbContextFactory<SharePickerDbContext> dbContext
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<Exchange> GetExchangesAsync(Company company, CancellationToken cancellationToken)
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+    private record ExchangeCacheKey(Company Company);
+    public async Task<Exchange> GetExchangeAsync(Company company, CancellationToken cancellationToken) =>
+        await memoryCache.GetOrCreateAsync(
+            new ExchangeCacheKey(company),
+            async entry =>
+            {
+                entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(10));
 
-        return await dbContext.Companies
-            .Where(dbo => dbo.Symbol == company.Symbol)
-            .OrderBy(dbo => dbo.Exchange.Symbol)
-            .Include(x => x.Exchange)
-            .Select(dbo => ToDomain(dbo.Exchange))
-            .SingleAsync(cancellationToken);
-    }
+                await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 
-    public async Task<List<IncomeStatement>> GetIncomeStatementsAsync(Company company, CancellationToken cancellationToken)
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+                return await dbContext.Companies
+                    .Where(dbo => dbo.Symbol == company.Symbol)
+                    .OrderBy(dbo => dbo.Exchange.Symbol)
+                    .Include(x => x.Exchange)
+                    .Select(dbo => ToDomain(dbo.Exchange))
+                    .SingleAsync(cancellationToken);
+            }) ?? throw new Exception();
 
-        return await dbContext.IncomeStatements
-            .Where(dbo => dbo.Company.Symbol == company.Symbol)
-            .OrderBy(dbo => dbo.Date)
-            .Include(dbo => dbo.Currency)
-            .Select(dbo => ToDomain(dbo))
-            .ToListAsync(cancellationToken);
-    }
+    private record IncomeStatementsCacheKey(Company Company);
+    public async Task<List<IncomeStatement>> GetIncomeStatementsAsync(Company company, CancellationToken cancellationToken) => 
+        await memoryCache.GetOrCreateAsync(
+            new IncomeStatementsCacheKey(company),
+            async entry =>
+            {
+                entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(10));
 
-    public async Task<List<BalanceSheetStatement>> GetBalanceSheetStatementsAsync(Company company, CancellationToken cancellationToken)
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+                await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 
-        return await dbContext.BalanceSheetStatements
-            .Where(dbo => dbo.Company.Symbol == company.Symbol)
-            .OrderBy(dbo => dbo.Date)
-            .Include(dbo => dbo.Currency)
-            .Select(dbo => ToDomain(dbo))
-            .ToListAsync(cancellationToken);
-    }
+                return await dbContext.IncomeStatements
+                   .Where(dbo => dbo.Company.Symbol == company.Symbol)
+                   .OrderBy(dbo => dbo.Date)
+                   .Include(dbo => dbo.Currency)
+                   .Select(dbo => ToDomain(dbo))
+                   .ToListAsync(cancellationToken);
+            }) ?? throw new Exception($"Cache entry for income statements for company {company.Symbol} was null");
 
-    public async Task<List<CashFlowStatement>> GetCashFlowStatementsAsync(Company company, CancellationToken cancellationToken)
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+    private record BalanceSheetStatementCacheKey(Company Company);
+    public async Task<List<BalanceSheetStatement>> GetBalanceSheetStatementsAsync(Company company, CancellationToken cancellationToken) =>
+        await memoryCache.GetOrCreateAsync(
+            new BalanceSheetStatementCacheKey(company),
+            async entry =>
+            {
+                entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(10));
 
-        return await dbContext.CashFlowStatements
-            .Where(dbo => dbo.Company.Symbol == company.Symbol)
-            .OrderBy(dbo => dbo.Date)
-            .Include(dbo => dbo.Currency)
-            .Select(dbo => ToDomain(dbo))
-            .ToListAsync(cancellationToken);
-    }
+                await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 
-    public async Task<List<Ratios>> GetRatiosAsync(Company company, CancellationToken cancellationToken)
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+                return await dbContext.BalanceSheetStatements
+                    .Where(dbo => dbo.Company.Symbol == company.Symbol)
+                    .OrderBy(dbo => dbo.Date)
+                    .Include(dbo => dbo.Currency)
+                    .Select(dbo => ToDomain(dbo))
+                    .ToListAsync(cancellationToken);
+            }) ?? throw new Exception($"Cache entry for balance sheet statements for company {company.Symbol} was null");
 
-        return await dbContext.Ratios
-            .Where(dbo => dbo.Company.Symbol == company.Symbol)
-            .OrderBy(dbo => dbo.Date)
-            .Select(dbo => ToDomain(dbo))
-            .ToListAsync(cancellationToken);
-    }
+    private record CashFlowStatementsCacheKey(Company Company);
+    public async Task<List<CashFlowStatement>> GetCashFlowStatementsAsync(Company company, CancellationToken cancellationToken) =>
+        await memoryCache.GetOrCreateAsync(
+            new CashFlowStatementsCacheKey(company),
+            async entry =>
+            {
+                entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(10));
+
+                await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+
+                return await dbContext.CashFlowStatements
+                    .Where(dbo => dbo.Company.Symbol == company.Symbol)
+                    .OrderBy(dbo => dbo.Date)
+                    .Include(dbo => dbo.Currency)
+                    .Select(dbo => ToDomain(dbo))
+                    .ToListAsync(cancellationToken);
+            }) ?? throw new Exception($"Cache entry for cash flow statements for company {company.Symbol} was null");
+
+    private record RatiosCacheKey(Company Company);
+    public async Task<List<Ratios>> GetRatiosAsync(Company company, CancellationToken cancellationToken) =>
+        await memoryCache.GetOrCreateAsync(
+            new RatiosCacheKey(company),
+            async entry =>
+            {
+                entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(10));
+
+                await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+
+                return await dbContext.Ratios
+                    .Where(dbo => dbo.Company.Symbol == company.Symbol)
+                    .OrderBy(dbo => dbo.Date)
+                    .Select(dbo => ToDomain(dbo))
+                    .ToListAsync(cancellationToken);
+            }) ?? throw new Exception($"Cache entry for ratios for company {company.Symbol} was null");
 
     private static Company ToDomain(Models.Database.Company dbo) => new(dbo.Symbol, dbo.Name);
 
