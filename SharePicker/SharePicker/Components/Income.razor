@@ -5,7 +5,8 @@
     Items="@_rows" 
     Dense="true" 
     Hover="true" 
-    Bordered="true">
+    Bordered="true"
+    Loading="_loading">
     <Columns>
         <PropertyColumn Property="x => x.Name" StickyLeft="true" Sortable="false" Title="" />
         @foreach(var incomeStatement in _incomeStatements ?? [])
@@ -20,7 +21,8 @@
 
 @code {
     private CancellationTokenSource _cancellationTokenSource = new();
-    private List<IncomeStatement>? _incomeStatements;
+    private List<IncomeStatement> _incomeStatements = [];
+    private bool _loading = true;
     private record Row(string Name, Func<IncomeStatement, decimal?> ValueFactory);
     private List<Row> _rows = new()
     {
@@ -50,9 +52,13 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        _incomeStatements = null;
+        _loading = true;
+
+        _incomeStatements = [];
 
         _incomeStatements = await IncomeStatementsFactory.Invoke(_cancellationTokenSource.Token);
+
+        _loading = false;
 
         await base.OnParametersSetAsync();
     }

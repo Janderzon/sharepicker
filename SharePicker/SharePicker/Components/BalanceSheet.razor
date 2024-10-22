@@ -7,7 +7,8 @@
     Hover="true"
     Bordered="true"
     Groupable="true"
-    GroupExpanded="true">
+    GroupExpanded="true"
+    Loading="_loading">
     <Columns>
         <PropertyColumn Property="x => x.Name" StickyLeft="true" Sortable="false" Title="" />
         @foreach (var balanceSheetStatement in _balanceSheetStatements ?? [])
@@ -26,7 +27,8 @@
 
 @code {
     private CancellationTokenSource _cancellationTokenSource = new();
-    private List<BalanceSheetStatement>? _balanceSheetStatements;
+    private List<BalanceSheetStatement> _balanceSheetStatements = [];
+    private bool _loading = true;
     private record Row(string Name, Func<BalanceSheetStatement, decimal> ValueFactory, Group Group);
     private List<Row> _rows = new()
     {
@@ -224,9 +226,13 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        _balanceSheetStatements = null;
+        _loading = true;
+
+        _balanceSheetStatements = [];
 
         _balanceSheetStatements = await BalanceSheetStatementsFactory.Invoke(_cancellationTokenSource.Token);
+
+        _loading = false;
 
         await base.OnParametersSetAsync();
     }

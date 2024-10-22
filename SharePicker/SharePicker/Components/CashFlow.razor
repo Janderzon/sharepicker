@@ -7,7 +7,8 @@
     Hover="true" 
     Bordered="true"
     Groupable="true"
-    GroupExpanded="true">
+    GroupExpanded="true"
+    Loading="_loading">
     <Columns>
         <PropertyColumn Property="x => x.Name" StickyLeft="true" Sortable="false" Title="" />
         @foreach (var cashFlowStatement in _cashFlowStatements ?? [])
@@ -27,7 +28,8 @@
 
 @code {
     private CancellationTokenSource _cancellationTokenSource = new();
-    private List<CashFlowStatement>? _cashFlowStatements;
+    private List<CashFlowStatement> _cashFlowStatements = [];
+    private bool _loading = true;
     private record Row(string Name, Func<CashFlowStatement, decimal> ValueFactory, Group Group);
     private List<Row> _rows = new()
     {
@@ -81,9 +83,13 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        _cashFlowStatements = null;
+        _loading = true;
+
+        _cashFlowStatements = [];
 
         _cashFlowStatements = await CashFlowStatementsFactory.Invoke(_cancellationTokenSource.Token);
+
+        _loading = false;
 
         await base.OnParametersSetAsync();
     }
