@@ -12,6 +12,10 @@
             YValue="@(x => x.Value)"
             SeriesType="SeriesType.Bar" />
     </ApexChart>
+} 
+else
+{
+    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Style="padding-top: 61.8%" />
 }
 
 @code {

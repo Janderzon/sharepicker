@@ -28,7 +28,8 @@
     Hover="true"
     RowClassFunc="SelectedRowClassFunc"
     Height="350px"
-    Dense="true">
+    Dense="true"
+    Loading="_loading">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Companies</MudText>
         <MudSpacer />
@@ -51,7 +52,8 @@
     private CancellationTokenSource _cancellationTokenSource = new();
     private MudDataGrid<Company> _dataGrid = null!;
     private string _searchString = string.Empty;
-    private List<Company>? _companies;
+    private List<Company> _companies = [];
+    private bool _loading = true;
 
     private bool GlobalSearch(Company company)
     {
@@ -75,9 +77,13 @@
 
     protected override async Task OnParametersSetAsync() 
     {
-        _companies = null;
+        _loading = true;
+
+        _companies = [];
 
         _companies = await SelectableCompaniesFactory.Invoke(_cancellationTokenSource.Token);
+
+        _loading = false;
 
         await base.OnParametersSetAsync();
     }
