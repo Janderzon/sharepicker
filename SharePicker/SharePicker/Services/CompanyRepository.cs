@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using JetBrains.Annotations;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using SharePicker.Models;
 
@@ -8,7 +9,8 @@ public class CompanyRepository(
     IDbContextFactory<SharePickerDbContext> dbContextFactory,
     IMemoryCache memoryCache)
 {
-    private record AvailableCompaniesCacheKey();
+    [UsedImplicitly]
+    private record AvailableCompaniesCacheKey;
     public async Task<List<Company>> GetAvailableCompaniesAsync(CancellationToken cancellationToken) => 
         await memoryCache.GetOrCreateAsync(
             new AvailableCompaniesCacheKey(),
@@ -34,7 +36,8 @@ public class CompanyRepository(
             .Select(dbo => ToDomain(dbo))
             .ToListAsync(cancellationToken);
     }
-
+    
+    [UsedImplicitly]
     private record ExchangeCacheKey(Company Company);
     public async Task<Exchange> GetExchangeAsync(Company company, CancellationToken cancellationToken) =>
         await memoryCache.GetOrCreateAsync(
@@ -53,6 +56,7 @@ public class CompanyRepository(
                     .SingleAsync(cancellationToken);
             }) ?? throw new Exception();
 
+    [UsedImplicitly]
     private record IncomeStatementsCacheKey(Company Company);
     public async Task<List<IncomeStatement>> GetIncomeStatementsAsync(Company company, CancellationToken cancellationToken) => 
         await memoryCache.GetOrCreateAsync(
@@ -71,6 +75,7 @@ public class CompanyRepository(
                    .ToListAsync(cancellationToken);
             }) ?? throw new Exception($"Cache entry for income statements for company {company.Symbol} was null");
 
+    [UsedImplicitly]
     private record BalanceSheetStatementCacheKey(Company Company);
     public async Task<List<BalanceSheetStatement>> GetBalanceSheetStatementsAsync(Company company, CancellationToken cancellationToken) =>
         await memoryCache.GetOrCreateAsync(
@@ -89,6 +94,7 @@ public class CompanyRepository(
                     .ToListAsync(cancellationToken);
             }) ?? throw new Exception($"Cache entry for balance sheet statements for company {company.Symbol} was null");
 
+    [UsedImplicitly]
     private record CashFlowStatementsCacheKey(Company Company);
     public async Task<List<CashFlowStatement>> GetCashFlowStatementsAsync(Company company, CancellationToken cancellationToken) =>
         await memoryCache.GetOrCreateAsync(
@@ -107,6 +113,7 @@ public class CompanyRepository(
                     .ToListAsync(cancellationToken);
             }) ?? throw new Exception($"Cache entry for cash flow statements for company {company.Symbol} was null");
 
+    [UsedImplicitly]
     private record RatiosCacheKey(Company Company);
     public async Task<List<Ratios>> GetRatiosAsync(Company company, CancellationToken cancellationToken) =>
         await memoryCache.GetOrCreateAsync(

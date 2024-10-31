@@ -1,5 +1,8 @@
-﻿namespace SharePicker.Models.Fmp;
+﻿using JetBrains.Annotations;
 
+namespace SharePicker.Models.Fmp;
+
+[PublicAPI]
 public record TradableSymbolDto
 {
     public required string Symbol { get; init; }

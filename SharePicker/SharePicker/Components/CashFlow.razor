@@ -11,7 +11,7 @@
     Loading="_loading">
     <Columns>
         <PropertyColumn Property="x => x.Name" StickyLeft="true" Sortable="false" Title="" />
-        @foreach (var cashFlowStatement in _cashFlowStatements ?? [])
+        @foreach (var cashFlowStatement in _cashFlowStatements)
         {
             <PropertyColumn
                 Property="x => x.ValueFactory(cashFlowStatement)" 
@@ -31,33 +31,33 @@
     private List<CashFlowStatement> _cashFlowStatements = [];
     private bool _loading = true;
     private record Row(string Name, Func<CashFlowStatement, decimal> ValueFactory, Group Group);
-    private List<Row> _rows = new()
-    {
-        new ("Net Income", cashFlowStatement => cashFlowStatement.OperationsCashFlow.NetIncome, Group.OperatingCashFlow),
-        new ("Depreciation & Amortisation", cashFlowStatement => cashFlowStatement.OperationsCashFlow.DepreciationAndAmortisation, Group.OperatingCashFlow),
-        new ("Deferred Income Tax", cashFlowStatement => cashFlowStatement.OperationsCashFlow.DeferredIncomeTax, Group.OperatingCashFlow),
-        new ("Stock Based Compensation", cashFlowStatement => cashFlowStatement.OperationsCashFlow.StockBasedCompensation, Group.OperatingCashFlow),
-        new ("Accounts Receivables", cashFlowStatement => cashFlowStatement.OperationsCashFlow.AccountsReceivables, Group.OperatingCashFlow),
-        new ("Inventory", cashFlowStatement => cashFlowStatement.OperationsCashFlow.Inventory, Group.OperatingCashFlow),
-        new ("Accounts Payables", cashFlowStatement => cashFlowStatement.OperationsCashFlow.AccountsPayables, Group.OperatingCashFlow),
-        new ("Other Working Capital", cashFlowStatement => cashFlowStatement.OperationsCashFlow.OtherWorkingCapital, Group.OperatingCashFlow),
-        new ("Change In Working Capital", cashFlowStatement => cashFlowStatement.OperationsCashFlow.ChangeInWorkingCapital, Group.OperatingCashFlow),
-        new ("Other Non-Cash Items", cashFlowStatement => cashFlowStatement.OperationsCashFlow.OtherNonCashItems, Group.OperatingCashFlow),
-        new ("Net Cash From Operations", cashFlowStatement => cashFlowStatement.OperationsCashFlow.NetCashFromOperations, Group.OperatingCashFlow),
-        new ("Capital Expenditure", cashFlowStatement => cashFlowStatement.InvestingCashFlow.CapitalExpenditure, Group.InvestingCashFlow),
-        new ("Acquisitions", cashFlowStatement => cashFlowStatement.InvestingCashFlow.Acquisitions, Group.InvestingCashFlow),
-        new ("Purchases Of Investments", cashFlowStatement => cashFlowStatement.InvestingCashFlow.PurchasesOfInvestments, Group.InvestingCashFlow),
-        new ("Sale/Maturity Of Investments", cashFlowStatement => cashFlowStatement.InvestingCashFlow.SaleOrMaturityOfInvestments, Group.InvestingCashFlow),
-        new ("Other (Investing)", cashFlowStatement => cashFlowStatement.InvestingCashFlow.OtherInvestingActivities, Group.InvestingCashFlow),
-        new ("Net Cash From Investing", cashFlowStatement => cashFlowStatement.InvestingCashFlow.NetCashFromInvesting, Group.InvestingCashFlow),
-        new ("Shares Issued", cashFlowStatement => cashFlowStatement.FinancingCashFlow.SharesIssued, Group.FinancingCashFlow),
-        new ("Shares Repurchased", cashFlowStatement => cashFlowStatement.FinancingCashFlow.SharesRepurchased, Group.FinancingCashFlow),
-        new ("Debt Repayment", cashFlowStatement => cashFlowStatement.FinancingCashFlow.DebtRepayment, Group.FinancingCashFlow),
-        new ("Dividends Paid", cashFlowStatement => cashFlowStatement.FinancingCashFlow.DividendsPaid, Group.FinancingCashFlow),
-        new ("Other (Financing)", cashFlowStatement => cashFlowStatement.FinancingCashFlow.OtherFinancingActivities, Group.FinancingCashFlow),
-        new ("Net Cash From Financing", cashFlowStatement => cashFlowStatement.FinancingCashFlow.NetCashFromFinancing, Group.FinancingCashFlow),
-        new ("Net Change In Cash", cashFlowStatement => cashFlowStatement.NetChangeInCash, Group.Summary)
-    };
+    private List<Row> _rows =
+    [
+        new("Net Income", cashFlowStatement => cashFlowStatement.OperationsCashFlow.NetIncome, Group.OperatingCashFlow),
+        new("Depreciation & Amortisation", cashFlowStatement => cashFlowStatement.OperationsCashFlow.DepreciationAndAmortisation, Group.OperatingCashFlow),
+        new("Deferred Income Tax", cashFlowStatement => cashFlowStatement.OperationsCashFlow.DeferredIncomeTax, Group.OperatingCashFlow),
+        new("Stock Based Compensation", cashFlowStatement => cashFlowStatement.OperationsCashFlow.StockBasedCompensation, Group.OperatingCashFlow),
+        new("Accounts Receivables", cashFlowStatement => cashFlowStatement.OperationsCashFlow.AccountsReceivables, Group.OperatingCashFlow),
+        new("Inventory", cashFlowStatement => cashFlowStatement.OperationsCashFlow.Inventory, Group.OperatingCashFlow),
+        new("Accounts Payables", cashFlowStatement => cashFlowStatement.OperationsCashFlow.AccountsPayables, Group.OperatingCashFlow),
+        new("Other Working Capital", cashFlowStatement => cashFlowStatement.OperationsCashFlow.OtherWorkingCapital, Group.OperatingCashFlow),
+        new("Change In Working Capital", cashFlowStatement => cashFlowStatement.OperationsCashFlow.ChangeInWorkingCapital, Group.OperatingCashFlow),
+        new("Other Non-Cash Items", cashFlowStatement => cashFlowStatement.OperationsCashFlow.OtherNonCashItems, Group.OperatingCashFlow),
+        new("Net Cash From Operations", cashFlowStatement => cashFlowStatement.OperationsCashFlow.NetCashFromOperations, Group.OperatingCashFlow),
+        new("Capital Expenditure", cashFlowStatement => cashFlowStatement.InvestingCashFlow.CapitalExpenditure, Group.InvestingCashFlow),
+        new("Acquisitions", cashFlowStatement => cashFlowStatement.InvestingCashFlow.Acquisitions, Group.InvestingCashFlow),
+        new("Purchases Of Investments", cashFlowStatement => cashFlowStatement.InvestingCashFlow.PurchasesOfInvestments, Group.InvestingCashFlow),
+        new("Sale/Maturity Of Investments", cashFlowStatement => cashFlowStatement.InvestingCashFlow.SaleOrMaturityOfInvestments, Group.InvestingCashFlow),
+        new("Other (Investing)", cashFlowStatement => cashFlowStatement.InvestingCashFlow.OtherInvestingActivities, Group.InvestingCashFlow),
+        new("Net Cash From Investing", cashFlowStatement => cashFlowStatement.InvestingCashFlow.NetCashFromInvesting, Group.InvestingCashFlow),
+        new("Shares Issued", cashFlowStatement => cashFlowStatement.FinancingCashFlow.SharesIssued, Group.FinancingCashFlow),
+        new("Shares Repurchased", cashFlowStatement => cashFlowStatement.FinancingCashFlow.SharesRepurchased, Group.FinancingCashFlow),
+        new("Debt Repayment", cashFlowStatement => cashFlowStatement.FinancingCashFlow.DebtRepayment, Group.FinancingCashFlow),
+        new("Dividends Paid", cashFlowStatement => cashFlowStatement.FinancingCashFlow.DividendsPaid, Group.FinancingCashFlow),
+        new("Other (Financing)", cashFlowStatement => cashFlowStatement.FinancingCashFlow.OtherFinancingActivities, Group.FinancingCashFlow),
+        new("Net Cash From Financing", cashFlowStatement => cashFlowStatement.FinancingCashFlow.NetCashFromFinancing, Group.FinancingCashFlow),
+        new("Net Change In Cash", cashFlowStatement => cashFlowStatement.NetChangeInCash, Group.Summary)
+    ];
 
     private enum Group
     {

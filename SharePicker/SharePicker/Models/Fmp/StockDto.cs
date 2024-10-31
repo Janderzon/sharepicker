@@ -1,5 +1,8 @@
-﻿namespace SharePicker.Models.Fmp;
+﻿using JetBrains.Annotations;
 
+namespace SharePicker.Models.Fmp;
+
+[PublicAPI]
 public class StockDto
 {
     public required string Symbol { get; init; }

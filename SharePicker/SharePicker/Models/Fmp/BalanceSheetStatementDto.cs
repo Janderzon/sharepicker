@@ -1,5 +1,8 @@
-﻿namespace SharePicker.Models.Fmp;
+﻿using JetBrains.Annotations;
 
+namespace SharePicker.Models.Fmp;
+
+[PublicAPI]
 public record BalanceSheetStatementDto
 {
     public required string Date { get; init; }

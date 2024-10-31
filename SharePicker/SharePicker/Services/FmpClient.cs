@@ -19,25 +19,25 @@ public class FmpClient(IOptions<FmpClientOptions> fmpClientOptions, HttpClient h
     public Task<List<IncomeStatementDto>> GetIncomeStatementsAsync(string symbol, CancellationToken cancellationToken) =>
         GetWithAuth<List<IncomeStatementDto>>(
             $"income-statement/{symbol}",
-            new Dictionary<string, string?>() { { "period", "annual" } },
+            new Dictionary<string, string?> { { "period", "annual" } },
             cancellationToken);
 
     public Task<List<BalanceSheetStatementDto>> GetBalanceSheetStatementsAsync(string symbol, CancellationToken cancellationToken) => 
         GetWithAuth<List<BalanceSheetStatementDto>>(
             $"balance-sheet-statement/{symbol}",
-            new Dictionary<string, string?>() { { "period", "annual" } },
+            new Dictionary<string, string?> { { "period", "annual" } },
             cancellationToken);
 
     public Task<List<CashFlowStatementDto>> GetCashFlowStatementsAsync(string symbol, CancellationToken cancellationToken) =>
         GetWithAuth<List<CashFlowStatementDto>>(
             $"cash-flow-statement/{symbol}",
-            new Dictionary<string, string?>() { { "period", "annual" } },
+            new Dictionary<string, string?> { { "period", "annual" } },
             cancellationToken);
 
     public Task<List<RatiosDto>> GetRatiosAsync(string symbol, CancellationToken cancellationToken) => 
         GetWithAuth<List<RatiosDto>>(
             $"ratios/{symbol}",
-            new Dictionary<string, string?>() { { "period", "annual" } },
+            new Dictionary<string, string?> { { "period", "annual" } },
             cancellationToken);
 
     private Task<T> GetWithAuth<T>(string url, CancellationToken cancellationToken) =>
