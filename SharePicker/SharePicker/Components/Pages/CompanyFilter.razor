@@ -53,14 +53,14 @@
                 </CardHeaderContent>
             </MudCardHeader>
             <MudCardContent>
-                <MudDataGrid Items="_results" Virtualize="true" FixedHeader="true" Height="350px">
+                <MudDataGrid Items="_results" Virtualize="true" FixedHeader="true" Dense="true" Height="350px">
                     <ToolBarContent>
                         <MudText>Results Count: @_results.Count</MudText>
                     </ToolBarContent>
                     <Columns>
                         <PropertyColumn Property="company => company.Symbol" Title="Symbol" />
                         <PropertyColumn Property="company => company.Name" Title="Name"/>
-                        @* <PropertyColumn Property="company => company.Exchange" Title="Exchange" /> *@
+                        <PropertyColumn Property="company => company.Exchange.Symbol" Title="Exchange Symbol" />
                     </Columns>
                 </MudDataGrid>
             </MudCardContent>

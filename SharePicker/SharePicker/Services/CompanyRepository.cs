@@ -21,7 +21,8 @@ public class CompanyRepository(
                 await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 
                 return await dbContext.Companies
-                    .OrderBy(x => x.Symbol)
+                    .OrderBy(dbo => dbo.Symbol)
+                    .Include(dbo => dbo.Exchange)
                     .Select(dbo => ToDomain(dbo))
                     .ToListAsync(cancellationToken);
             }) ?? throw new Exception("Cache entry for available companies was null");
@@ -34,7 +35,8 @@ public class CompanyRepository(
 
         return await filter
             .FilterCompanies(dbContext.Companies)
-            .OrderBy(x => x.Symbol)
+            .OrderBy(dbo => dbo.Symbol)
+            .Include(dbo => dbo.Exchange)
             .Select(dbo => ToDomain(dbo))
             .ToListAsync(cancellationToken);
     }
@@ -136,7 +138,7 @@ public class CompanyRepository(
                     .ToListAsync(cancellationToken);
             }) ?? throw new Exception($"Cache entry for ratios for company {company.Symbol} was null");
 
-    private static Company ToDomain(Models.Database.Company dbo) => new(dbo.Symbol, dbo.Name);
+    private static Company ToDomain(Models.Database.Company dbo) => new(dbo.Symbol, dbo.Name, ToDomain(dbo.Exchange));
 
     private static Exchange ToDomain(Models.Database.Exchange dbo) => new(dbo.Symbol, dbo.Name);
 
