@@ -1,4 +1,5 @@
 ﻿using SharePicker.Models.Database;
+using Exchange = SharePicker.Models.Exchange;
 
 namespace SharePicker.Services;
 
@@ -10,6 +11,14 @@ public interface ICompanyFilter
 public class CompanyFilterBuilder
 {
     private readonly List<Func<IQueryable<Company>, IQueryable<Company>>> _filters = [];
+
+    public CompanyFilterBuilder WithExchanges(IEnumerable<Exchange> exchanges)
+    {
+        _filters.Add(filter => filter.Where(company => exchanges
+            .Select(exchange => exchange.Symbol)
+            .Contains(company.Exchange.Symbol)));
+        return this;
+    }
 
     public CompanyFilterBuilder WithMinProfitMargin(decimal percentage)
     {
@@ -32,7 +41,8 @@ public class CompanyFilterBuilder
                 company.IncomeStatements,
                 outerStatement => outerStatement.Date.Year,
                 innerStatement => innerStatement.Date.Year + 1,
-                (outerStatement, innerStatement) => innerStatement.ProfitBeforeIncomeAndTaxation < outerStatement.ProfitBeforeIncomeAndTaxation)
+                (outerStatement, innerStatement) => 
+                    innerStatement.ProfitBeforeIncomeAndTaxation < outerStatement.ProfitBeforeIncomeAndTaxation)
             .Count(result => result == false) <= 2));
         return this;
     }

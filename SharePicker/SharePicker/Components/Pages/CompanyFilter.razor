@@ -1,5 +1,4 @@
 ﻿@page "/CompanyFilter"
-
 @using Microsoft.AspNetCore.Authorization
 @using SharePicker.Models
 @using SharePicker.Services
@@ -16,15 +15,15 @@
             </CardHeaderContent>
         </MudCardHeader>
         <MudCardContent>
-            <MudSelect T="string"
+            <MudSelect T="Exchange"
                        Label="Exchanges"
                        MultiSelection="true"
                        SelectAll="true"
                        MultiSelectionTextFunc="GetExchangeSelectionText"
-                       @bind-SelectedValues=_selectedExchanges>
+                       @bind-SelectedValues="_selectedExchanges">
                 @foreach (var exchange in _exchanges)
                 {
-                    <MudSelectItem Value="@exchange">@exchange</MudSelectItem>
+                    <MudSelectItem Value="@exchange">@exchange.Symbol</MudSelectItem>
                 }
             </MudSelect>
             <MudNumericField @bind-Value="_minProfitMargin" Label="Min Profit Margin (Suggested min: 10%)" />
@@ -56,7 +55,7 @@
             <MudCardContent>
                 <MudDataGrid Items="_results" Virtualize="true" FixedHeader="true" Height="350px">
                     <ToolBarContent>
-                        <MudText>Results Count: @_results.Count()</MudText>
+                        <MudText>Results Count: @_results.Count</MudText>
                     </ToolBarContent>
                     <Columns>
                         <PropertyColumn Property="company => company.Symbol" Title="Symbol" />
@@ -71,24 +70,21 @@
 
 @code {
     private readonly CancellationTokenSource _cancellationTokenSource = new();
-    private IEnumerable<string> _exchanges = new List<string>();
-    private IEnumerable<string> _selectedExchanges = new List<string>();
+    private List<Exchange> _exchanges = [];
+    private IEnumerable<Exchange> _selectedExchanges = new List<Exchange>();
     private List<Company>? _results;
     private bool _processing;
     private decimal? _minProfitMargin;
     private decimal? _minRoce;
     private bool _increasingProfits;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        // _exchanges = CompanyProvider
-        //     .GetCompanies()
-        //     .Select(company => company.Exchange)
-        //     .Order()
-        //     .ToHashSet();
+        _exchanges = await CompanyRepository.GetExchangeAsync(_cancellationTokenSource.Token);
+        _selectedExchanges = _exchanges;
     }
 
-    private string GetExchangeSelectionText(List<string> selectedValues) => selectedValues.Count == 0 
+    private static string GetExchangeSelectionText(List<string> selectedValues) => selectedValues.Count == 0 
         ? "No exchanges selected"
         : $"{selectedValues.Count} exchange{(selectedValues.Count > 1 ? "s" : "")} selected";
 
@@ -99,6 +95,7 @@
 
         var companyFilterBuilder = new CompanyFilterBuilder();
 
+        companyFilterBuilder.WithExchanges(_selectedExchanges);
         if (_minProfitMargin.HasValue)
             companyFilterBuilder.WithMinProfitMargin(_minProfitMargin.Value);
         if (_minRoce.HasValue)

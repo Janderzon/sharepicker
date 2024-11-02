@@ -26,7 +26,9 @@ public class CompanyRepository(
                     .ToListAsync(cancellationToken);
             }) ?? throw new Exception("Cache entry for available companies was null");
 
-    public async Task<List<Company>> GetFilteredCompaniesAsync(ICompanyFilter filter, CancellationToken cancellationToken)
+    public async Task<List<Company>> GetFilteredCompaniesAsync(
+        ICompanyFilter filter, 
+        CancellationToken cancellationToken)
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 
@@ -38,27 +40,26 @@ public class CompanyRepository(
     }
     
     [UsedImplicitly]
-    private record ExchangeCacheKey(Company Company);
-    public async Task<Exchange> GetExchangeAsync(Company company, CancellationToken cancellationToken) =>
+    private record ExchangesCacheKey;
+    public async Task<List<Exchange>> GetExchangeAsync(CancellationToken cancellationToken) =>
         await memoryCache.GetOrCreateAsync(
-            new ExchangeCacheKey(company),
+            new ExchangesCacheKey(),
             async entry =>
             {
                 entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(10));
 
                 await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 
-                return await dbContext.Companies
-                    .Where(dbo => dbo.Symbol == company.Symbol)
-                    .OrderBy(dbo => dbo.Exchange.Symbol)
-                    .Include(x => x.Exchange)
-                    .Select(dbo => ToDomain(dbo.Exchange))
-                    .SingleAsync(cancellationToken);
+                return await dbContext.Exchanges
+                    .Select(dbo => ToDomain(dbo))
+                    .ToListAsync(cancellationToken);
             }) ?? throw new Exception();
 
     [UsedImplicitly]
     private record IncomeStatementsCacheKey(Company Company);
-    public async Task<List<IncomeStatement>> GetIncomeStatementsAsync(Company company, CancellationToken cancellationToken) => 
+    public async Task<List<IncomeStatement>> GetIncomeStatementsAsync(
+        Company company, 
+        CancellationToken cancellationToken) => 
         await memoryCache.GetOrCreateAsync(
             new IncomeStatementsCacheKey(company),
             async entry =>
@@ -77,7 +78,9 @@ public class CompanyRepository(
 
     [UsedImplicitly]
     private record BalanceSheetStatementCacheKey(Company Company);
-    public async Task<List<BalanceSheetStatement>> GetBalanceSheetStatementsAsync(Company company, CancellationToken cancellationToken) =>
+    public async Task<List<BalanceSheetStatement>> GetBalanceSheetStatementsAsync(
+        Company company, 
+        CancellationToken cancellationToken) =>
         await memoryCache.GetOrCreateAsync(
             new BalanceSheetStatementCacheKey(company),
             async entry =>
@@ -96,7 +99,9 @@ public class CompanyRepository(
 
     [UsedImplicitly]
     private record CashFlowStatementsCacheKey(Company Company);
-    public async Task<List<CashFlowStatement>> GetCashFlowStatementsAsync(Company company, CancellationToken cancellationToken) =>
+    public async Task<List<CashFlowStatement>> GetCashFlowStatementsAsync(
+        Company company,
+        CancellationToken cancellationToken) =>
         await memoryCache.GetOrCreateAsync(
             new CashFlowStatementsCacheKey(company),
             async entry =>
