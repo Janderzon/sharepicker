@@ -20,21 +20,21 @@ public class CompanyFilterBuilder
         return this;
     }
 
-    public CompanyFilterBuilder WithMinProfitMargin(decimal percentage)
+    public CompanyFilterBuilder WithMinProfitMargin(decimal percentage, int maxOutliers)
     {
         _filters.Add(filter => filter.Where(company =>
-            company.Ratios.All(ratios => ratios.EbitPerRevenue * 100 >= percentage)));
+            company.Ratios.Count(ratios => ratios.EbitPerRevenue * 100 < percentage) <= maxOutliers));
         return this;
     }
 
-    public CompanyFilterBuilder WithMinReturnOnCapitalEmployed(decimal percentage)
+    public CompanyFilterBuilder WithMinReturnOnCapitalEmployed(decimal percentage, int maxOutliers)
     {
         _filters.Add(filter => filter.Where(company =>
-            company.Ratios.All(ratios => ratios.ReturnOnCapitalEmployed * 100 >= percentage)));
+            company.Ratios.Count(ratios => ratios.ReturnOnCapitalEmployed * 100 < percentage) <= maxOutliers));
         return this;
     }
 
-    public CompanyFilterBuilder WithIncreasingProfits()
+    public CompanyFilterBuilder WithIncreasingProfits(int maxOutliers)
     {
         _filters.Add(filter => filter.Where(company => company.IncomeStatements
             .Join(
@@ -43,7 +43,7 @@ public class CompanyFilterBuilder
                 innerStatement => innerStatement.Date.Year + 1,
                 (outerStatement, innerStatement) => 
                     innerStatement.ProfitBeforeIncomeAndTaxation < outerStatement.ProfitBeforeIncomeAndTaxation)
-            .Count(result => result == false) <= 2));
+            .Count(result => result == false) <= maxOutliers));
         return this;
     }
 

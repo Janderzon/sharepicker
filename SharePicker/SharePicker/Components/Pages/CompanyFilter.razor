@@ -27,8 +27,11 @@
                 }
             </MudSelect>
             <MudNumericField @bind-Value="_minProfitMargin" Label="Min Profit Margin (Suggested min: 10%)" />
+            <MudNumericField @bind-Value="_maxProfitMarginOutliers" Label="Max Profit Margin Outliers" />
             <MudNumericField @bind-Value="_minRoce" Label="Min ROCE (Suggested min: 15%)" />
+            <MudNumericField @bind-Value="_maxRoceOutliers" Label="Max ROCE Outliers" />
             <MudSwitch @bind-Value="_increasingProfits" Label="Year-On-Year Increasing Profits" Color="Color.Info" />
+            <MudNumericField @bind-Value="_maxIncreasingProfitsOutliers" Label="Max ROCE Outliers" />
         </MudCardContent>
         <MudCardActions>
             <MudButton Disabled="_processing" Variant="Variant.Filled" Color="Color.Primary" OnClick="GetResults">
@@ -75,8 +78,11 @@
     private List<Company>? _results;
     private bool _processing;
     private decimal? _minProfitMargin;
+    private int? _maxProfitMarginOutliers;
     private decimal? _minRoce;
+    private int? _maxRoceOutliers;
     private bool _increasingProfits;
+    private int? _maxIncreasingProfitsOutliers;
 
     protected override async Task OnInitializedAsync()
     {
@@ -97,11 +103,11 @@
 
         companyFilterBuilder.WithExchanges(_selectedExchanges);
         if (_minProfitMargin.HasValue)
-            companyFilterBuilder.WithMinProfitMargin(_minProfitMargin.Value);
+            companyFilterBuilder.WithMinProfitMargin(_minProfitMargin.Value, _maxProfitMarginOutliers ?? 0);
         if (_minRoce.HasValue)
-            companyFilterBuilder.WithMinReturnOnCapitalEmployed(_minRoce.Value);
+            companyFilterBuilder.WithMinReturnOnCapitalEmployed(_minRoce.Value, _maxRoceOutliers ?? 0);
         if (_increasingProfits)
-            companyFilterBuilder.WithIncreasingProfits();
+            companyFilterBuilder.WithIncreasingProfits(_maxIncreasingProfitsOutliers ?? 0);
 
         _results = await CompanyRepository.GetFilteredCompaniesAsync(
             companyFilterBuilder.Build(),
