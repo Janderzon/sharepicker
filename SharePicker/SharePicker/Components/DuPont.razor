@@ -49,14 +49,15 @@ else
             new YAxis
             {
                 Title = new AxisTitle { Text = "ROCE" },
-                SeriesName = "ROCE"
+                SeriesName = "ROCE",
+                DecimalsInFloat = 2
             },
-
             new YAxis
             {
                 Title = new AxisTitle { Text = "Profit Margin And Capital Turnover" },
                 SeriesName = ["Profit Margin", "Capital Turnover"],
-                Opposite = true
+                Opposite = true,
+                DecimalsInFloat = 2
             }
         ]
     };
