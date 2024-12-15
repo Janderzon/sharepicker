@@ -10,10 +10,10 @@
     GroupExpanded="true"
     Loading="_loading">
     <Columns>
-        <PropertyColumn Property="x => x.Name" StickyLeft="true" Sortable="false" Title="" />
+        <PropertyColumn Property="row => row.Name" StickyLeft="true" Sortable="false" Title="" />
         @foreach (var balanceSheetStatement in _balanceSheetStatements)
         {
-            <PropertyColumn Property="x => x.ValueFactory(balanceSheetStatement)"
+            <PropertyColumn Property="row => row.GetValue(balanceSheetStatement)"
                             Sortable="false"
                             Title="@balanceSheetStatement.Date.ToString("yyyy")" />
         }
@@ -29,7 +29,15 @@
     private CancellationTokenSource _cancellationTokenSource = new();
     private List<BalanceSheetStatement> _balanceSheetStatements = [];
     private bool _loading = true;
-    private record Row(string Name, Func<BalanceSheetStatement, decimal> ValueFactory, Group Group);
+
+    private class Row(string name, Func<BalanceSheetStatement, decimal> valueFactory, Group group)
+    {
+       public string Name => name;
+
+       public Group Group => group;
+       
+       public string GetValue(BalanceSheetStatement statement) => valueFactory(statement).ToString("#,##0,,");
+    }
     private List<Row> _rows =
     [
        new(

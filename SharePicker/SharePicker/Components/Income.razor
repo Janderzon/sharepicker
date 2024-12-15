@@ -8,11 +8,11 @@
     Bordered="true"
     Loading="_loading">
     <Columns>
-        <PropertyColumn Property="x => x.Name" StickyLeft="true" Sortable="false" Title="" />
-        @foreach(var incomeStatement in _incomeStatements ?? [])
+        <PropertyColumn Property="row => row.Name" StickyLeft="true" Sortable="false" Title="" />
+        @foreach(var incomeStatement in _incomeStatements)
         {
             <PropertyColumn
-                Property="x => x.ValueFactory(incomeStatement)" 
+                Property="row => row.GetValue(incomeStatement)" 
                 Sortable="false"
                 Title="@incomeStatement.Date.ToString("yyyy")" />
         }
@@ -23,27 +23,33 @@
     private CancellationTokenSource _cancellationTokenSource = new();
     private List<IncomeStatement> _incomeStatements = [];
     private bool _loading = true;
-    private record Row(string Name, Func<IncomeStatement, decimal?> ValueFactory);
-    private List<Row> _rows = new()
+    private class Row(string name, Func<IncomeStatement, decimal?> valueFactory)
     {
-        new ("Revenue", incomeStatement => incomeStatement.Revenue),
-        new ("Cost Of Sales", incomeStatement => incomeStatement.CostOfSales),
-        new ("Gross Profit", incomeStatement => incomeStatement.GrossProfit),
-        new ("R&D Costs", incomeStatement => incomeStatement.ResearchAndDevelopmentCosts),
-        new ("Distribution Costs", incomeStatement => incomeStatement.DistributionCosts),
-        new ("Administrative Costs", incomeStatement => incomeStatement.AdministrativeCosts),
-        new ("Other Costs", incomeStatement => incomeStatement.OtherCosts),
-        new ("Operating Profit", incomeStatement => incomeStatement.OperatingProfit),
-        new ("Profit Before Interest And Taxation", incomeStatement => incomeStatement.ProfitBeforeIncomeAndTaxation),
-        new ("Finance Income", incomeStatement => incomeStatement.FinanceIncome),
-        new ("Finance Expense", incomeStatement => incomeStatement.FinanceExpense),
-        new ("Profit Before Tax", incomeStatement => incomeStatement.ProfitBeforeTax),
-        new ("Taxation", incomeStatement => incomeStatement.Taxation),
-        new ("Profit After Tax", incomeStatement => incomeStatement.ProfitAfterTax),
-        new ("Net Profit", incomeStatement => incomeStatement.NetProfit),
-        new ("Earnings Per Share", incomeStatement => incomeStatement?.EarningsPerShare),
-        new ("Diluted Earnings Per Share", incomeStatement => incomeStatement?.DilutedEarningsPerShare)
-    };
+        public string Name => name;
+       
+        public string GetValue(IncomeStatement statement) =>
+            valueFactory(statement)?.ToString("#,##0,,") ?? string.Empty;
+    }
+    private List<Row> _rows =
+    [
+        new("Revenue", incomeStatement => incomeStatement.Revenue),
+        new("Cost Of Sales", incomeStatement => incomeStatement.CostOfSales),
+        new("Gross Profit", incomeStatement => incomeStatement.GrossProfit),
+        new("R&D Costs", incomeStatement => incomeStatement.ResearchAndDevelopmentCosts),
+        new("Distribution Costs", incomeStatement => incomeStatement.DistributionCosts),
+        new("Administrative Costs", incomeStatement => incomeStatement.AdministrativeCosts),
+        new("Other Costs", incomeStatement => incomeStatement.OtherCosts),
+        new("Operating Profit", incomeStatement => incomeStatement.OperatingProfit),
+        new("Profit Before Interest And Taxation", incomeStatement => incomeStatement.ProfitBeforeIncomeAndTaxation),
+        new("Finance Income", incomeStatement => incomeStatement.FinanceIncome),
+        new("Finance Expense", incomeStatement => incomeStatement.FinanceExpense),
+        new("Profit Before Tax", incomeStatement => incomeStatement.ProfitBeforeTax),
+        new("Taxation", incomeStatement => incomeStatement.Taxation),
+        new("Profit After Tax", incomeStatement => incomeStatement.ProfitAfterTax),
+        new("Net Profit", incomeStatement => incomeStatement.NetProfit),
+        new("Earnings Per Share", incomeStatement => incomeStatement.EarningsPerShare),
+        new("Diluted Earnings Per Share", incomeStatement => incomeStatement.DilutedEarningsPerShare)
+    ];
 
     [Parameter]
     [EditorRequired]
