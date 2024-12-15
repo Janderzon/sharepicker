@@ -21,7 +21,7 @@
                        MultiSelection="true"
                        SelectAll="true"
                        MultiSelectionTextFunc="GetExchangeSelectionText"
-                       @bind-SelectedValues=_selectedExchanges>
+                       @bind-SelectedValues="_selectedExchanges">
                 @foreach (var exchange in _exchanges)
                 {
                     <MudSelectItem Value="@exchange">@exchange</MudSelectItem>
