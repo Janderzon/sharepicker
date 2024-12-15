@@ -23,18 +23,18 @@ else
     private List<LabeledValue>? _profitMarginSeries;
     private ApexChartOptions<LabeledValue> _chartOptions = new()
     {
-        Chart = new()
+        Chart = new Chart
         {
-            Toolbar = new() { Show = false }
+            Toolbar = new Toolbar { Show = false }
         },
-        Theme = new() { Mode = Mode.Dark },
-        Yaxis = new()
-        {
-            new()
+        Theme = new Theme { Mode = Mode.Dark },
+        Yaxis =
+        [
+            new YAxis
             {
-                Title = new(){ Text = "Ratio" }
+                Title = new AxisTitle { Text = "Ratio" }
             }
-        }
+        ]
     };
 
     [Parameter]
