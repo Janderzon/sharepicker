@@ -39,25 +39,27 @@ else
     private List<LabeledValue>? _capitalTurnoverSeries;
     private ApexChartOptions<LabeledValue> _chartOptions = new()
     {
-        Chart = new()
+        Chart = new Chart
         {
-            Toolbar = new() { Show = false }
+            Toolbar = new Toolbar { Show = false }
         },
-        Theme = new() { Mode = Mode.Dark },
-        Yaxis = new()
-        {
-            new()
+        Theme = new Theme { Mode = Mode.Dark },
+        Yaxis =
+        [
+            new YAxis
             {
-                Title = new(){ Text = "ROCE" },
-                SeriesName = "ROCE"
+                Title = new AxisTitle { Text = "ROCE" },
+                SeriesName = "ROCE",
+                DecimalsInFloat = 2
             },
-            new()
+            new YAxis
             {
-                Title = new(){ Text = "Profit Margin And Capital Turnover" },
-                SeriesName = [ "Profit Margin", "Capital Turnover" ],
-                Opposite = true
+                Title = new AxisTitle { Text = "Profit Margin And Capital Turnover" },
+                SeriesName = ["Profit Margin", "Capital Turnover"],
+                Opposite = true,
+                DecimalsInFloat = 2
             }
-        }
+        ]
     };
 
     [Parameter]

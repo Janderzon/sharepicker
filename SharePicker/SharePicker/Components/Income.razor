@@ -1,20 +1,23 @@
 ﻿@using SharePicker.Models
 @implements IAsyncDisposable
 
-<MudDataGrid 
-    Items="@_rows" 
-    Dense="true" 
-    Hover="true" 
+<MudDataGrid
+    Items="@_rows"
+    Dense="true"
+    Hover="true"
     Bordered="true"
     Loading="_loading">
+    <ToolBarContent>
+        <MudSpacer/><MudText>Currency values are quoted in millions.</MudText>
+    </ToolBarContent>
     <Columns>
-        <PropertyColumn Property="x => x.Name" StickyLeft="true" Sortable="false" Title="" />
-        @foreach(var incomeStatement in _incomeStatements ?? [])
+        <PropertyColumn Property="row => row.Name" StickyLeft="true" Sortable="false" Title=""/>
+        @foreach (var incomeStatement in _incomeStatements)
         {
             <PropertyColumn
-                Property="x => x.ValueFactory(incomeStatement)" 
+                Property="row => row.GetValue(incomeStatement)"
                 Sortable="false"
-                Title="@incomeStatement.Date.ToString("yyyy")" />
+                Title="@GetColumnTitle(incomeStatement)"/>
         }
     </Columns>
 </MudDataGrid>
@@ -23,32 +26,41 @@
     private CancellationTokenSource _cancellationTokenSource = new();
     private List<IncomeStatement> _incomeStatements = [];
     private bool _loading = true;
-    private record Row(string Name, Func<IncomeStatement, decimal?> ValueFactory);
-    private List<Row> _rows = new()
+    private class Row(string name, Func<IncomeStatement, decimal?> valueFactory)
     {
-        new ("Revenue", incomeStatement => incomeStatement.Revenue),
-        new ("Cost Of Sales", incomeStatement => incomeStatement.CostOfSales),
-        new ("Gross Profit", incomeStatement => incomeStatement.GrossProfit),
-        new ("R&D Costs", incomeStatement => incomeStatement.ResearchAndDevelopmentCosts),
-        new ("Distribution Costs", incomeStatement => incomeStatement.DistributionCosts),
-        new ("Administrative Costs", incomeStatement => incomeStatement.AdministrativeCosts),
-        new ("Other Costs", incomeStatement => incomeStatement.OtherCosts),
-        new ("Operating Profit", incomeStatement => incomeStatement.OperatingProfit),
-        new ("Profit Before Interest And Taxation", incomeStatement => incomeStatement.ProfitBeforeIncomeAndTaxation),
-        new ("Finance Income", incomeStatement => incomeStatement.FinanceIncome),
-        new ("Finance Expense", incomeStatement => incomeStatement.FinanceExpense),
-        new ("Profit Before Tax", incomeStatement => incomeStatement.ProfitBeforeTax),
-        new ("Taxation", incomeStatement => incomeStatement.Taxation),
-        new ("Profit After Tax", incomeStatement => incomeStatement.ProfitAfterTax),
-        new ("Net Profit", incomeStatement => incomeStatement.NetProfit),
-        new ("Earnings Per Share", incomeStatement => incomeStatement?.EarningsPerShare),
-        new ("Diluted Earnings Per Share", incomeStatement => incomeStatement?.DilutedEarningsPerShare)
-    };
+        public string Name => name;
+       
+        public string GetValue(IncomeStatement statement) =>
+            valueFactory(statement)?.ToString("#,##0,,") ?? string.Empty;
+    }
+    private List<Row> _rows =
+    [
+        new("Revenue", incomeStatement => incomeStatement.Revenue),
+        new("Cost Of Sales", incomeStatement => incomeStatement.CostOfSales),
+        new("Gross Profit", incomeStatement => incomeStatement.GrossProfit),
+        new("R&D Costs", incomeStatement => incomeStatement.ResearchAndDevelopmentCosts),
+        new("Distribution Costs", incomeStatement => incomeStatement.DistributionCosts),
+        new("Administrative Costs", incomeStatement => incomeStatement.AdministrativeCosts),
+        new("Other Costs", incomeStatement => incomeStatement.OtherCosts),
+        new("Operating Profit", incomeStatement => incomeStatement.OperatingProfit),
+        new("Profit Before Interest And Taxation", incomeStatement => incomeStatement.ProfitBeforeIncomeAndTaxation),
+        new("Finance Income", incomeStatement => incomeStatement.FinanceIncome),
+        new("Finance Expense", incomeStatement => incomeStatement.FinanceExpense),
+        new("Profit Before Tax", incomeStatement => incomeStatement.ProfitBeforeTax),
+        new("Taxation", incomeStatement => incomeStatement.Taxation),
+        new("Profit After Tax", incomeStatement => incomeStatement.ProfitAfterTax),
+        new("Net Profit", incomeStatement => incomeStatement.NetProfit),
+        new("Earnings Per Share", incomeStatement => incomeStatement.EarningsPerShare),
+        new("Diluted Earnings Per Share", incomeStatement => incomeStatement.DilutedEarningsPerShare)
+    ];
 
     [Parameter]
     [EditorRequired]
     public Func<CancellationToken, Task<List<IncomeStatement>>> IncomeStatementsFactory { get; set; } =
         _ => Task.FromResult(new List<IncomeStatement>());
+    
+    private string GetColumnTitle(IncomeStatement incomeStatement) =>
+        $"{incomeStatement.Date.ToString("yyyy")} ({incomeStatement.Currency})";
 
     protected override async Task OnParametersSetAsync()
     {
