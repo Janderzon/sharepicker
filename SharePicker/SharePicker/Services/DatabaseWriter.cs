@@ -52,6 +52,13 @@ public class DatabaseWriter(
         foreach (var dto in await fmpClient.GetIncomeStatementsAsync(stock.Symbol, cancellationToken))
         {
             await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+            
+            var date = DateOnly.ParseExact(dto.Date, "yyyy-MM-dd");
+            
+            if (await dbContext.IncomeStatements
+                .Where(statement => statement.Company.Symbol == stock.Symbol)
+                .AnyAsync(statement => statement.Date == date, cancellationToken))
+                continue;
 
             var exchange = await dbContext.Exchanges.SingleOrDefaultAsync(exchange => exchange.Symbol == stock.ExchangeShortName, cancellationToken)
                 ?? new Exchange { Name = stock.Exchange, Symbol = stock.ExchangeShortName };
@@ -67,7 +74,7 @@ public class DatabaseWriter(
                 new IncomeStatement
                 {
                     Company = company,
-                    Date = DateOnly.ParseExact(dto.Date, "yyyy-MM-dd"),
+                    Date = date,
                     Currency = currency,
                     Revenue = dto.Revenue,
                     CostOfSales = dto.CostOfRevenue,
@@ -101,6 +108,13 @@ public class DatabaseWriter(
         foreach (var dto in await fmpClient.GetBalanceSheetStatementsAsync(stock.Symbol, cancellationToken))
         {
             await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+            
+            var date = DateOnly.ParseExact(dto.Date, "yyyy-MM-dd");
+            
+            if (await dbContext.BalanceSheetStatements
+                    .Where(statement => statement.Company.Symbol == stock.Symbol)
+                    .AnyAsync(statement => statement.Date == date, cancellationToken))
+                continue;
 
             var exchange = await dbContext.Exchanges.SingleOrDefaultAsync(exchange => exchange.Symbol == stock.ExchangeShortName, cancellationToken)
                 ?? new Exchange { Name = stock.Exchange, Symbol = stock.ExchangeShortName };
@@ -116,7 +130,7 @@ public class DatabaseWriter(
                 new BalanceSheetStatement
                 {
                     Company = company,
-                    Date = DateOnly.ParseExact(dto.Date, "yyyy-MM-dd"),
+                    Date = date,
                     Currency = currency,
                     CashAndCashEquivalents = dto.CashAndCashEquivalents,
                     ShortTermInvestments = dto.ShortTermInvestments,
@@ -173,6 +187,13 @@ public class DatabaseWriter(
         foreach (var dto in await fmpClient.GetCashFlowStatementsAsync(stock.Symbol, cancellationToken))
         {
             await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+            
+            var date = DateOnly.ParseExact(dto.Date, "yyyy-MM-dd");
+            
+            if (await dbContext.CashFlowStatements
+                    .Where(statement => statement.Company.Symbol == stock.Symbol)
+                    .AnyAsync(statement => statement.Date == date, cancellationToken))
+                continue;
 
             var exchange = await dbContext.Exchanges.SingleOrDefaultAsync(exchange => exchange.Symbol == stock.ExchangeShortName, cancellationToken)
                 ?? new Exchange { Name = stock.Exchange, Symbol = stock.ExchangeShortName };
@@ -188,7 +209,7 @@ public class DatabaseWriter(
                 new CashFlowStatement
                 {
                     Company = company,
-                    Date = DateOnly.ParseExact(dto.Date, "yyyy-MM-dd"),
+                    Date = date,
                     Currency = currency,
                     NetIncome = dto.NetIncome,
                     DepreciationAndAmortisation = dto.DepreciationAndAmortization,
@@ -229,6 +250,13 @@ public class DatabaseWriter(
         foreach (var dto in await fmpClient.GetRatiosAsync(stock.Symbol, cancellationToken))
         {
             await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+            
+            var date = DateOnly.ParseExact(dto.Date, "yyyy-MM-dd");
+            
+            if (await dbContext.Ratios
+                    .Where(ratios => ratios.Company.Symbol == stock.Symbol)
+                    .AnyAsync(ratios => ratios.Date == date, cancellationToken))
+                continue;
 
             var exchange = await dbContext.Exchanges.SingleOrDefaultAsync(exchange => exchange.Symbol == stock.ExchangeShortName, cancellationToken)
                 ?? new Exchange { Name = stock.Exchange, Symbol = stock.ExchangeShortName };
@@ -240,7 +268,7 @@ public class DatabaseWriter(
                 new Ratios
                 {
                     Company = company,
-                    Date = DateOnly.ParseExact(dto.Date, "yyyy-MM-dd"),
+                    Date = date,
                     CurrentRatio = dto.CurrentRatio,
                     QuickRatio = dto.QuickRatio,
                     CashRatio = dto.CashRatio,
