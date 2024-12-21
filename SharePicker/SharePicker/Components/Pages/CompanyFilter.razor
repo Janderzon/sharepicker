@@ -70,8 +70,8 @@
 </MudStack>
 
 @code {
-    private CancellationTokenSource _cancellationTokenSource = new();
-    private IEnumerable<string> _exchanges = new List<string>();
+    private readonly CancellationTokenSource _cancellationTokenSource = new();
+    private readonly IEnumerable<string> _exchanges = new List<string>();
     private IEnumerable<string> _selectedExchanges = new List<string>();
     private List<Company>? _results = null;
     private bool _processing;
