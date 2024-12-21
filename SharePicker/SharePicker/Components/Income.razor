@@ -14,7 +14,7 @@
             <PropertyColumn
                 Property="row => row.GetValue(incomeStatement)" 
                 Sortable="false"
-                Title="@incomeStatement.Date.ToString("yyyy")" />
+                Title="@GetColumnTitle(incomeStatement)" />
         }
     </Columns>
 </MudDataGrid>
@@ -55,6 +55,9 @@
     [EditorRequired]
     public Func<CancellationToken, Task<List<IncomeStatement>>> IncomeStatementsFactory { get; set; } =
         _ => Task.FromResult(new List<IncomeStatement>());
+    
+    private string GetColumnTitle(IncomeStatement incomeStatement) =>
+        $"{incomeStatement.Date.ToString("yyyy")} ({incomeStatement.Currency})";
 
     protected override async Task OnParametersSetAsync()
     {

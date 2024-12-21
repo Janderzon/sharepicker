@@ -16,7 +16,7 @@
             <PropertyColumn
                 Property="row => row.GetValue(cashFlowStatement)" 
                 Sortable="false"
-                Title="@cashFlowStatement.Date.ToString("yyyy")" />
+                Title="@GetColumnTitle(cashFlowStatement)" />
         }
         <PropertyColumn Property="x => x.Group" Grouping Hidden="true">
             <GroupTemplate>
@@ -87,6 +87,9 @@
     [EditorRequired]
     public Func<CancellationToken, Task<List<CashFlowStatement>>> CashFlowStatementsFactory { get; set; } =
         _ => Task.FromResult(new List<CashFlowStatement>());
+    
+    private string GetColumnTitle(CashFlowStatement cashFlowStatement) =>
+        $"{cashFlowStatement.Date.ToString("yyyy")} ({cashFlowStatement.Currency})";
 
     protected override async Task OnParametersSetAsync()
     {

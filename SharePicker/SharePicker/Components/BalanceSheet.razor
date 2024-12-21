@@ -15,7 +15,7 @@
         {
             <PropertyColumn Property="row => row.GetValue(balanceSheetStatement)"
                             Sortable="false"
-                            Title="@balanceSheetStatement.Date.ToString("yyyy")" />
+                            Title="@GetColumnTitle(balanceSheetStatement)" />
         }
         <PropertyColumn Property="x => x.Group" Grouping Hidden="true">
             <GroupTemplate>
@@ -266,6 +266,9 @@
         Group.Summary => "Summary",
         _ => throw new Exception($"Unsupported type: {group.GetType()}")
     };
+
+    private string GetColumnTitle(BalanceSheetStatement balanceSheetStatement) =>
+       $"{balanceSheetStatement.Date.ToString("yyyy")} ({balanceSheetStatement.Currency})";
 
     [Parameter]
     [EditorRequired]
