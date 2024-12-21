@@ -1,20 +1,23 @@
 ﻿@using SharePicker.Models
 @implements IAsyncDisposable
 
-<MudDataGrid 
-    Items="@_rows" 
-    Dense="true" 
-    Hover="true" 
+<MudDataGrid
+    Items="@_rows"
+    Dense="true"
+    Hover="true"
     Bordered="true"
     Loading="_loading">
+    <ToolBarContent>
+        <MudSpacer/><MudText>Currency values are quoted in millions.</MudText>
+    </ToolBarContent>
     <Columns>
-        <PropertyColumn Property="row => row.Name" StickyLeft="true" Sortable="false" Title="" />
-        @foreach(var incomeStatement in _incomeStatements)
+        <PropertyColumn Property="row => row.Name" StickyLeft="true" Sortable="false" Title=""/>
+        @foreach (var incomeStatement in _incomeStatements)
         {
             <PropertyColumn
-                Property="row => row.GetValue(incomeStatement)" 
+                Property="row => row.GetValue(incomeStatement)"
                 Sortable="false"
-                Title="@GetColumnTitle(incomeStatement)" />
+                Title="@GetColumnTitle(incomeStatement)"/>
         }
     </Columns>
 </MudDataGrid>

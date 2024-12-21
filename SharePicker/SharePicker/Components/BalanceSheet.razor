@@ -9,6 +9,9 @@
     Groupable="true"
     GroupExpanded="true"
     Loading="_loading">
+   <ToolBarContent>
+      <MudSpacer/><MudText>Currency values are quoted in millions.</MudText>
+   </ToolBarContent>
     <Columns>
         <PropertyColumn Property="row => row.Name" StickyLeft="true" Sortable="false" Title="" />
         @foreach (var balanceSheetStatement in _balanceSheetStatements)
