@@ -20,11 +20,16 @@ public class DatabaseWriter(
                 .ToHashSet();
             var symbolsWithFinancialStatements = (await fmpClient.GetSymbolsWithFinancialStatementsAsync(cancellationToken)).ToHashSet();
 
+            var upToDateSymbols = await GetUpToDateSymbols(cancellationToken);
+            
             foreach (var stock in stocks
                 .Where(stock => tradableSymbols.Contains(stock.Symbol))
                 .Where(stock => symbolsWithFinancialStatements.Contains(stock.Symbol)))
             {
                 if (stock.ExchangeShortName != "LSE")
+                    continue;
+                
+                if (upToDateSymbols.Contains(stock.Symbol))
                     continue;
 
                 try
@@ -328,5 +333,23 @@ public class DatabaseWriter(
 
             await dbContext.SaveChangesAsync(cancellationToken);
         }
+    }
+
+    private async Task<HashSet<string>> GetUpToDateSymbols(CancellationToken cancellationToken)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+        
+        var year = DateTime.Today.Year;
+
+        var upToDateSymbols = await dbContext.Companies
+            .Where(company => 
+                company.IncomeStatements.Any(statement => statement.Date.Year == year)
+                && company.BalanceSheetStatements.Any(statement => statement.Date.Year == year) 
+                && company.CashFlowStatements.Any(statement => statement.Date.Year == year)
+                && company.Ratios.Any(ratios => ratios.Date.Year == year))
+            .Select(company => company.Symbol)
+            .ToListAsync(cancellationToken);
+
+        return upToDateSymbols.ToHashSet();
     }
 }
