@@ -54,16 +54,24 @@ public class DatabaseWriter(
         if (stock.ExchangeShortName == null || stock.Exchange == null)
             return;
 
+        int yearOfMostRecentData;
+        await using (var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken))
+        {
+            yearOfMostRecentData = await dbContext.IncomeStatements
+                .Where(statement => statement.Company.Symbol == stock.Symbol)
+                .Select(statement => statement.Date.Year)
+                .OrderBy(year => year)
+                .LastOrDefaultAsync(cancellationToken);
+        }
+
         foreach (var dto in await fmpClient.GetIncomeStatementsAsync(stock.Symbol, cancellationToken))
         {
-            await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
-            
             var date = DateOnly.ParseExact(dto.Date, "yyyy-MM-dd");
             
-            if (await dbContext.IncomeStatements
-                .Where(statement => statement.Company.Symbol == stock.Symbol)
-                .AnyAsync(statement => statement.Date == date, cancellationToken))
+            if (date.Year <= yearOfMostRecentData)
                 continue;
+            
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 
             var exchange = await dbContext.Exchanges.SingleOrDefaultAsync(exchange => exchange.Symbol == stock.ExchangeShortName, cancellationToken)
                 ?? new Exchange { Name = stock.Exchange, Symbol = stock.ExchangeShortName };
@@ -109,17 +117,25 @@ public class DatabaseWriter(
     {
         if (stock.ExchangeShortName == null || stock.Exchange == null)
             return;
+        
+        int yearOfMostRecentData;
+        await using (var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken))
+        {
+            yearOfMostRecentData = await dbContext.BalanceSheetStatements
+                .Where(statement => statement.Company.Symbol == stock.Symbol)
+                .Select(statement => statement.Date.Year)
+                .OrderBy(year => year)
+                .LastOrDefaultAsync(cancellationToken);
+        }
 
         foreach (var dto in await fmpClient.GetBalanceSheetStatementsAsync(stock.Symbol, cancellationToken))
         {
-            await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
-            
             var date = DateOnly.ParseExact(dto.Date, "yyyy-MM-dd");
             
-            if (await dbContext.BalanceSheetStatements
-                    .Where(statement => statement.Company.Symbol == stock.Symbol)
-                    .AnyAsync(statement => statement.Date == date, cancellationToken))
+            if (date.Year <= yearOfMostRecentData)
                 continue;
+            
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 
             var exchange = await dbContext.Exchanges.SingleOrDefaultAsync(exchange => exchange.Symbol == stock.ExchangeShortName, cancellationToken)
                 ?? new Exchange { Name = stock.Exchange, Symbol = stock.ExchangeShortName };
@@ -188,17 +204,25 @@ public class DatabaseWriter(
     {
         if (stock.ExchangeShortName == null || stock.Exchange == null)
             return;
+        
+        int yearOfMostRecentData;
+        await using (var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken))
+        {
+            yearOfMostRecentData = await dbContext.CashFlowStatements
+                .Where(statement => statement.Company.Symbol == stock.Symbol)
+                .Select(statement => statement.Date.Year)
+                .OrderBy(year => year)
+                .LastOrDefaultAsync(cancellationToken);
+        }
 
         foreach (var dto in await fmpClient.GetCashFlowStatementsAsync(stock.Symbol, cancellationToken))
         {
-            await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
-            
             var date = DateOnly.ParseExact(dto.Date, "yyyy-MM-dd");
             
-            if (await dbContext.CashFlowStatements
-                    .Where(statement => statement.Company.Symbol == stock.Symbol)
-                    .AnyAsync(statement => statement.Date == date, cancellationToken))
+            if (date.Year <= yearOfMostRecentData)
                 continue;
+            
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 
             var exchange = await dbContext.Exchanges.SingleOrDefaultAsync(exchange => exchange.Symbol == stock.ExchangeShortName, cancellationToken)
                 ?? new Exchange { Name = stock.Exchange, Symbol = stock.ExchangeShortName };
@@ -251,17 +275,25 @@ public class DatabaseWriter(
     {
         if (stock.ExchangeShortName == null || stock.Exchange == null)
             return;
+        
+        int yearOfMostRecentData;
+        await using (var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken))
+        {
+            yearOfMostRecentData = await dbContext.Ratios
+                .Where(ratios => ratios.Company.Symbol == stock.Symbol)
+                .Select(ratios => ratios.Date.Year)
+                .OrderBy(year => year)
+                .LastOrDefaultAsync(cancellationToken);
+        }
 
         foreach (var dto in await fmpClient.GetRatiosAsync(stock.Symbol, cancellationToken))
         {
-            await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
-            
             var date = DateOnly.ParseExact(dto.Date, "yyyy-MM-dd");
             
-            if (await dbContext.Ratios
-                    .Where(ratios => ratios.Company.Symbol == stock.Symbol)
-                    .AnyAsync(ratios => ratios.Date == date, cancellationToken))
+            if (date.Year <= yearOfMostRecentData)
                 continue;
+            
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 
             var exchange = await dbContext.Exchanges.SingleOrDefaultAsync(exchange => exchange.Symbol == stock.ExchangeShortName, cancellationToken)
                 ?? new Exchange { Name = stock.Exchange, Symbol = stock.ExchangeShortName };
@@ -339,14 +371,14 @@ public class DatabaseWriter(
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
         
-        var year = DateTime.Today.Year;
+        var yearOfLatestData = DateTime.Today.Year - 1;
 
         var upToDateSymbols = await dbContext.Companies
             .Where(company => 
-                company.IncomeStatements.Any(statement => statement.Date.Year == year)
-                && company.BalanceSheetStatements.Any(statement => statement.Date.Year == year) 
-                && company.CashFlowStatements.Any(statement => statement.Date.Year == year)
-                && company.Ratios.Any(ratios => ratios.Date.Year == year))
+                company.IncomeStatements.Any(statement => statement.Date.Year == yearOfLatestData)
+                && company.BalanceSheetStatements.Any(statement => statement.Date.Year == yearOfLatestData) 
+                && company.CashFlowStatements.Any(statement => statement.Date.Year == yearOfLatestData)
+                && company.Ratios.Any(ratios => ratios.Date.Year == yearOfLatestData))
             .Select(company => company.Symbol)
             .ToListAsync(cancellationToken);
 
