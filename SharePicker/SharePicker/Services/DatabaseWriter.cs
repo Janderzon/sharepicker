@@ -111,6 +111,8 @@ public class DatabaseWriter(
                 cancellationToken);
 
             await dbContext.SaveChangesAsync(cancellationToken);
+
+            logger.LogInformation("Added {Year} income statement for {Company} to database", date.Year, company.Name);
         }
     }
         
@@ -198,6 +200,11 @@ public class DatabaseWriter(
                 cancellationToken);
 
             await dbContext.SaveChangesAsync(cancellationToken);
+            
+            logger.LogInformation(
+                "Added {Year} balance sheet statement for {Company} to database", 
+                date.Year,
+                company.Name);
         }
     }        
 
@@ -269,6 +276,11 @@ public class DatabaseWriter(
                 cancellationToken);
 
             await dbContext.SaveChangesAsync(cancellationToken);
+            
+            logger.LogInformation(
+                "Added {Year} cash flow statement for {Company} to database", 
+                date.Year, 
+                company.Name);
         }
     }
 
@@ -365,6 +377,8 @@ public class DatabaseWriter(
                 cancellationToken);
 
             await dbContext.SaveChangesAsync(cancellationToken);
+            
+            logger.LogInformation("Added {Year} ratios for {Company} to database", date.Year, company.Name);
         }
     }
 
