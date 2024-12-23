@@ -97,9 +97,10 @@ public class DatabaseWriter(
                     AdministrativeCosts = dto.GeneralAndAdministrativeExpenses,
                     OtherCosts = dto.OtherExpenses,
                     OperatingProfit = dto.OperatingIncome,
-                    ProfitBeforeIncomeAndTaxation = dto.IncomeBeforeTax - dto.InterestIncome + dto.InterestExpense,
-                    FinanceIncome = dto.InterestIncome,
-                    FinanceExpense = dto.InterestExpense,
+                    ProfitBeforeIncomeAndTaxation = 
+                        dto.IncomeBeforeTax - dto.InterestIncome ?? 0 + dto.InterestExpense ?? 0,
+                    FinanceIncome = dto.InterestIncome ?? 0,
+                    FinanceExpense = dto.InterestExpense ?? 0,
                     ProfitBeforeTax = dto.IncomeBeforeTax,
                     Taxation = dto.IncomeTaxExpense,
                     ProfitAfterTax = dto.IncomeBeforeTax - dto.IncomeTaxExpense,
