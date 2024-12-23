@@ -97,9 +97,10 @@ public class DatabaseWriter(
                     AdministrativeCosts = dto.GeneralAndAdministrativeExpenses,
                     OtherCosts = dto.OtherExpenses,
                     OperatingProfit = dto.OperatingIncome,
-                    ProfitBeforeIncomeAndTaxation = dto.IncomeBeforeTax - dto.InterestIncome + dto.InterestExpense,
-                    FinanceIncome = dto.InterestIncome,
-                    FinanceExpense = dto.InterestExpense,
+                    ProfitBeforeIncomeAndTaxation = 
+                        dto.IncomeBeforeTax - dto.InterestIncome ?? 0 + dto.InterestExpense ?? 0,
+                    FinanceIncome = dto.InterestIncome ?? 0,
+                    FinanceExpense = dto.InterestExpense ?? 0,
                     ProfitBeforeTax = dto.IncomeBeforeTax,
                     Taxation = dto.IncomeTaxExpense,
                     ProfitAfterTax = dto.IncomeBeforeTax - dto.IncomeTaxExpense,
@@ -110,6 +111,8 @@ public class DatabaseWriter(
                 cancellationToken);
 
             await dbContext.SaveChangesAsync(cancellationToken);
+
+            logger.LogInformation("Added {Year} income statement for {Company} to database", date.Year, company.Name);
         }
     }
         
@@ -197,6 +200,11 @@ public class DatabaseWriter(
                 cancellationToken);
 
             await dbContext.SaveChangesAsync(cancellationToken);
+            
+            logger.LogInformation(
+                "Added {Year} balance sheet statement for {Company} to database", 
+                date.Year,
+                company.Name);
         }
     }        
 
@@ -268,6 +276,11 @@ public class DatabaseWriter(
                 cancellationToken);
 
             await dbContext.SaveChangesAsync(cancellationToken);
+            
+            logger.LogInformation(
+                "Added {Year} cash flow statement for {Company} to database", 
+                date.Year, 
+                company.Name);
         }
     }
 
@@ -364,6 +377,8 @@ public class DatabaseWriter(
                 cancellationToken);
 
             await dbContext.SaveChangesAsync(cancellationToken);
+            
+            logger.LogInformation("Added {Year} ratios for {Company} to database", date.Year, company.Name);
         }
     }
 
