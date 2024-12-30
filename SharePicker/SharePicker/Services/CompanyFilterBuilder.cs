@@ -37,6 +37,15 @@ public class CompanyFilterBuilder
         return this;
     }
 
+    public CompanyFilterBuilder WithExchanges(IEnumerable<Models.Exchange> exchanges)
+    {
+        var exchangesToInclude = exchanges.Select(exchange => exchange.Symbol);
+        
+        _filters.Add(filter => filter.Where(company => exchangesToInclude.Contains(company.Exchange.Symbol)));
+        
+        return this;
+    }
+
     public ICompanyFilter Build() => new CompanyFilter([.._filters]);
 
     private class CompanyFilter(List<Func<IQueryable<Company>, IQueryable<Company>>> filters) : ICompanyFilter
