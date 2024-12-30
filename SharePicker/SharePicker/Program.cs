@@ -26,6 +26,7 @@ builder.Services
     .AddHttpClient<FmpClient>(client =>
     {
         client.BaseAddress = new Uri("https://financialmodelingprep.com/api/v3/");
+        client.Timeout = Timeout.InfiniteTimeSpan;
     })
     .AddPolicyHandler(HttpPolicyExtensions
         .HandleTransientHttpError()
