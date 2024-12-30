@@ -43,7 +43,7 @@
     <Columns>
         <PropertyColumn Property="company => company.Symbol" Title="Symbol" CellStyle="width: 20%" />
         <PropertyColumn Property="company => company.Name" Title="Name" />
-        @* <PropertyColumn Property="company => company.Exchange" Title="Exchange Short Name" /> *@
+        <PropertyColumn Property="company => company.Exchange.Symbol" Title="Exchange" CellStyle="width: 20%" />
     </Columns>
 </MudDataGrid>
 
@@ -65,8 +65,8 @@
         if (company.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
             return true;
 
-        // if (company.Exchange.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
-        //     return true;
+        if (company.Exchange.Symbol.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
 
         return false;
     }
