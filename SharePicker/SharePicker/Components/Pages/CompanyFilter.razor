@@ -66,9 +66,9 @@
                         <MudText>Results Count: @_results.Count</MudText>
                     </ToolBarContent>
                     <Columns>
-                        <PropertyColumn Property="company => company.Symbol" Title="Symbol"/>
+                        <PropertyColumn Property="company => company.Symbol" Title="Symbol" CellStyle="width: 20%"/>
                         <PropertyColumn Property="company => company.Name" Title="Name"/>
-                        <PropertyColumn Property="company => company.Exchange.Symbol" Title="Exchange"/>
+                        <PropertyColumn Property="company => company.Exchange.Symbol" Title="Exchange" CellStyle="width: 20%"/>
                     </Columns>
                 </MudDataGrid>
             </MudCardContent>
