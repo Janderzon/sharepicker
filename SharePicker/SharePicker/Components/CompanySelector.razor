@@ -32,6 +32,7 @@
     <ToolBarContent>
         <MudText Typo="Typo.h6">Companies</MudText>
         <MudSpacer />
+        <MudSwitch @bind-Value="_includeSecondaryListings" Label="Include Secondary Listings" Color="Color.Info"/>
         <MudTextField @bind-Value="_searchString"
                       Placeholder="Search"
                       Adornment="Adornment.Start"
@@ -53,9 +54,13 @@
     private string _searchString = string.Empty;
     private List<Company> _companies = [];
     private bool _loading = true;
+    private bool _includeSecondaryListings;
 
     private bool GlobalSearch(Company company)
     {
+        if (!_includeSecondaryListings && company.Symbol.StartsWith('0'))
+            return false;
+        
         if (string.IsNullOrWhiteSpace(_searchString))
             return true;
 

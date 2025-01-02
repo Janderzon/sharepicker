@@ -22,7 +22,6 @@
             }
             else
             {
-
                 <MudSelect T="Exchange"
                            Label="Exchanges"
                            MultiSelection="true"
@@ -36,6 +35,7 @@
                 <MudNumericField @bind-Value="_minProfitMargin" Label="Min Profit Margin (Suggested min: 10%)"/>
                 <MudNumericField @bind-Value="_minRoce" Label="Min ROCE (Suggested min: 15%)"/>
                 <MudSwitch @bind-Value="_increasingProfits" Label="Year-On-Year Increasing Profits" Color="Color.Info"/>
+                <MudSwitch @bind-Value="_includeSecondaryListings" Label="Include Secondary Listings" Color="Color.Info"/>
             }
         </MudCardContent>
         <MudCardActions>
@@ -85,6 +85,7 @@
     private decimal? _minProfitMargin;
     private decimal? _minRoce;
     private bool _increasingProfits;
+    private bool _includeSecondaryListings;
     private bool _loading = true;
 
     protected override async Task OnInitializedAsync()
@@ -112,6 +113,8 @@
             companyFilterBuilder.WithIncreasingProfits();
         if (_selectedExchanges.Any())
             companyFilterBuilder.WithExchanges(_selectedExchanges);
+        if (!_includeSecondaryListings)
+            companyFilterBuilder.ExcludeSecondaryListings();
 
         _results = await CompanyRepository.GetFilteredCompaniesAsync(
             companyFilterBuilder.Build(),

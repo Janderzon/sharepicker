@@ -46,6 +46,13 @@ public class CompanyFilterBuilder
         return this;
     }
 
+    public CompanyFilterBuilder ExcludeSecondaryListings()
+    {
+        _filters.Add(filter => filter.Where(company => company.Symbol.FirstOrDefault() != '0'));
+
+        return this;
+    }
+
     public ICompanyFilter Build() => new CompanyFilter([.._filters]);
 
     private class CompanyFilter(List<Func<IQueryable<Company>, IQueryable<Company>>> filters) : ICompanyFilter
