@@ -16,25 +16,33 @@
             </CardHeaderContent>
         </MudCardHeader>
         <MudCardContent>
-            <MudSelect T="Exchange"
-                       Label="Exchanges"
-                       MultiSelection="true"
-                       MultiSelectionTextFunc="GetExchangeSelectionText"
-                       @bind-SelectedValues="_selectedExchanges">
-                @foreach (var exchange in _exchanges)
-                {
-                    <MudSelectItem Value="@exchange">@exchange.Symbol</MudSelectItem>
-                }
-            </MudSelect>
-            <MudNumericField @bind-Value="_minProfitMargin" Label="Min Profit Margin (Suggested min: 10%)" />
-            <MudNumericField @bind-Value="_minRoce" Label="Min ROCE (Suggested min: 15%)" />
-            <MudSwitch @bind-Value="_increasingProfits" Label="Year-On-Year Increasing Profits" Color="Color.Info" />
+            @if (_loading)
+            {
+                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="100px"/>
+            }
+            else
+            {
+
+                <MudSelect T="Exchange"
+                           Label="Exchanges"
+                           MultiSelection="true"
+                           MultiSelectionTextFunc="GetExchangeSelectionText"
+                           @bind-SelectedValues="_selectedExchanges">
+                    @foreach (var exchange in _exchanges)
+                    {
+                        <MudSelectItem Value="@exchange">@exchange.Symbol</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudNumericField @bind-Value="_minProfitMargin" Label="Min Profit Margin (Suggested min: 10%)"/>
+                <MudNumericField @bind-Value="_minRoce" Label="Min ROCE (Suggested min: 15%)"/>
+                <MudSwitch @bind-Value="_increasingProfits" Label="Year-On-Year Increasing Profits" Color="Color.Info"/>
+            }
         </MudCardContent>
         <MudCardActions>
-            <MudButton Disabled="_processing" Variant="Variant.Filled" Color="Color.Primary" OnClick="GetResults">
+            <MudButton Disabled="_processing || _loading" Variant="Variant.Filled" Color="Color.Primary" OnClick="GetResults">
                 @if (_processing)
                 {
-                    <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                    <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
                     <MudText Class="ms-2">Processing</MudText>
                 }
                 else
@@ -43,7 +51,7 @@
                 }
             </MudButton>
         </MudCardActions>
-    </MudCard>
+    </MudCard >
     @if (_results != null)
     {
         <MudCard>
@@ -58,9 +66,9 @@
                         <MudText>Results Count: @_results.Count</MudText>
                     </ToolBarContent>
                     <Columns>
-                        <PropertyColumn Property="company => company.Symbol" Title="Symbol" />
+                        <PropertyColumn Property="company => company.Symbol" Title="Symbol"/>
                         <PropertyColumn Property="company => company.Name" Title="Name"/>
-                        <PropertyColumn Property="company => company.Exchange.Symbol" Title="Exchange" />
+                        <PropertyColumn Property="company => company.Exchange.Symbol" Title="Exchange"/>
                     </Columns>
                 </MudDataGrid>
             </MudCardContent>
@@ -77,10 +85,12 @@
     private decimal? _minProfitMargin;
     private decimal? _minRoce;
     private bool _increasingProfits;
+    private bool _loading = true;
 
     protected override async Task OnInitializedAsync()
     {
         _exchanges = await CompanyRepository.GetExchangesAsync(_cancellationTokenSource.Token);
+        _loading = false;
     }
 
     private static string GetExchangeSelectionText(List<string> selectedValues) => selectedValues.Count == 0 
